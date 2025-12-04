@@ -39,8 +39,8 @@ class LessonStatusService:
         
         status_changed = False
         
-        # Vergangene Lesson (end_datetime < jetzt) mit Status PLANNED → TAUGHT
-        if end_datetime < now and lesson.status == 'planned':
+        # Vergangene Lesson (end_datetime < jetzt) mit Status PLANNED oder leer → TAUGHT
+        if end_datetime < now and (lesson.status == 'planned' or not lesson.status or lesson.status == ''):
             lesson.status = 'taught'
             status_changed = True
         
@@ -49,7 +49,8 @@ class LessonStatusService:
             lesson.status = 'planned'
             status_changed = True
         
-        if status_changed:
+        # Speichern nur, wenn Lesson bereits gespeichert ist (hat PK)
+        if status_changed and lesson.pk:
             lesson.save(update_fields=['status', 'updated_at'])
         
         return status_changed

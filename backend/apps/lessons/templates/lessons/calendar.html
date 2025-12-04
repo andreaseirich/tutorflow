@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Kalender {{ month }}/{{ year }} - TutorFlow{% endblock %}
+{% block title %}Kalender {{ month_names|slice:month|last }} {{ year }} - TutorFlow{% endblock %}
 
 {% block content %}
 <h1>Kalender {{ month_names|slice:month|last }} {{ year }}</h1>
