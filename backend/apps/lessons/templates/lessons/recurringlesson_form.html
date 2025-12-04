@@ -15,7 +15,22 @@
 
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="error">{{ field.errors }}</div>
+            {% endif %}
+            {% if field.name == 'recurrence_type' %}
+                <small class="form-text text-muted">
+                    <strong>Wöchentlich:</strong> Jede Woche an den ausgewählten Wochentagen.<br>
+                    <strong>Alle 2 Wochen:</strong> Jede zweite Woche an den ausgewählten Wochentagen.<br>
+                    <strong>Monatlich:</strong> Jeden Monat am gleichen Kalendertag (z.B. jeden 15. des Monats), wenn dieser Tag ein ausgewählter Wochentag ist.
+                </small>
+            {% endif %}
+        </div>
+    {% endfor %}
     
     <div class="btn-group">
         <button type="submit" class="btn btn-success">Speichern und Lessons generieren</button>

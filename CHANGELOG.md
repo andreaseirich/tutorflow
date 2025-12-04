@@ -5,6 +5,23 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.4] - 2025-12-04
+
+### Hinzugefügt
+- **Erweiterte Wiederholungsmuster für Serientermine**:
+  - `recurrence_type` Feld in RecurringLesson (weekly/biweekly/monthly)
+  - Wöchentlich: wie bisher, jede Woche an den markierten Wochentagen
+  - Alle 2 Wochen: jede zweite Woche an den markierten Wochentagen
+  - Monatlich: jeden Monat am gleichen Kalendertag, wenn dieser Tag ein ausgewählter Wochentag ist
+  - RecurringLessonService unterstützt alle drei Wiederholungsarten
+  - Formular erweitert um Wiederholungsart-Auswahl mit Erklärungen
+
+### Tests
+- 6 Tests für verschiedene Wiederholungsmuster (weekly, biweekly, monthly)
+- Tests für automatische Status-Setzung bei allen Wiederholungsarten
+
+---
+
 ## [0.8.3] - 2025-12-04
 
 ### Hinzugefügt

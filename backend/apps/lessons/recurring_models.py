@@ -43,6 +43,18 @@ class RecurringLesson(models.Model):
         default=0,
         help_text="Fahrtzeit nachher in Minuten"
     )
+    # Wiederholungsart
+    RECURRENCE_TYPE_CHOICES = [
+        ('weekly', 'Wöchentlich'),
+        ('biweekly', 'Alle 2 Wochen'),
+        ('monthly', 'Monatlich'),
+    ]
+    recurrence_type = models.CharField(
+        max_length=20,
+        choices=RECURRENCE_TYPE_CHOICES,
+        default='weekly',
+        help_text="Wiederholungsart: Wöchentlich, alle 2 Wochen oder monatlich"
+    )
     # Wochentage als Boolean-Felder
     monday = models.BooleanField(default=False, help_text="Montag")
     tuesday = models.BooleanField(default=False, help_text="Dienstag")

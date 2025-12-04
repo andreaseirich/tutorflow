@@ -15,6 +15,7 @@ class RecurringLessonForm(forms.ModelForm):
         fields = [
             'contract', 'location', 'start_date', 'end_date', 'start_time',
             'duration_minutes', 'travel_time_before_minutes', 'travel_time_after_minutes',
+            'recurrence_type',
             'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
             'is_active', 'notes'
         ]
@@ -27,6 +28,7 @@ class RecurringLessonForm(forms.ModelForm):
             'duration_minutes': forms.NumberInput(attrs={'class': 'form-control'}),
             'travel_time_before_minutes': forms.NumberInput(attrs={'class': 'form-control'}),
             'travel_time_after_minutes': forms.NumberInput(attrs={'class': 'form-control'}),
+            'recurrence_type': forms.Select(attrs={'class': 'form-control'}),
             'monday': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'tuesday': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'wednesday': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
