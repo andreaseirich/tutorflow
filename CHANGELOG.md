@@ -62,6 +62,31 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - `docs/CHECKPOINTS.md` - Datumsangaben in Checkpoint 1 und 2 korrigiert
 - `CHANGELOG.md` - Versionsdatumsangaben korrigiert
 
+## [0.5.0] - 2025-12-04
+
+### Hinzugefügt
+- UI/UX-Polishing: Verbesserte Templates mit konsistenter Navigation, klarer Konfliktdarstellung, Premium-Badges
+- Demo/Seed-Daten: Management Command `seed_demo_data` für Demo-Szenario
+  - 3 Demo-Schüler mit unterschiedlichen Profilen
+  - Zugehörige Verträge (privat und über Institut)
+  - Mehrere Unterrichtsstunden (inkl. Konflikt zur Demonstration)
+  - Blockzeiten
+  - 1 Premium-User mit generiertem Unterrichtsplan
+- Validierungsskript: `scripts/validate.sh` für automatische Checks (Django Check, Tests, TODO-Kommentare, Debug-Ausgaben)
+- Dokumentation: DEVPOST.md für Hackathon-Einreichung erstellt
+
+### Geändert
+- README.md: Überarbeitet mit Demo-Daten-Anleitung, Validierungsskript, verbesserte Feature-Beschreibung
+- docs/ETHICS.md: Erweitert um Abschnitt zu Demo-Daten und Datenschutz
+- docs/PHASES.md: Phase 5 als abgeschlossen markiert
+- docs/CHECKPOINTS.md: Checkpoint 5 hinzugefügt
+- Templates: Verbesserte Darstellung von Konflikten, Premium-Badges, konsistente Buttons
+
+### Phase
+- Phase 5 – Polishing, Validierung & Hackathon-Feinschliff abgeschlossen
+
+---
+
 ## [0.3.0] - 2025-12-04
 
 ### Hinzugefügt

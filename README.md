@@ -22,14 +22,17 @@ TutorFlow bietet eine vollständige Lösung für die Verwaltung von Nachhilfetä
 ## Features
 
 ### Basis-Features
-- Verwaltung von Schülern, Verträgen und Nachhilfestunden
-- Planung mit Blockzeiten und Fahrtzeiten
-- Monatsansicht und Einnahmenberechnungen
-- Konfliktprüfung bei der Terminplanung
-- Optional: PDF-Upload für Auftragsbestätigungen
+- **Schülerverwaltung**: Zentrale Verwaltung mit Kontaktdaten, Schule, Fächern
+- **Vertragsverwaltung**: Honorar, Dauer, Vertragszeitraum, geplante Einheiten
+- **Unterrichtsplanung**: Planung mit Datum, Zeit, Ort, Fahrtzeiten
+- **Blockzeiten**: Verwaltung eigener Termine (Uni, Job, etc.)
+- **Konfliktprüfung**: Automatische Erkennung von Überschneidungen (inkl. Fahrtzeiten)
+- **Einnahmenübersicht**: Monats- und Jahresauswertungen nach Status (geplant, unterrichtet, ausgezahlt)
+- **Dashboard**: Übersicht über heutige/nächste Stunden, Konflikte, Einnahmen
 
 ### Premium-Features
-- KI-gestützte Generierung von Unterrichtsplänen
+- **KI-gestützte Unterrichtspläne**: Automatische Generierung von detaillierten Unterrichtsplänen via LLM-API
+- **Human-in-the-Loop**: Generierte Pläne können angepasst und verantwortet werden
 
 ## Tech Stack
 
@@ -91,6 +94,34 @@ python manage.py runserver
 
 Die Anwendung ist dann unter `http://127.0.0.1:8000/` erreichbar.
 
+### Demo-Daten laden
+
+Um die Anwendung mit Demo-Daten zu testen, können Sie das Seed-Command ausführen:
+
+```bash
+cd backend
+python manage.py seed_demo_data
+```
+
+Dies erstellt:
+- 3 Demo-Schüler mit unterschiedlichen Profilen
+- Zugehörige Verträge
+- Mehrere Unterrichtsstunden (inkl. einem Konflikt zur Demonstration)
+- Blockzeiten
+- 1 Premium-User mit generiertem Unterrichtsplan
+
+**Demo-Login:**
+- Username: `demo_premium`
+- Password: `demo123`
+
+**Demo-Szenario:**
+Die Demo-Daten zeigen ein realistisches Szenario mit:
+- Mehreren Schülern in verschiedenen Klassenstufen
+- Unterschiedlichen Verträgen (privat und über Institut)
+- Einer Konfliktsituation zwischen zwei Lessons (zur Demonstration der Konfliktprüfung)
+- Einer Blockzeit (Uni-Vorlesung)
+- Einem Premium-User mit KI-generiertem Unterrichtsplan
+
 ## Projektstruktur
 
 ```
@@ -118,13 +149,29 @@ tutorflow/
 
 Das Projekt wird in Phasen entwickelt. Siehe `docs/PHASES.md` für Details.
 
+## Validierung
+
+Ein Validierungsskript ist verfügbar, um das Projekt zu prüfen:
+
+```bash
+./scripts/validate.sh
+```
+
+Das Skript führt folgende Checks durch:
+- Django System Check
+- Testsuite
+- Prüfung auf TODO-Kommentare
+- Prüfung auf Debug-Ausgaben
+- Dokumentationsprüfung
+
 ## Dokumentation
 
 - **ARCHITECTURE.md**: Architekturübersicht und technische Details
 - **ETHICS.md**: Ethisch-christliche Leitlinien und Datenschutzprinzipien
 - **PHASES.md**: Übersicht über Entwicklungsphasen
 - **CHECKPOINTS.md**: Fortschrittsprotokoll und Checkpoints
-- **API.md**: API-Dokumentation (wird in späteren Phasen befüllt)
+- **API.md**: API-Dokumentation
+- **DEVPOST.md**: Inhalte für Devpost-Einreichung
 
 ## Lizenz
 
