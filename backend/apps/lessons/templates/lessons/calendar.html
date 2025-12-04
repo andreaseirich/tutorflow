@@ -1,9 +1,9 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Kalender {{ month_names|slice:month|last }} {{ year }} - TutorFlow{% endblock %}
+{% block title %}Kalender {{ month_label }} {{ year }} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Kalender {{ month_names|slice:month|last }} {{ year }}</h1>
+<h1>Kalender {{ month_label }} {{ year }}</h1>
 
 <div class="btn-group">
     <a href="{% url 'lessons:calendar' %}?year={{ prev_year }}&month={{ prev_month }}" class="btn">← Vorheriger Monat</a>
