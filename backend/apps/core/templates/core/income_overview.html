@@ -1,0 +1,56 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Einnahmenübersicht - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Einnahmenübersicht</h1>
+
+{% if view_type == 'month' %}
+<h2>{{ month }}/{{ year }}</h2>
+<p><strong>Gesamt (ausgezahlt):</strong> {{ monthly_income.total_income }}€ ({{ monthly_income.lesson_count }} Stunden)</p>
+
+<h3>Nach Status</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Status</th>
+            <th>Einnahmen</th>
+            <th>Anzahl Stunden</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for status_code, status_data in income_by_status.items %}
+        <tr>
+            <td>{{ status_data.name }}</td>
+            <td>{{ status_data.income }}€</td>
+            <td>{{ status_data.lesson_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<h2>Jahr {{ year }}</h2>
+<p><strong>Gesamt (ausgezahlt):</strong> {{ yearly_income.total_income }}€ ({{ yearly_income.total_lessons }} Stunden)</p>
+
+<h3>Monatsübersicht</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Monat</th>
+            <th>Einnahmen</th>
+            <th>Anzahl Stunden</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for month_data in yearly_income.monthly_breakdown %}
+        <tr>
+            <td>{{ month_data.month }}/{{ month_data.year }}</td>
+            <td>{{ month_data.total_income }}€</td>
+            <td>{{ month_data.lesson_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
+
