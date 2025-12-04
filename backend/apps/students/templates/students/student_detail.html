@@ -1,0 +1,59 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ student.full_name }} - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>{{ student.full_name }}</h1>
+
+<div class="btn-group">
+    <a href="{% url 'students:update' student.pk %}" class="btn">Bearbeiten</a>
+    <a href="{% url 'students:delete' student.pk %}" class="btn btn-danger">Löschen</a>
+    <a href="{% url 'students:list' %}" class="btn btn-secondary">Zurück zur Liste</a>
+</div>
+
+<h2>Details</h2>
+<table>
+    <tr><th>Vorname</th><td>{{ student.first_name }}</td></tr>
+    <tr><th>Nachname</th><td>{{ student.last_name }}</td></tr>
+    {% if student.email %}<tr><th>E-Mail</th><td>{{ student.email }}</td></tr>{% endif %}
+    {% if student.phone %}<tr><th>Telefon</th><td>{{ student.phone }}</td></tr>{% endif %}
+    {% if student.school %}<tr><th>Schule</th><td>{{ student.school }}</td></tr>{% endif %}
+    {% if student.grade %}<tr><th>Klasse</th><td>{{ student.grade }}</td></tr>{% endif %}
+    {% if student.subjects %}<tr><th>Fächer</th><td>{{ student.subjects }}</td></tr>{% endif %}
+    {% if student.default_location %}<tr><th>Standard-Ort</th><td>{{ student.default_location }}</td></tr>{% endif %}
+    {% if student.notes %}<tr><th>Notizen</th><td>{{ student.notes }}</td></tr>{% endif %}
+</table>
+
+<h2>Verträge</h2>
+{% if student.contracts.all %}
+<table>
+    <thead>
+        <tr>
+            <th>Institut</th>
+            <th>Honorar</th>
+            <th>Dauer</th>
+            <th>Von</th>
+            <th>Bis</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for contract in student.contracts.all %}
+        <tr>
+            <td>{{ contract.institute|default:"-" }}</td>
+            <td>{{ contract.hourly_rate }}€</td>
+            <td>{{ contract.unit_duration_minutes }} Min.</td>
+            <td>{{ contract.start_date }}</td>
+            <td>{{ contract.end_date|default:"unbefristet" }}</td>
+            <td>{% if contract.is_active %}<span style="color: #28a745;">Aktiv</span>{% else %}<span style="color: #6c757d;">Inaktiv</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <p>Keine Verträge vorhanden.</p>
+</div>
+{% endif %}
+{% endblock %}
+

@@ -27,9 +27,9 @@
             <td>{{ lesson.get_status_display }}</td>
             <td>
                 {% if lesson._conflicts %}
-                <span class="conflict">⚠ {{ lesson._conflicts|length }}</span>
+                <span class="conflict-icon">⚠</span> <span class="conflict">{{ lesson._conflicts|length }}</span>
                 {% else %}
-                ✓
+                <span style="color: #28a745;">✓</span>
                 {% endif %}
             </td>
             <td>
