@@ -178,22 +178,23 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
     - Redirect nach Create/Update führt zurück zum korrekten Monat (year/month aus Request)
 
 ### Abrechnungs-Workflow
-1. **Auswahl von Lessons**: Benutzer wählt Zeitraum und optional Vertrag
-2. **Anzeige verfügbarer Lessons**: System zeigt alle TAUGHT Lessons ohne InvoiceItem
-3. **Auswahl**: Benutzer wählt Lessons per Checkbox aus
+1. **Zeitraum auswählen**: Benutzer wählt Zeitraum (period_start, period_end) und optional Vertrag
+2. **Automatische Auswahl**: System wählt automatisch alle Lessons mit Status TAUGHT im Zeitraum
+   - Lessons mit Status PLANNED oder PAID werden nicht berücksichtigt
+   - Lessons, die bereits in einer Rechnung sind, werden ausgeschlossen
+   - Eine Lesson kann nur in einer Rechnung vorkommen (1:1-Beziehung über invoice_items)
+3. **Vorschau**: System zeigt Vorschau der verfügbaren Lessons (optional)
 4. **Rechnung erstellen**: `InvoiceService.create_invoice_from_lessons()`
    - Erstellt Invoice mit period_start, period_end, payer_info
-   - Erstellt InvoiceItems für jede ausgewählte Lesson (mit Kopie der Daten)
+   - Erstellt InvoiceItems für alle verfügbaren TAUGHT Lessons im Zeitraum (mit Kopie der Daten)
    - **Berechnung**: `units = lesson_duration_minutes / contract_unit_duration_minutes`, `amount = units * hourly_rate`
    - Berechnet total_amount als Summe aller InvoiceItems
-   - Setzt Lessons automatisch auf Status PAID
-5. **Dokument generieren**: Optional `InvoiceDocumentService.save_document()`
-   - Generiert HTML-Dokument
-   - Speichert als FileField
+   - Markiert alle Lessons automatisch als "bezahlt" (Status TAUGHT → PAID)
+5. **Rechnungsdokument**: Optional: Generierung eines HTML/PDF-Dokuments
 6. **Rechnung löschen**: `InvoiceService.delete_invoice()`
    - Löscht Invoice und alle InvoiceItems (CASCADE)
-   - Setzt Lessons zurück auf TAUGHT, falls sie nicht in anderen Rechnungen sind
-7. **Finanzansicht**: Zeigt abgerechnete vs. nicht abgerechnete Lessons
+   - Setzt Lessons zurück auf TAUGHT (PAID → TAUGHT), da eine Lesson nur in einer Rechnung sein kann
+7. **Finanzansicht**: Unterscheidung zwischen abgerechneten und nicht abgerechneten Lessons
 
 ### Konfliktlogik (Phase 3)
 - **LessonConflictService**: Zentrale Service-Klasse für Konfliktprüfung
