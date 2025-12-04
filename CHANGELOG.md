@@ -5,6 +5,22 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.7] - 2025-12-04
+
+### Hinzugefügt
+- **Management Command `reset_paid_lessons`**:
+  - Setzt alle Lessons mit Status PAID auf TAUGHT zurück
+  - Option `--delete-invoices`: Löscht auch die zugehörigen Rechnungen und InvoiceItems
+  - Option `--dry-run`: Zeigt nur an, was geändert würde, ohne Änderungen vorzunehmen
+  - Verwendung: `python manage.py reset_paid_lessons [--delete-invoices] [--dry-run]`
+  - Nützlich für Bulk-Operationen oder Korrekturen
+
+### Tests
+- 4 Tests für `reset_paid_lessons` Command
+- Tests für: Status-Reset, Löschen von Rechnungen, Dry-Run, keine PAID Lessons
+
+---
+
 ## [0.8.6] - 2025-12-04
 
 ### Geändert
