@@ -68,9 +68,15 @@ class LessonCreateView(CreateView):
         date_param = self.request.GET.get('date')
         if date_param:
             try:
-                initial['date'] = date_param
-            except ValueError:
-                pass
+                # Validiere, dass das Datum ein gültiges Format hat
+                parsed_date = date.fromisoformat(date_param)
+                initial['date'] = parsed_date
+            except (ValueError, TypeError):
+                # Falls ungültig, verwende aktuelles Datum
+                initial['date'] = timezone.localdate()
+        else:
+            # Kein Datum-Parameter: verwende aktuelles Datum
+            initial['date'] = timezone.localdate()
         return initial
 
     def get_success_url(self):
@@ -104,7 +110,10 @@ class LessonUpdateView(UpdateView):
     def get_success_url(self):
         """Weiterleitung zurück zum Kalender mit Jahr/Monat."""
         lesson = self.object
-        return reverse_lazy('lessons:calendar') + f'?year={lesson.date.year}&month={lesson.date.month}'
+        # Verwende year/month aus Request, falls vorhanden, sonst aus Lesson-Datum
+        year = int(self.request.GET.get('year', lesson.date.year))
+        month = int(self.request.GET.get('month', lesson.date.month))
+        return reverse_lazy('lessons:calendar') + f'?year={year}&month={month}'
 
     def form_valid(self, form):
         lesson = form.save()

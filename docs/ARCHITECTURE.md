@@ -101,12 +101,16 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Kein Model**: Service-Layer für automatische Status-Verwaltung von Lessons
 - **Methoden**:
   - `update_status_for_lesson(lesson)`: Aktualisiert Status basierend auf Datum/Zeit
-    - Vergangene Lessons (end_datetime < jetzt) mit Status PLANNED → TAUGHT
+    - Vergangene Lessons (end_datetime < jetzt) mit Status PLANNED oder leer → TAUGHT
     - Zukünftige Lessons (start_datetime >= jetzt) ohne Status → PLANNED
     - PAID oder CANCELLED werden NICHT überschrieben
+    - Speichert nur, wenn Lesson bereits Primary Key hat (sonst nur Status setzen)
   - `bulk_update_past_lessons()`: Setzt alle vergangenen PLANNED Lessons auf TAUGHT
 - **Zweck**: Automatische Status-Setzung beim Anlegen/Aktualisieren von Lessons
-- **Integration**: Wird in LessonCreateView und LessonUpdateView aufgerufen
+- **Integration**: 
+  - Wird in LessonCreateView und LessonUpdateView aufgerufen
+  - Wird in RecurringLessonService.generate_lessons() aufgerufen (vor und nach Speichern)
+- **Wichtig**: Status wird im normalen Lesson-Formular NICHT mehr manuell auswählbar - nur automatisch gesetzt
 
 #### CalendarService (apps.lessons.calendar_service)
 - **Kein Model**: Service-Layer für Kalenderansicht

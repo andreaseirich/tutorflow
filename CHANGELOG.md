@@ -5,6 +5,33 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.1] - 2025-12-04
+
+### Geändert
+- **Status-Automatik für alle Lesson-Erzeugungen**:
+  - RecurringLessonService nutzt jetzt LessonStatusService für automatische Status-Setzung
+  - Lessons aus Serienterminen bekommen automatisch korrekten Status (Vergangenheit → TAUGHT, Zukunft → PLANNED)
+  - Entfernt: Hart gesetzter Status 'planned' bei Recurring Lessons
+- **Status nicht mehr manuell auswählbar**:
+  - Status-Feld aus LessonForm entfernt (nur noch automatisch gesetzt)
+  - Status wird nicht mehr im normalen Lesson-Formular angezeigt
+  - Nur automatischer Mechanismus entscheidet Status beim Speichern
+- **Kalender-Datum-Synchronisation**:
+  - Monatsname im Kalender entspricht dem angezeigten Monat (year/month Parameter)
+  - Default-Datum im Create-Formular entspricht dem angeklickten Tag (date Parameter)
+  - Redirect nach Create/Update führt zurück zum korrekten Monat (year/month aus Request)
+
+### Tests
+- 6 neue Tests für Status-Automatik bei Recurring Lessons und manueller Erstellung
+- 3 Tests für Kalender-Datum-Synchronisation
+
+### Dokumentation
+- ARCHITECTURE.md: Status-Automatik für alle Lesson-Erzeugungen dokumentiert
+- ARCHITECTURE.md: Hinweis, dass Status im Formular nicht manuell wählbar ist
+- README.md: Automatische Status-Verwaltung erwähnt
+
+---
+
 ## [0.8.0] - 2025-12-04
 
 ### Hinzugefügt

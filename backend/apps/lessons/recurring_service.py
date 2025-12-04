@@ -6,6 +6,7 @@ from typing import List, Optional
 from apps.lessons.models import Lesson
 from apps.lessons.recurring_models import RecurringLesson
 from apps.lessons.services import LessonConflictService
+from apps.lessons.status_service import LessonStatusService
 
 
 class RecurringLessonService:
@@ -72,7 +73,7 @@ class RecurringLessonService:
                 if existing:
                     skipped += 1
                 else:
-                    # Erstelle neue Lesson
+                    # Erstelle neue Lesson (ohne Status - wird automatisch gesetzt)
                     lesson = Lesson(
                         contract=recurring_lesson.contract,
                         date=current_date,
@@ -81,14 +82,19 @@ class RecurringLessonService:
                         location=recurring_lesson.location,
                         travel_time_before_minutes=recurring_lesson.travel_time_before_minutes,
                         travel_time_after_minutes=recurring_lesson.travel_time_after_minutes,
-                        status='planned',
+                        status='',  # Leer - wird automatisch gesetzt
                         notes=recurring_lesson.notes
                     )
+                    
+                    # Automatische Status-Setzung (vor dem Speichern)
+                    LessonStatusService.update_status_for_lesson(lesson)
                     
                     if dry_run:
                         preview.append(lesson)
                     else:
                         lesson.save()
+                        # Status nochmal setzen nach Speichern (falls nötig)
+                        LessonStatusService.update_status_for_lesson(lesson)
                         
                         # Prüfe Konflikte
                         if check_conflicts:

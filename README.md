@@ -31,6 +31,7 @@ TutorFlow bietet eine vollständige Lösung für die Verwaltung von Nachhilfetä
 - **Unterrichtsplanung**: Planung mit Datum, Zeit, Ort, Fahrtzeiten
   - **Kalenderansicht**: Monatskalender als zentrale UI für Lesson-Verwaltung
   - **Serientermine**: Wiederholende Stunden (z. B. jeden Montag/Donnerstag) mit automatischer Generierung
+  - **Automatische Status-Verwaltung**: Lesson-Status (geplant/unterrichtet) wird automatisch anhand des Datums gesetzt
 - **Blockzeiten**: Verwaltung eigener Termine (Uni, Job, etc.)
 - **Konfliktprüfung**: Automatische Erkennung von Überschneidungen (inkl. Fahrtzeiten)
 - **Einnahmenübersicht**: Monats- und Jahresauswertungen nach Status (geplant, unterrichtet, ausgezahlt)
