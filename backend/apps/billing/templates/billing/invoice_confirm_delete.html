@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Rechnung löschen - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Rechnung löschen</h1>
+
+<div style="background: #fff3cd; padding: 20px; border-radius: 5px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
+    <h2 style="color: #dc3545; margin-top: 0;">⚠ Achtung</h2>
+    <p>Möchten Sie diese Rechnung wirklich löschen?</p>
+    <p><strong>Rechnung:</strong> {{ object.payer_name }} ({{ object.period_start }} - {{ object.period_end }})</p>
+    <p><strong>Betrag:</strong> {{ object.total_amount }}€</p>
+    <p><strong>Anzahl Posten:</strong> {{ object.items.count }}</p>
+    <p style="margin-top: 15px;">
+        <strong>Hinweis:</strong> Alle Unterrichtsstunden dieser Rechnung werden auf "unterrichtet" zurückgesetzt, 
+        falls sie nicht in anderen Rechnungen enthalten sind.
+    </p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="btn-group">
+        <button type="submit" class="btn btn-danger">Ja, löschen</button>
+        <a href="{% url 'billing:invoice_detail' object.pk %}" class="btn btn-secondary">Abbrechen</a>
+    </div>
+</form>
+{% endblock %}
+
