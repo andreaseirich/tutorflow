@@ -31,9 +31,53 @@ ContractMonthlyPlanFormSet = inlineformset_factory(
 )
 
 
+def iter_contract_months(start_date: date, end_date: date = None) -> list:
+    """
+    Iteriert über alle Monate zwischen start_date und end_date.
+    
+    Args:
+        start_date: Startdatum des Vertrags
+        end_date: Enddatum des Vertrags (optional, None = unbefristet)
+                 Falls None, wird ein Standard-Zeitraum von 5 Jahren ab start_date verwendet
+                 (genau 60 Monate: vom Startmonat bis zum letzten Monat des 5. Jahres)
+    
+    Returns:
+        Liste von (year, month) Tupeln für alle Monate im Intervall
+    """
+    if not start_date:
+        return []
+    
+    # Für unbefristete Verträge: Standard-Zeitraum von genau 5 Jahren (60 Monate)
+    if end_date is None:
+        # Setze Enddatum auf den letzten Tag des 5. Jahres
+        end_year = start_date.year + 4  # 5 Jahre = Jahr 0-4
+        end_month = 12
+        end_date = date(end_year, end_month, 31)
+    
+    months = []
+    current_year = start_date.year
+    current_month = start_date.month
+    end_year = end_date.year
+    end_month = end_date.month
+    
+    while (current_year, current_month) <= (end_year, end_month):
+        months.append((current_year, current_month))
+        
+        # Nächster Monat
+        current_month += 1
+        if current_month > 12:
+            current_month = 1
+            current_year += 1
+    
+    return months
+
+
 def generate_monthly_plans_for_contract(contract: Contract) -> list:
     """
     Generiert ContractMonthlyPlan-Einträge für alle Monate im Vertragszeitraum.
+    
+    Die Monate werden unabhängig vom aktuellen Datum erzeugt - für den gesamten
+    Zeitraum zwischen start_date und end_date (oder 5 Jahre bei unbefristeten Verträgen).
     
     Args:
         contract: Der Contract, für den die Pläne erstellt werden sollen
@@ -44,33 +88,17 @@ def generate_monthly_plans_for_contract(contract: Contract) -> list:
     if not contract.start_date:
         return []
     
-    # Bestimme Enddatum (end_date oder aktuelles Datum + 1 Jahr)
-    end_date = contract.end_date
-    if not end_date:
-        today = date.today()
-        end_date = date(today.year + 1, today.month, today.day)
-    
     plans = []
-    current_year = contract.start_date.year
-    current_month = contract.start_date.month
-    end_year = end_date.year
-    end_month = end_date.month
+    months = iter_contract_months(contract.start_date, contract.end_date)
     
-    while (current_year, current_month) <= (end_year, end_month):
+    for year, month in months:
         # Prüfe, ob bereits ein Plan für diesen Monat existiert
         plan, created = ContractMonthlyPlan.objects.get_or_create(
             contract=contract,
-            year=current_year,
-            month=current_month,
+            year=year,
+            month=month,
             defaults={'planned_units': 0}
         )
         plans.append(plan)
-        
-        # Nächster Monat
-        current_month += 1
-        if current_month > 12:
-            current_month = 1
-            current_year += 1
     
     return plans
-
