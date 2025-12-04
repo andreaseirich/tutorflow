@@ -80,16 +80,30 @@ Das Projekt TutorFlow wird in mehreren Phasen entwickelt, um eine strukturierte 
 
 ## Phase 4 – Premium & KI-Funktionen
 
-**Status**: ⏳ Ausstehend
+**Status**: ✅ Abgeschlossen
 
 **Ziel**: Premium-Flag am User, Integration einer LLM-API für Unterrichtsplan-Erstellung, saubere Trennung von Basis- und Premium-Features.
 
 **Akzeptanzkriterien**:
-- KI-Unterrichtsplan kann für Premium-User erzeugt werden
-- ETHICS.md enthält Hinweise zum KI-Einsatz
+- ✅ Premium-Flag vollständig integriert (`apps.core.utils.is_premium_user()`)
+- ✅ KI-Unterrichtsplan kann für Premium-User erzeugt werden
+- ✅ LLM-Integration gekapselt (client/prompts/services)
+- ✅ API-Keys über Umgebungsvariablen konfiguriert
+- ✅ Fehlerbehandlung für LLM-Aufrufe implementiert
+- ✅ ETHICS.md enthält Hinweise zum KI-Einsatz und Datenschutz
 
 **Tests**:
-- Mock-Tests/Integrationstests für KI-Aufrufe
+- ✅ 12 Tests für Premium-Gating, Prompt-Bau, Service-Layer und Client
+- ✅ Mock-Tests für KI-Aufrufe (keine echten API-Calls in Tests)
+- ✅ Fehlerszenarien getestet
+
+**Fortschritt**:
+- AI-App erstellt (`apps.ai`) mit modularer Struktur
+- LLMClient für API-Kommunikation (OpenAI-kompatibel)
+- Prompt-Bau für strukturierte Unterrichtspläne
+- LessonPlanService für High-Level-Generierung
+- UI-Integration in Lesson-Detail-Ansicht
+- Premium-Gating in Views und Templates
 
 ---
 

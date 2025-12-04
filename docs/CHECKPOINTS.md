@@ -197,3 +197,71 @@ Dieses Dokument protokolliert den Fortschritt des Projekts und wichtige Meilenst
 
 Alle ursprünglich mit `2025-01-27` dokumentierten Datumsangaben wurden auf das korrekte Datum `2025-12-04` (Europe/Berlin) korrigiert, da das ursprüngliche Datum nicht mit dem tatsächlichen Projektstand übereinstimmte.
 
+---
+
+## Checkpoint 4: Premium & KI-Funktionen implementiert
+
+**Datum**: 2025-12-04
+
+**Phase**: Phase 4 – Premium & KI-Funktionen
+
+**Status**: ✅ Abgeschlossen
+
+### Abgeschlossen
+- ✅ Premium-Logik vollständig integriert:
+  - `apps.core.utils.is_premium_user()` für Premium-Checks
+  - UserProfile mit Premium-Flag im Admin verwaltbar
+  - Premium-Gating in Views und Templates
+- ✅ AI-App-Struktur erstellt:
+  - `apps.ai.client.LLMClient` - Low-Level-API-Kommunikation
+  - `apps.ai.prompts` - Prompt-Bau für Unterrichtspläne
+  - `apps.ai.services.LessonPlanService` - High-Level-Generierung
+- ✅ LessonPlan-Generierung:
+  - Kontext-Sammlung (Schüler, Lesson, vorherige Lessons)
+  - Strukturierter Prompt-Bau
+  - LLM-API-Integration (OpenAI-kompatibel)
+  - Fehlerbehandlung (Timeouts, Netzwerk-Errors)
+  - Speicherung als LessonPlan-Model
+- ✅ Konfiguration:
+  - LLM-Settings über Umgebungsvariablen (LLM_API_KEY, LLM_API_BASE_URL, LLM_MODEL_NAME)
+  - Keine Secrets im Code
+- ✅ UI-Integration:
+  - Button "Unterrichtsplan mit KI generieren" in Lesson-Detail
+  - Anzeige generierter Pläne
+  - Premium-Hinweis für Nicht-Premium-User
+- ✅ Tests:
+  - 12 Tests für Premium-Gating, Prompt-Bau, Services und Client
+  - Mock-Tests für LLM-Aufrufe (keine echten API-Calls)
+  - Fehlerszenarien getestet
+
+### Validierungsergebnisse
+
+#### Code-Qualität
+- [x] AI-App modular strukturiert (client, prompts, services)
+- [x] Keine Datei über 300 Zeilen
+- [x] Django check erfolgreich (0 issues)
+- [x] API-Keys über ENV-Variablen, keine Secrets im Code
+
+#### Funktionalität
+- [x] Premium-Gating funktioniert korrekt
+- [x] LessonPlan-Generierung für Premium-User möglich
+- [x] Fehlerbehandlung für LLM-Aufrufe implementiert
+- [x] UI zeigt Premium-Hinweise für Nicht-Premium-User
+
+#### Tests
+- [x] 12 Tests implementiert
+- [x] Alle Tests laufen erfolgreich
+- [x] Mock-Tests für LLM (keine echten API-Calls)
+
+#### Dokumentation
+- [x] ARCHITECTURE.md aktualisiert (AI-Architektur dokumentiert)
+- [x] ETHICS.md aktualisiert (KI-Einsatz, Datenschutz, Human-in-the-Loop)
+- [x] API.md aktualisiert (Premium-Endpoint dokumentiert)
+- [x] PHASES.md aktualisiert (Phase 4 als abgeschlossen markiert)
+- [x] CHECKPOINTS.md aktualisiert
+
+### Nächste Schritte
+1. Git-Commits erstellen
+2. Phase 4 abschließen
+3. Phase 5 vorbereiten (Polishing & Hackathon-Feinschliff)
+

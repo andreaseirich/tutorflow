@@ -129,12 +129,35 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 4. Aggregation nach Status und Monat
 5. Darstellung in IncomeOverview-View mit Filterung nach Jahr/Monat
 
-### KI-Unterrichtsplan-Generierung (Premium)
-1. Premium-User wählt Schüler und Thema
-2. System sammelt Kontext (Fach, Klasse, bisherige Lessons)
-3. API-Aufruf an LLM (z. B. ChatGPT)
-4. Ergebnis wird als LessonPlan gespeichert
-5. Optional: Verknüpfung mit einer Lesson
+### KI-Unterrichtsplan-Generierung (Premium) - Phase 4
+1. Premium-User wählt eine Lesson aus
+2. **Premium-Check**: System prüft, ob User Premium-Zugang hat (`apps.core.utils.is_premium_user()`)
+3. **Kontext-Sammlung**: System sammelt relevante Informationen:
+   - Schüler: Name, Klasse, Fach, Notizen
+   - Lesson: Datum, Dauer, Status, Notizen
+   - Vorherige Lessons: Letzte 5 Lessons für Kontext
+4. **Prompt-Bau**: `apps.ai.prompts.build_lesson_plan_prompt()` erstellt strukturierten Prompt
+5. **LLM-Aufruf**: `apps.ai.client.LLMClient` kommuniziert mit LLM-API (OpenAI-kompatibel)
+6. **Fehlerbehandlung**: Timeouts, Netzwerk- und API-Fehler werden sauber abgefangen
+7. **Speicherung**: Ergebnis wird als `LessonPlan` gespeichert mit:
+   - Verknüpfung zu Lesson und Student
+   - Generiertem Inhalt (Markdown-Text)
+   - Metadaten (Modell-Name, Erstellungszeitpunkt)
+8. **UI-Anzeige**: LessonPlan wird in Lesson-Detail-Ansicht angezeigt
+9. **Human-in-the-Loop**: Nachhilfelehrer prüft und passt den Plan an
+
+### AI-Architektur (Phase 4)
+- **apps.ai.client.LLMClient**: Low-Level-API-Kommunikation
+  - OpenAI-kompatibles Format
+  - Timeout-Handling
+  - Fehlerbehandlung (LLMClientError)
+- **apps.ai.prompts**: Prompt-Bau
+  - Strukturierte System- und User-Prompts
+  - Kontext-Aggregation
+- **apps.ai.services.LessonPlanService**: High-Level-Service
+  - Orchestriert Kontext-Sammlung, Prompt-Bau und LLM-Aufruf
+  - Erstellt/aktualisiert LessonPlan-Model
+- **Konfiguration**: LLM-Settings über Umgebungsvariablen (LLM_API_KEY, LLM_API_BASE_URL, LLM_MODEL_NAME)
 
 ## Zeitzonen-Handling
 

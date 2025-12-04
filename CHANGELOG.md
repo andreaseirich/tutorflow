@@ -103,3 +103,47 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ### Phase
 - Phase 3 – Kernfunktionen (Planung & Einnahmen) abgeschlossen
 
+## [0.4.0] - 2025-12-04
+
+### Hinzugefügt
+- **Premium-Funktionen**:
+  - `apps.core.utils.is_premium_user()` - Utility-Funktion für Premium-Checks
+  - Premium-Gating in Views und Templates
+  - UI-Hinweise für Nicht-Premium-User
+- **AI-App** (`apps.ai`):
+  - `apps.ai.client.LLMClient` - Low-Level-Client für LLM-API-Kommunikation (OpenAI-kompatibel)
+  - `apps.ai.prompts` - Prompt-Bau für strukturierte Unterrichtspläne
+  - `apps.ai.services.LessonPlanService` - High-Level-Service für LessonPlan-Generierung
+- **LessonPlan-Generierung**:
+  - Kontext-Sammlung (Schüler, Lesson, vorherige Lessons)
+  - Strukturierter Prompt-Bau mit System- und User-Prompts
+  - LLM-API-Integration mit Fehlerbehandlung
+  - Speicherung als LessonPlan-Model mit Metadaten (Modell-Name, Erstellungszeitpunkt)
+- **UI-Integration**:
+  - Button "Unterrichtsplan mit KI generieren" in Lesson-Detail-Ansicht (nur Premium)
+  - Anzeige generierter Pläne
+  - Premium-Hinweis für Nicht-Premium-User
+- **Konfiguration**:
+  - LLM-Settings über Umgebungsvariablen (LLM_API_KEY, LLM_API_BASE_URL, LLM_MODEL_NAME, LLM_TIMEOUT_SECONDS)
+  - Keine Secrets im Code
+- **Tests**:
+  - 12 Tests für Premium-Gating, Prompt-Bau, Services und Client
+  - Mock-Tests für LLM-Aufrufe (keine echten API-Calls in Tests)
+  - Fehlerszenarien getestet
+- **Abhängigkeiten**:
+  - `requests` für HTTP-API-Kommunikation
+
+### Geändert
+- `backend/tutorflow/settings.py` - LLM-Konfiguration hinzugefügt
+- `apps/lessons/views.py` - LessonDetailView erweitert um LessonPlan-Anzeige
+- `apps/lessons/templates/lessons/lesson_detail.html` - Template für LessonPlan-Generierung
+- `docs/ARCHITECTURE.md` - AI-Architektur dokumentiert
+- `docs/ETHICS.md` - KI-Einsatz, Datenschutz und Human-in-the-Loop dokumentiert
+- `docs/API.md` - Premium-Endpoint dokumentiert
+- `docs/PHASES.md` - Phase 4 als abgeschlossen markiert
+- `docs/CHECKPOINTS.md` - Checkpoint 4 dokumentiert
+- `requirements.txt` - requests hinzugefügt
+
+### Phase
+- Phase 4 – Premium & KI-Funktionen abgeschlossen
+

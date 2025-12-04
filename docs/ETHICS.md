@@ -54,13 +54,29 @@ Der Stil der Software soll von Ordnung und Zuverlässigkeit geprägt sein. Es we
 
 ### Verantwortungsvoller KI-Einsatz
 - KI wird nur für unterstützende Funktionen verwendet (Unterrichtsplan-Generierung)
+- **Human-in-the-Loop**: KI-generierte Unterrichtspläne sind nur Vorschläge und müssen vom Nachhilfelehrer geprüft, angepasst und verantwortet werden
 - Nutzer behalten die volle Kontrolle über generierte Inhalte
-- Klare Kennzeichnung von KI-generierten Inhalten
+- Klare Kennzeichnung von KI-generierten Inhalten (Modell-Name wird gespeichert)
 - Keine Manipulation oder Täuschung durch KI
 
 ### Transparenz
 - Nutzer werden darüber informiert, wenn KI verwendet wird
 - Generierte Inhalte können vom Nutzer überprüft und angepasst werden
+- Das verwendete LLM-Modell wird dokumentiert
+
+### Datenschutz bei KI-Nutzung
+- **Minimale Datensammlung**: Es werden nur die notwendigsten Informationen an die LLM-API gesendet:
+  - Name des Schülers (Vorname, Nachname)
+  - Klassenstufe
+  - Fach
+  - Dauer der Stunde
+  - Notizen zur Stunde (falls vorhanden)
+- **Keine sensiblen Daten**: Folgende Daten werden NICHT an die API gesendet:
+  - Vollständige Adressen
+  - Telefonnummern oder E-Mail-Adressen
+  - Persönliche Notizen, die nicht für die Unterrichtsplanung relevant sind
+- **Lokale Speicherung**: Generierte Pläne werden lokal in der Datenbank gespeichert, nicht bei der LLM-API
+- **API-Keys**: API-Keys werden über Umgebungsvariablen konfiguriert, nicht im Code gespeichert
 
 ## Hackathon-Konformität
 
