@@ -16,20 +16,23 @@ class InvoiceService:
         """
         Gibt alle Lessons zurück, die für eine Abrechnung in Frage kommen.
         
+        Nur Lessons mit Status TAUGHT, die noch nicht in einer Invoice sind.
+        Lessons mit Status PLANNED oder PAID werden ausgeschlossen.
+        
         Args:
             period_start: Startdatum des Zeitraums
             period_end: Enddatum des Zeitraums
             contract_id: Optional: Filter nach Vertrag-ID
             
         Returns:
-            QuerySet von Lessons mit Status TAUGHT, die noch nicht in einer Invoice sind
+            QuerySet von Lessons mit Status TAUGHT, die noch nicht in einem InvoiceItem sind
         """
         queryset = Lesson.objects.filter(
-            status='taught',
+            status='taught',  # Nur unterrichtete Lessons
             date__gte=period_start,
             date__lte=period_end
         ).exclude(
-            invoice_items__isnull=False
+            invoice_items__isnull=False  # Keine Lessons, die bereits in einer Rechnung sind
         ).select_related('contract', 'contract__student', 'location')
         
         if contract_id:
@@ -38,23 +41,27 @@ class InvoiceService:
         return queryset.order_by('date', 'start_time')
     
     @staticmethod
-    def create_invoice_from_lessons(lesson_ids, period_start, period_end, contract=None):
+    def create_invoice_from_lessons(period_start, period_end, contract=None):
         """
-        Erstellt eine Invoice mit InvoiceItems aus ausgewählten Lessons.
+        Erstellt eine Invoice mit InvoiceItems aus allen verfügbaren Lessons im Zeitraum.
+        
+        Automatisch werden alle Lessons mit Status TAUGHT im angegebenen Zeitraum verwendet,
+        die noch nicht in einer Rechnung sind.
         
         Args:
-            lesson_ids: Liste von Lesson-IDs
             period_start: Startdatum
             period_end: Enddatum
-            contract: Optional: Vertrag
+            contract: Optional: Filter nach Vertrag
             
         Returns:
             Invoice-Instanz
         """
-        lessons = Lesson.objects.filter(id__in=lesson_ids, status='taught')
+        # Lade automatisch alle abrechenbaren Lessons im Zeitraum
+        contract_id = contract.id if contract else None
+        lessons = InvoiceService.get_billable_lessons(period_start, period_end, contract_id)
         
         if not lessons.exists():
-            raise ValueError("Keine gültigen Lessons gefunden.")
+            raise ValueError("Keine abrechenbaren Unterrichtsstunden im angegebenen Zeitraum gefunden.")
         
         # Bestimme payer_name und payer_address
         if contract:

@@ -41,9 +41,8 @@ class InvoiceCalculationTest(TestCase):
             status='taught'
         )
         
-        # Erstelle Rechnung
+        # Erstelle Rechnung (automatisch alle Lessons im Zeitraum)
         invoice = InvoiceService.create_invoice_from_lessons(
-            [lesson.id],
             date(2025, 8, 1),
             date(2025, 8, 31),
             self.contract
@@ -79,9 +78,8 @@ class InvoiceCalculationTest(TestCase):
             status='taught'
         )
         
-        # Erstelle Rechnung
+        # Erstelle Rechnung (automatisch alle Lessons im Zeitraum)
         invoice = InvoiceService.create_invoice_from_lessons(
-            [lesson1.id, lesson2.id, lesson3.id],
             date(2025, 8, 1),
             date(2025, 8, 31),
             self.contract
@@ -133,9 +131,8 @@ class InvoiceStatusTransitionTest(TestCase):
             status='taught'
         )
         
-        # Erstelle Rechnung
+        # Erstelle Rechnung (automatisch alle Lessons im Zeitraum)
         invoice = InvoiceService.create_invoice_from_lessons(
-            [lesson1.id, lesson2.id],
             date(2025, 8, 1),
             date(2025, 8, 31),
             self.contract
@@ -159,7 +156,6 @@ class InvoiceStatusTransitionTest(TestCase):
         )
         
         invoice = InvoiceService.create_invoice_from_lessons(
-            [lesson.id],
             date(2025, 8, 1),
             date(2025, 8, 31),
             self.contract
@@ -188,9 +184,8 @@ class InvoiceStatusTransitionTest(TestCase):
             status='taught'
         )
         
-        # Erstelle erste Rechnung
+        # Erstelle erste Rechnung (automatisch alle Lessons im Zeitraum)
         invoice1 = InvoiceService.create_invoice_from_lessons(
-            [lesson.id],
             date(2025, 8, 1),
             date(2025, 8, 31),
             self.contract

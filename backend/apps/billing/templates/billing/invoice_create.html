@@ -5,13 +5,24 @@
 {% block content %}
 <h1>Neue Rechnung erstellen</h1>
 
+<div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #2196f3;">
+    <strong>💡 Hinweis:</strong>
+    <p style="margin: 5px 0 0 0; font-size: 0.9em;">
+        Alle unterrichteten Stunden (Status "unterrichtet") im angegebenen Zeitraum werden automatisch in die Rechnung aufgenommen.
+        Stunden, die bereits in einer anderen Rechnung enthalten sind, werden ausgeschlossen.
+    </p>
+</div>
+
 <form method="post" id="invoice-form">
     {% csrf_token %}
     
     <div style="margin-bottom: 20px;">
         <label for="{{ form.period_start.id_for_label }}">Zeitraum:</label>
-        {{ form.period_start }}
-        {{ form.period_end }}
+        <div style="display: flex; gap: 10px; align-items: center;">
+            {{ form.period_start }}
+            <span>bis</span>
+            {{ form.period_end }}
+        </div>
         {% if form.period_start.errors %}
         <div class="error">{{ form.period_start.errors }}</div>
         {% endif %}
@@ -23,62 +34,66 @@
     <div style="margin-bottom: 20px;">
         <label for="{{ form.contract.id_for_label }}">Vertrag (optional):</label>
         {{ form.contract }}
+        <small class="form-text text-muted">Wenn ausgewählt, werden nur Stunden dieses Vertrags abgerechnet.</small>
     </div>
     
-    <button type="button" onclick="loadLessons()" class="btn">Lessons laden</button>
+    <button type="button" onclick="loadLessons()" class="btn">Vorschau anzeigen</button>
     
     {% if billable_lessons %}
-    <h2>Verfügbare Unterrichtsstunden</h2>
-    <p>Wählen Sie die Stunden aus, die abgerechnet werden sollen:</p>
+    <h2>Verfügbare Unterrichtsstunden ({{ billable_lessons|length }})</h2>
+    <p>Diese Stunden werden automatisch in die Rechnung aufgenommen:</p>
     
-    <table>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
         <thead>
-            <tr>
-                <th>Auswählen</th>
-                <th>Datum</th>
-                <th>Zeit</th>
-                <th>Schüler</th>
-                <th>Dauer</th>
-                <th>Betrag</th>
+            <tr style="background: #f5f5f5;">
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Datum</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Zeit</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Schüler</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Dauer</th>
+                <th style="padding: 8px; text-align: right; border: 1px solid #ddd;">Betrag</th>
             </tr>
         </thead>
         <tbody>
             {% for lesson in billable_lessons %}
             <tr>
-                <td>
-                    <input type="checkbox" name="lesson_checkbox" value="{{ lesson.id }}" 
-                           onchange="updateLessonIds()">
-                </td>
-                <td>{{ lesson.date|date:"d.m.Y" }}</td>
-                <td>{{ lesson.start_time|time:"H:i" }}</td>
-                <td>{{ lesson.contract.student.full_name }}</td>
-                <td>{{ lesson.duration_minutes }} Min.</td>
-                <td>
-                    {% widthratio lesson.contract.hourly_rate 60 lesson.duration_minutes %}€
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ lesson.date|date:"d.m.Y" }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ lesson.start_time|time:"H:i" }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ lesson.contract.student.full_name }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ lesson.duration_minutes }} Min.</td>
+                <td style="padding: 8px; text-align: right; border: 1px solid #ddd;">
+                    {% with units=lesson.duration_minutes|floatformat:0 contract_unit=lesson.contract.unit_duration_minutes|floatformat:0 %}
+                    {% widthratio lesson.duration_minutes contract_unit 1 as calculated_units %}
+                    {% widthratio lesson.contract.hourly_rate 1 calculated_units as calculated_amount %}
+                    {{ calculated_amount|floatformat:2 }}€
+                    {% endwith %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    
-    {{ form.lesson_ids }}
+    {% elif period_start and period_end %}
+    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; border-left: 4px solid #ffc107; margin-bottom: 20px;">
+        <p style="margin: 0;">Keine abrechenbaren Unterrichtsstunden im angegebenen Zeitraum gefunden.</p>
+        <p style="margin: 5px 0 0 0; font-size: 0.9em;">
+            Stellen Sie sicher, dass:
+            <ul style="margin: 5px 0 0 0; padding-left: 20px;">
+                <li>Es gibt Stunden mit Status "unterrichtet" im Zeitraum</li>
+                <li>Diese Stunden noch nicht in einer anderen Rechnung enthalten sind</li>
+            </ul>
+        </p>
+    </div>
     {% endif %}
     
     <div class="btn-group" style="margin-top: 20px;">
-        <button type="submit" class="btn btn-success">Rechnung erstellen</button>
+        <button type="submit" class="btn btn-success" {% if not billable_lessons %}disabled{% endif %}>
+            Rechnung erstellen
+        </button>
         <a href="{% url 'billing:invoice_list' %}" class="btn btn-secondary">Abbrechen</a>
     </div>
 </form>
 
 <script>
-function updateLessonIds() {
-    const checkboxes = document.querySelectorAll('input[name="lesson_checkbox"]:checked');
-    const ids = Array.from(checkboxes).map(cb => cb.value).join(',');
-    document.getElementById('{{ form.lesson_ids.id_for_label }}').value = ids;
-}
-
 function loadLessons() {
-    const form = document.getElementById('invoice-form');
     const periodStart = document.getElementById('{{ form.period_start.id_for_label }}').value;
     const periodEnd = document.getElementById('{{ form.period_end.id_for_label }}').value;
     const contract = document.getElementById('{{ form.contract.id_for_label }}').value;

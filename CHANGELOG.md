@@ -5,6 +5,31 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.6] - 2025-12-04
+
+### Geändert
+- **Automatische Rechnungserstellung**:
+  - Keine manuelle Einzel-Auswahl von Lessons mehr (keine Checkbox-Auswahl)
+  - Alle TAUGHT Lessons im Zeitraum werden automatisch in die Rechnung aufgenommen
+  - Formular zeigt nur noch Zeitraum und optionalen Vertrag-Filter
+  - Vorschau zeigt alle verfügbaren Lessons, die automatisch aufgenommen werden
+- **Einschränkung: Eine Lesson nur in einer Rechnung**:
+  - `get_billable_lessons()` schließt Lessons aus, die bereits in einem InvoiceItem sind
+  - Technisch über `exclude(invoice_items__isnull=False)`
+  - Eine Lesson kann nicht in zwei Rechnungen landen
+
+### Behoben
+- **Nur TAUGHT Lessons abrechenbar**:
+  - `get_billable_lessons()` filtert nur Lessons mit Status TAUGHT
+  - Lessons mit Status PLANNED oder PAID werden ausgeschlossen
+  - `create_invoice_from_lessons()` verwendet automatisch `get_billable_lessons()`
+
+### Tests
+- 6 neue Tests für automatische Rechnungserstellung
+- Tests für: nur TAUGHT Lessons, automatische Auswahl aller Lessons, keine doppelte Zuordnung, Status-Übergänge
+
+---
+
 ## [0.8.5] - 2025-12-04
 
 ### Behoben
