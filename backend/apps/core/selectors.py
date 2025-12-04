@@ -7,7 +7,7 @@ from datetime import datetime, date
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from apps.lessons.models import Lesson
-from apps.contracts.models import Contract
+from apps.contracts.models import Contract, ContractMonthlyPlan
 
 
 class IncomeSelector:
@@ -66,6 +66,60 @@ class IncomeSelector:
             'total_income': total_income,
             'lesson_count': lesson_count,
             'contract_details': list(contract_details.values()),
+        }
+
+    @staticmethod
+    def get_monthly_planned_vs_actual(year: int, month: int) -> dict:
+        """
+        Vergleicht geplante vs. tatsächliche Einheiten und Einnahmen für einen Monat.
+        
+        Args:
+            year: Jahr
+            month: Monat (1-12)
+        
+        Returns:
+            Dict mit planned_units, planned_amount, actual_units, actual_amount
+        """
+        # Geplante Einheiten aus ContractMonthlyPlan
+        monthly_plans = ContractMonthlyPlan.objects.filter(year=year, month=month)
+        planned_units = sum(plan.planned_units for plan in monthly_plans)
+        planned_amount = Decimal('0.00')
+        
+        for plan in monthly_plans:
+            # Berechne geplantes Einkommen basierend auf Stundensatz und Dauer
+            hourly_rate = plan.contract.hourly_rate
+            unit_duration_hours = Decimal(plan.contract.unit_duration_minutes) / Decimal('60')
+            planned_amount += hourly_rate * unit_duration_hours * Decimal(plan.planned_units)
+        
+        # Tatsächliche Einheiten aus Lessons
+        start_date = date(year, month, 1)
+        if month == 12:
+            end_date = date(year + 1, 1, 1)
+        else:
+            end_date = date(year, month + 1, 1)
+        
+        lessons = Lesson.objects.filter(
+            date__gte=start_date,
+            date__lt=end_date
+        ).select_related('contract')
+        
+        actual_units = lessons.count()
+        actual_amount = Decimal('0.00')
+        
+        for lesson in lessons:
+            hourly_rate = lesson.contract.hourly_rate
+            hours = Decimal(lesson.duration_minutes) / Decimal('60')
+            actual_amount += hourly_rate * hours
+        
+        return {
+            'year': year,
+            'month': month,
+            'planned_units': planned_units,
+            'planned_amount': planned_amount,
+            'actual_units': actual_units,
+            'actual_amount': actual_amount,
+            'difference_units': actual_units - planned_units,
+            'difference_amount': actual_amount - planned_amount,
         }
 
     @staticmethod
@@ -140,4 +194,3 @@ class IncomeSelector:
             }
         
         return status_breakdown
-

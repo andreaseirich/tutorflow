@@ -7,50 +7,126 @@
 
 {% if view_type == 'month' %}
 <h2>{{ month }}/{{ year }}</h2>
-<p><strong>Gesamt (ausgezahlt):</strong> {{ monthly_income.total_income }}€ ({{ monthly_income.lesson_count }} Stunden)</p>
 
-<h3>Nach Status</h3>
+{% if planned_vs_actual %}
+<h3>Geplant vs. Tatsächlich</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Kategorie</th>
+            <th>Geplant</th>
+            <th>Tatsächlich</th>
+            <th>Differenz</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Einheiten</td>
+            <td>{{ planned_vs_actual.planned_units }}</td>
+            <td>{{ planned_vs_actual.actual_units }}</td>
+            <td>
+                {% if planned_vs_actual.difference_units > 0 %}
+                <span style="color: #28a745;">+{{ planned_vs_actual.difference_units }}</span>
+                {% elif planned_vs_actual.difference_units < 0 %}
+                <span style="color: #dc3545;">{{ planned_vs_actual.difference_units }}</span>
+                {% else %}
+                <span>0</span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>Einnahmen</td>
+            <td>{{ planned_vs_actual.planned_amount }}€</td>
+            <td>{{ planned_vs_actual.actual_amount }}€</td>
+            <td>
+                {% if planned_vs_actual.difference_amount > 0 %}
+                <span style="color: #28a745;">+{{ planned_vs_actual.difference_amount }}€</span>
+                {% elif planned_vs_actual.difference_amount < 0 %}
+                <span style="color: #dc3545;">{{ planned_vs_actual.difference_amount }}€</span>
+                {% else %}
+                <span>0€</span>
+                {% endif %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endif %}
+
+<h3>Einnahmen nach Status</h3>
 <table>
     <thead>
         <tr>
             <th>Status</th>
-            <th>Einnahmen</th>
             <th>Anzahl Stunden</th>
+            <th>Einnahmen</th>
         </tr>
     </thead>
     <tbody>
         {% for status_code, status_data in income_by_status.items %}
         <tr>
             <td>{{ status_data.name }}</td>
-            <td>{{ status_data.income }}€</td>
             <td>{{ status_data.lesson_count }}</td>
+            <td>{{ status_data.income }}€</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-{% else %}
-<h2>Jahr {{ year }}</h2>
-<p><strong>Gesamt (ausgezahlt):</strong> {{ yearly_income.total_income }}€ ({{ yearly_income.total_lessons }} Stunden)</p>
 
-<h3>Monatsübersicht</h3>
+<h3>Details</h3>
+<p><strong>Ausgezahlt:</strong> {{ monthly_income.total_income }}€ ({{ monthly_income.lesson_count }} Stunden)</p>
+
+{% else %}
+<h2>{{ year }}</h2>
+
+<h3>Jahresübersicht</h3>
+<p><strong>Gesamt:</strong> {{ yearly_income.total_income }}€ ({{ yearly_income.total_lessons }} Stunden)</p>
+
+<h3>Monatliche Aufschlüsselung</h3>
 <table>
     <thead>
         <tr>
             <th>Monat</th>
+            <th>Stunden</th>
             <th>Einnahmen</th>
-            <th>Anzahl Stunden</th>
         </tr>
     </thead>
     <tbody>
         {% for month_data in yearly_income.monthly_breakdown %}
         <tr>
             <td>{{ month_data.month }}/{{ month_data.year }}</td>
-            <td>{{ month_data.total_income }}€</td>
             <td>{{ month_data.lesson_count }}</td>
+            <td>{{ month_data.total_income }}€</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Einnahmen nach Status</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Status</th>
+            <th>Anzahl Stunden</th>
+            <th>Einnahmen</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for status_code, status_data in income_by_status.items %}
+        <tr>
+            <td>{{ status_data.name }}</td>
+            <td>{{ status_data.lesson_count }}</td>
+            <td>{{ status_data.income }}€</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 {% endif %}
-{% endblock %}
 
+<div class="btn-group">
+    <a href="{% url 'core:income' %}?year={{ year|add:'-1' }}" class="btn">Vorheriges Jahr</a>
+    <a href="{% url 'core:income' %}?year={{ year|add:'1' }}" class="btn">Nächstes Jahr</a>
+    {% if view_type == 'month' %}
+    <a href="{% url 'core:income' %}?year={{ year }}" class="btn">Jahresansicht</a>
+    {% endif %}
+</div>
+{% endblock %}

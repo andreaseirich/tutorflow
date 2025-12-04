@@ -8,10 +8,50 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
+    
+    {% if formset %}
+    <h2>Monatliche Planung</h2>
+    <p>Geben Sie für jeden Monat im Vertragszeitraum die geplanten Einheiten ein.</p>
+    
+    {{ formset.management_form }}
+    <table>
+        <thead>
+            <tr>
+                <th>Jahr</th>
+                <th>Monat</th>
+                <th>Geplante Einheiten</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in formset %}
+            <tr>
+                <td>{{ form.year.value }}</td>
+                <td>{{ form.year.value }}-{{ form.month.value|stringformat:"02d" }}</td>
+                <td>
+                    {{ form.id }}
+                    {{ form.year.as_hidden }}
+                    {{ form.month.as_hidden }}
+                    {{ form.planned_units }}
+                    {% if form.planned_units.errors %}
+                    <div class="error">{{ form.planned_units.errors }}</div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    
     <div class="btn-group">
         <button type="submit" class="btn btn-success">Speichern</button>
         <a href="{% url 'contracts:list' %}" class="btn btn-secondary">Abbrechen</a>
     </div>
 </form>
-{% endblock %}
 
+{% if not object %}
+<script>
+// Beim Erstellen: Nach Speichern zur Update-View weiterleiten, um monatliche Planung zu bearbeiten
+// Dies wird durch die View-Logik gehandhabt
+</script>
+{% endif %}
+{% endblock %}

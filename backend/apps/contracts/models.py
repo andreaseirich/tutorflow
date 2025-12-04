@@ -38,7 +38,7 @@ class Contract(models.Model):
     planned_units_per_month = models.PositiveIntegerField(
         null=True,
         blank=True,
-        help_text="Geplante Einheiten pro Monat (optional)"
+        help_text="Geplante Einheiten pro Monat (optional, deprecated - use ContractMonthlyPlan)"
     )
     is_active = models.BooleanField(
         default=True,
@@ -60,3 +60,34 @@ class Contract(models.Model):
     def __str__(self):
         institute_str = f" ({self.institute})" if self.institute else ""
         return f"{self.student} - {self.hourly_rate}€/Einheit{institute_str}"
+
+
+class ContractMonthlyPlan(models.Model):
+    """Monatliche Planung für einen Vertrag - explizite geplante Einheiten pro Monat."""
+    
+    contract = models.ForeignKey(
+        Contract,
+        on_delete=models.CASCADE,
+        related_name='monthly_plans',
+        help_text="Zugehöriger Vertrag"
+    )
+    year = models.PositiveIntegerField(help_text="Jahr")
+    month = models.PositiveIntegerField(
+        validators=[MinValueValidator(1)],
+        help_text="Monat (1-12)"
+    )
+    planned_units = models.PositiveIntegerField(
+        default=0,
+        help_text="Geplante Einheiten für diesen Monat"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['year', 'month']
+        unique_together = [['contract', 'year', 'month']]
+        verbose_name = 'Monatlicher Vertragsplan'
+        verbose_name_plural = 'Monatliche Vertragspläne'
+
+    def __str__(self):
+        return f"{self.contract} - {self.year}-{self.month:02d}: {self.planned_units} Einheiten"
