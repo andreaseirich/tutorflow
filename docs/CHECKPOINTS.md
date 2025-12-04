@@ -117,9 +117,77 @@ Dieses Dokument protokolliert den Fortschritt des Projekts und wichtige Meilenst
 - [x] CHECKPOINTS.md aktualisiert
 
 ### Nächste Schritte
+1. ✅ Git-Commits erstellt
+2. ✅ Phase 2 abgeschlossen
+3. ✅ Phase 3 abgeschlossen
+
+---
+
+## Checkpoint 3: Kernfunktionen implementiert
+
+**Datum**: 2025-12-04
+
+**Phase**: Phase 3 – Kernfunktionen (Planung & Einnahmen)
+
+**Status**: ✅ Abgeschlossen
+
+### Abgeschlossen
+- ✅ CRUD-Funktionen für alle Kern-Entitäten:
+  - Student (List, Detail, Create, Update, Delete)
+  - Contract (List, Detail, Create, Update, Delete)
+  - Lesson (List, Detail, Create, Update, Delete, Month-View)
+  - BlockedTime (List, Detail, Create, Update, Delete)
+  - Location (List, Detail, Create, Update, Delete)
+- ✅ Konfliktprüfung implementiert:
+  - LessonConflictService für Zeitblock-Berechnung und Konfliktprüfung
+  - Berücksichtigung von Fahrtzeiten
+  - Einbindung von Blockzeiten
+  - Konfliktmarkierung in UI
+- ✅ Planungslogik:
+  - LessonQueryService für Abfragen (Monat, heute, kommend)
+  - Monatsansicht für Lessons
+- ✅ Einnahmenübersicht:
+  - Dashboard mit aktuellen Einnahmen
+  - IncomeOverview-View mit Monats-/Jahresansicht
+  - Verwendung von IncomeSelector
+- ✅ Basis-UI:
+  - Navigation zwischen allen Bereichen
+  - Dashboard mit Übersicht
+  - Einfache Templates für alle CRUD-Operationen
+- ✅ Tests:
+  - 7 neue Tests für Services und Konfliktprüfung
+  - Alle Tests laufen erfolgreich
+
+### Validierungsergebnisse
+
+#### Code-Qualität
+- [x] Services modular aufgeteilt (services.py, selectors.py)
+- [x] Views in separate Dateien aufgeteilt
+- [x] Keine Datei über 300 Zeilen
+- [x] Django check erfolgreich (0 issues)
+
+#### Funktionalität
+- [x] CRUD für alle Entitäten funktioniert
+- [x] Konfliktprüfung erkennt Überlappungen korrekt
+- [x] Fahrtzeiten werden in Konfliktprüfung berücksichtigt
+- [x] Blockzeiten werden erkannt
+- [x] Einnahmenberechnung funktioniert korrekt
+
+#### Tests
+- [x] 7 neue Tests implementiert
+- [x] Alle Tests laufen erfolgreich
+- [x] Tests decken Konfliktprüfung, Services und Abfragen ab
+
+#### Dokumentation
+- [x] ARCHITECTURE.md aktualisiert (Konfliktlogik, Einnahmenberechnung)
+- [x] API.md aktualisiert (implementierte Views dokumentiert)
+- [x] PHASES.md aktualisiert (Phase 3 als abgeschlossen markiert)
+- [x] CHECKPOINTS.md aktualisiert
+
+### Nächste Schritte
 1. Git-Commits erstellen
-2. Phase 2 abschließen
-3. Phase 3 vorbereiten (Kernfunktionen)
+2. Phase 3 abschließen
+3. Phase 4 vorbereiten (Premium & KI-Funktionen)
 
 ---
 
