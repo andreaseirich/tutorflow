@@ -59,6 +59,7 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Beziehungen**: Many-to-One zu Contract
 - **Unique Constraint**: (contract, year, month)
 - **Zweck**: Explizite monatliche Planung von geplanten Einheiten pro Vertrag. Erlaubt ungleichmäßige Verteilung über das Jahr (z. B. mehr Einheiten in Prüfungsphasen).
+- **Wichtig**: Monthly Plans werden stets für den gesamten Vertragszeitraum (start_date bis end_date) erzeugt, unabhängig vom aktuellen Datum. Dies ermöglicht die Planung für zukünftige Verträge sowie die Erfassung von Plänen für vergangene Zeiträume.
 
 #### Lesson (apps.lessons)
 - **Felder**: contract (FK), date, start_time, duration_minutes, status (choices), location (FK), travel_time_before_minutes, travel_time_after_minutes, notes

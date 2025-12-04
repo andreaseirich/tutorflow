@@ -5,6 +5,24 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.6.1] - 2025-12-04
+
+### Behoben
+- **Monatliche Vertragsplanung**: Entfernung der Begrenzung auf das aktuelle Datum
+  - Geplante Einheiten können nun für alle Monate zwischen start_date und end_date erfasst werden
+  - Unabhängig davon, ob der Monat in der Vergangenheit oder Zukunft liegt
+  - Neue Hilfsfunktion `iter_contract_months()` für konsistente Monatsgenerierung
+  - Korrektur der Logik zum Löschen von Plänen außerhalb des Vertragszeitraums
+
+### Tests
+- 5 neue Tests für zukünftige, vergangene und übergreifende Verträge
+- Tests prüfen explizit, dass keine Begrenzung auf das aktuelle Datum existiert
+
+### Dokumentation
+- ARCHITECTURE.md: Klarstellung, dass Monthly Plans für den gesamten Vertragszeitraum erzeugt werden
+
+---
+
 ## [0.6.0] - 2025-12-04
 
 ### Hinzugefügt
