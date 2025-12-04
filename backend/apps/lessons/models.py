@@ -72,3 +72,14 @@ class Lesson(models.Model):
     def total_time_minutes(self):
         """Gesamtzeit inklusive Fahrtzeiten."""
         return self.duration_minutes + self.travel_time_before_minutes + self.travel_time_after_minutes
+
+    @property
+    def has_conflicts(self):
+        """Prüft, ob diese Lesson Konflikte hat."""
+        from apps.lessons.services import LessonConflictService
+        return LessonConflictService.has_conflicts(self)
+
+    def get_conflicts(self):
+        """Gibt alle Konflikte dieser Lesson zurück."""
+        from apps.lessons.services import LessonConflictService
+        return LessonConflictService.check_conflicts(self)
