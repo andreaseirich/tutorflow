@@ -123,3 +123,27 @@ def generate_invoice_document(request, pk):
         messages.error(request, f'Fehler beim Generieren des Dokuments: {str(e)}')
     
     return redirect('billing:invoice_detail', pk=pk)
+
+
+def serve_invoice_document(request, pk):
+    """Serviert das Rechnungsdokument für eine Invoice."""
+    from django.http import FileResponse, Http404
+    from django.conf import settings
+    import os
+    
+    invoice = get_object_or_404(Invoice, pk=pk)
+    
+    if not invoice.document:
+        raise Http404("Rechnungsdokument nicht gefunden.")
+    
+    # Prüfe, ob Datei existiert
+    file_path = invoice.document.path
+    if not os.path.exists(file_path):
+        raise Http404("Rechnungsdokument-Datei nicht gefunden.")
+    
+    # Serviere die Datei
+    return FileResponse(
+        open(file_path, 'rb'),
+        content_type='text/html',
+        filename=os.path.basename(file_path)
+    )
