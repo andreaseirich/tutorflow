@@ -366,3 +366,68 @@ Alle ursprünglich mit `2025-01-27` dokumentierten Datumsangaben wurden auf das 
 ### Nächste Schritte
 1. Phase 6 abgeschlossen
 
+---
+
+## Checkpoint 7: Serientermine und Kalenderansicht implementiert
+
+**Datum**: 2025-12-04
+
+**Phase**: Phase 7 – Serientermine und Kalenderansicht
+
+**Status**: ✅ Abgeschlossen
+
+### Abgeschlossen
+- ✅ RecurringLesson Model erstellt:
+  - Wochentage-Auswahl (monday-sunday als Boolean-Felder)
+  - Zeitraum (start_date, end_date)
+  - Optional location, Fahrtzeiten, Notizen
+  - is_active Flag
+- ✅ RecurringLessonService implementiert:
+  - Generiert Lessons für alle aktivierten Wochentage im Zeitraum
+  - Überspringt bereits vorhandene Lessons
+  - Optional Konfliktprüfung
+  - Vorschau-Funktion ohne Speicherung
+- ✅ UI für Serientermine:
+  - CRUD-Views (List, Detail, Create, Update, Delete)
+  - RecurringLessonForm mit Validierung (mindestens ein Wochentag)
+  - Button zum Generieren von Lessons
+  - Vorschau der zu erzeugenden Lessons
+- ✅ Kalenderansicht:
+  - CalendarService für Gruppierung nach Tagen
+  - CalendarView mit Monats-Grid (7 Spalten: Mo-So)
+  - Anzeige von Lessons mit Zeit und Schüler
+  - Markierung von Konflikten
+  - Anzeige von Blockzeiten
+  - Navigation zwischen Monaten
+- ✅ Integration:
+  - Kalender-Link in Navigation
+  - Generierte Lessons integrieren sich nahtlos in bestehende Logik
+  - Einzelne Lessons können weiterhin unabhängig bearbeitet werden
+- ✅ Tests:
+  - 8 Tests für RecurringLesson, Service und Kalender
+  - Alle Tests laufen erfolgreich
+
+### Validierungsergebnisse
+
+#### Funktionalität
+- [x] RecurringLesson Model funktioniert korrekt
+- [x] Service generiert Lessons korrekt für einzelne/multiple Wochentage
+- [x] Service überspringt vorhandene Lessons
+- [x] Service prüft Konflikte optional
+- [x] Kalenderansicht zeigt Lessons und Blockzeiten korrekt
+- [x] Navigation zwischen Monaten funktioniert
+
+#### Tests
+- [x] 8 Tests implementiert
+- [x] Alle Tests laufen erfolgreich
+- [x] Tests decken verschiedene Szenarien ab (einzelne/multiple Wochentage, Vertragsgrenzen, Konflikte)
+
+#### Dokumentation
+- [x] ARCHITECTURE.md aktualisiert (RecurringLesson, CalendarService)
+- [x] API.md aktualisiert (Endpoints für Serientermine und Kalender)
+- [x] PHASES.md aktualisiert (Phase 7 dokumentiert)
+- [x] CHANGELOG.md aktualisiert (Version 0.7.0)
+
+### Nächste Schritte
+1. Phase 7 abgeschlossen
+
