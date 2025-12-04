@@ -5,6 +5,16 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.6.2] - 2025-12-04
+
+### Entfernt
+- **Contract.planned_units_per_month**: Feld vollständig entfernt
+  - Migration erstellt, um Feld aus der Datenbank zu entfernen
+  - Aus ContractForm, Templates und seed_demo_data entfernt
+  - Geplante Einheiten werden ausschließlich über ContractMonthlyPlan verwaltet
+
+---
+
 ## [0.6.1] - 2025-12-04
 
 ### Behoben
