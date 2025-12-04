@@ -184,12 +184,16 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 4. **Rechnung erstellen**: `InvoiceService.create_invoice_from_lessons()`
    - Erstellt Invoice mit period_start, period_end, payer_info
    - Erstellt InvoiceItems für jede ausgewählte Lesson (mit Kopie der Daten)
-   - Berechnet total_amount
-   - Setzt Lessons auf Status PAID
+   - **Berechnung**: `units = lesson_duration_minutes / contract_unit_duration_minutes`, `amount = units * hourly_rate`
+   - Berechnet total_amount als Summe aller InvoiceItems
+   - Setzt Lessons automatisch auf Status PAID
 5. **Dokument generieren**: Optional `InvoiceDocumentService.save_document()`
    - Generiert HTML-Dokument
    - Speichert als FileField
-6. **Finanzansicht**: Zeigt abgerechnete vs. nicht abgerechnete Lessons
+6. **Rechnung löschen**: `InvoiceService.delete_invoice()`
+   - Löscht Invoice und alle InvoiceItems (CASCADE)
+   - Setzt Lessons zurück auf TAUGHT, falls sie nicht in anderen Rechnungen sind
+7. **Finanzansicht**: Zeigt abgerechnete vs. nicht abgerechnete Lessons
 
 ### Konfliktlogik (Phase 3)
 - **LessonConflictService**: Zentrale Service-Klasse für Konfliktprüfung
