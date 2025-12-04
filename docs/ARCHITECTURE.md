@@ -67,6 +67,12 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Beziehungen**: Many-to-One zu Contract und Location
 - **Zweck**: Planung und Verwaltung von Unterrichtsstunden mit Status-Tracking
 
+#### RecurringLesson (apps.lessons.recurring_models)
+- **Felder**: contract (FK), location (FK, optional), start_date, end_date, start_time, duration_minutes, travel_time_before_minutes, travel_time_after_minutes, monday-sunday (Boolean), is_active, notes
+- **Beziehungen**: Many-to-One zu Contract und Location
+- **Zweck**: Vorlage für wiederholende Unterrichtsstunden (Serientermine). Ermöglicht die Definition von Serien (z. B. "jeden Montag 14 Uhr") und automatische Generierung von Lessons über einen Zeitraum.
+- **Service**: `RecurringLessonService` generiert Lessons aus RecurringLesson-Vorlagen, prüft Konflikte und überspringt bereits vorhandene Lessons.
+
 #### BlockedTime (apps.blocked_times)
 - **Felder**: title, description, start_datetime, end_datetime, is_recurring, recurring_pattern
 - **Beziehungen**: Keine direkten Beziehungen

@@ -5,6 +5,39 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.7.0] - 2025-12-04
+
+### Hinzugefügt
+- **RecurringLesson Model**: Neue Entität für wiederholende Unterrichtsstunden (Serientermine)
+  - Wochentage-Auswahl (Mo-So als Boolean-Felder)
+  - Zeitraum (start_date, end_date)
+  - Automatische Generierung von Lessons über einen Zeitraum
+- **RecurringLessonService**: Service für Generierung von Lessons aus Serienterminen
+  - Generiert Lessons für alle aktivierten Wochentage im Zeitraum
+  - Überspringt bereits vorhandene Lessons
+  - Prüft Konflikte optional
+  - Vorschau-Funktion ohne Speicherung
+- **Kalenderansicht**: Monatskalender für Lessons und Blockzeiten
+  - CalendarView mit Monats-Grid (7 Spalten: Mo-So)
+  - Anzeige von Lessons mit Zeit und Schüler
+  - Markierung von Konflikten
+  - Anzeige von Blockzeiten
+  - Navigation zwischen Monaten
+- **UI für Serientermine**: CRUD-Views und Templates
+  - Liste, Detail, Form, Löschen
+  - Button zum Generieren von Lessons aus Serie
+  - Vorschau der zu erzeugenden Lessons
+
+### Tests
+- 8 neue Tests für RecurringLesson, RecurringLessonService und CalendarService
+- Tests für einzelne/multiple Wochentage, Vertragsgrenzen, Konflikte, Kalender-Gruppierung
+
+### Dokumentation
+- ARCHITECTURE.md: RecurringLesson und CalendarService dokumentiert
+- API.md: Endpoints für Serientermine und Kalender hinzugefügt
+
+---
+
 ## [0.6.2] - 2025-12-04
 
 ### Entfernt

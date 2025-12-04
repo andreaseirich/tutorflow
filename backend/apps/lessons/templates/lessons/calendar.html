@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Kalender {{ month }}/{{ year }} - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Kalender {{ month_names|slice:month|last }} {{ year }}</h1>
+
+<div class="btn-group">
+    <a href="{% url 'lessons:calendar' %}?year={{ prev_year }}&month={{ prev_month }}" class="btn">← Vorheriger Monat</a>
+    <a href="{% url 'lessons:calendar' %}?year={{ next_year }}&month={{ next_month }}" class="btn">Nächster Monat →</a>
+    <a href="{% url 'lessons:list' %}" class="btn btn-secondary">Zurück zur Liste</a>
+</div>
+
+<table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <thead>
+        <tr>
+            {% for weekday in weekday_names %}
+            <th style="border: 1px solid #ddd; padding: 10px; background: #f5f5f5; text-align: center;">{{ weekday }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for week in weeks %}
+        <tr>
+            {% for day in week %}
+            <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top; {% if not day.is_current_month %}background: #f9f9f9; color: #999;{% endif %} min-height: 100px; width: 14.28%;">
+                <div style="font-weight: bold; margin-bottom: 5px;">
+                    {% if day.is_current_month %}{{ day.date.day }}{% else %}{{ day.date.day }}{% endif %}
+                </div>
+                
+                {% if day.lessons %}
+                <div style="margin-bottom: 5px;">
+                    {% for lesson in day.lessons %}
+                    <div style="background: #e3f2fd; padding: 3px; margin-bottom: 2px; font-size: 0.85em; border-left: 3px solid {% if lesson.id in conflicts_by_lesson %}#dc3545{% else %}#2196f3{% endif %};">
+                        <strong>{{ lesson.start_time|time:"H:i" }}</strong> 
+                        {{ lesson.contract.student.first_name }}
+                        {% if lesson.id in conflicts_by_lesson %}
+                        <span style="color: #dc3545;" title="Konflikt">⚠</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if day.blocked_times %}
+                <div>
+                    {% for blocked_time in day.blocked_times %}
+                    <div style="background: #f5f5f5; padding: 3px; margin-bottom: 2px; font-size: 0.85em; color: #666; border-left: 3px solid #999;">
+                        🚫 {{ blocked_time.title }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 20px; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+    <strong>Legende:</strong>
+    <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #e3f2fd; border-left: 3px solid #2196f3;">Unterrichtsstunde</span>
+    <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #e3f2fd; border-left: 3px solid #dc3545;">⚠ Konflikt</span>
+    <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #f5f5f5; border-left: 3px solid #999;">🚫 Blockzeit</span>
+</div>
+{% endblock %}
+
