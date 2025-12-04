@@ -68,10 +68,14 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Zweck**: Planung und Verwaltung von Unterrichtsstunden mit Status-Tracking
 
 #### RecurringLesson (apps.lessons.recurring_models)
-- **Felder**: contract (FK), location (FK, optional), start_date, end_date, start_time, duration_minutes, travel_time_before_minutes, travel_time_after_minutes, monday-sunday (Boolean), is_active, notes
+- **Felder**: contract (FK), location (FK, optional), start_date, end_date, start_time, duration_minutes, travel_time_before_minutes, travel_time_after_minutes, recurrence_type (weekly/biweekly/monthly), monday-sunday (Boolean), is_active, notes
 - **Beziehungen**: Many-to-One zu Contract und Location
 - **Zweck**: Vorlage für wiederholende Unterrichtsstunden (Serientermine). Ermöglicht die Definition von Serien (z. B. "jeden Montag 14 Uhr") und automatische Generierung von Lessons über einen Zeitraum.
-- **Service**: `RecurringLessonService` generiert Lessons aus RecurringLesson-Vorlagen, prüft Konflikte und überspringt bereits vorhandene Lessons.
+- **Wiederholungsarten**:
+  - `weekly`: Wöchentlich - jede Woche an den ausgewählten Wochentagen
+  - `biweekly`: Alle 2 Wochen - jede zweite Woche an den ausgewählten Wochentagen
+  - `monthly`: Monatlich - jeden Monat am gleichen Kalendertag, wenn dieser Tag ein ausgewählter Wochentag ist
+- **Service**: `RecurringLessonService` generiert Lessons aus RecurringLesson-Vorlagen basierend auf `recurrence_type`, prüft Konflikte und überspringt bereits vorhandene Lessons.
 
 #### BlockedTime (apps.blocked_times)
 - **Felder**: title, description, start_datetime, end_datetime, is_recurring, recurring_pattern
