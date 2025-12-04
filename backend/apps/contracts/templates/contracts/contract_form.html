@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{% if object %}Vertrag bearbeiten{% else %}Neuer Vertrag{% endif %} - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>{% if object %}Vertrag bearbeiten{% else %}Neuer Vertrag{% endif %}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="btn-group">
+        <button type="submit" class="btn btn-success">Speichern</button>
+        <a href="{% url 'contracts:list' %}" class="btn btn-secondary">Abbrechen</a>
+    </div>
+</form>
+{% endblock %}
+

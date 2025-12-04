@@ -1,0 +1,57 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ contract }} - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>{{ contract }}</h1>
+
+<div class="btn-group">
+    <a href="{% url 'contracts:update' contract.pk %}" class="btn">Bearbeiten</a>
+    <a href="{% url 'contracts:delete' contract.pk %}" class="btn btn-danger">Löschen</a>
+    <a href="{% url 'contracts:list' %}" class="btn btn-secondary">Zurück zur Liste</a>
+</div>
+
+<h2>Details</h2>
+<table>
+    <tr><th>Schüler</th><td><a href="{% url 'students:detail' contract.student.pk %}">{{ contract.student.full_name }}</a></td></tr>
+    {% if contract.institute %}<tr><th>Institut</th><td>{{ contract.institute }}</td></tr>{% endif %}
+    <tr><th>Honorar</th><td>{{ contract.hourly_rate }}€ pro Einheit</td></tr>
+    <tr><th>Dauer pro Einheit</th><td>{{ contract.unit_duration_minutes }} Minuten</td></tr>
+    <tr><th>Vertragsbeginn</th><td>{{ contract.start_date }}</td></tr>
+    <tr><th>Vertragsende</th><td>{{ contract.end_date|default:"unbefristet" }}</td></tr>
+    {% if contract.planned_units_per_month %}<tr><th>Geplante Einheiten/Monat</th><td>{{ contract.planned_units_per_month }}</td></tr>{% endif %}
+    <tr><th>Status</th><td>{% if contract.is_active %}<span style="color: #28a745;">Aktiv</span>{% else %}<span style="color: #6c757d;">Inaktiv</span>{% endif %}</td></tr>
+    {% if contract.notes %}<tr><th>Notizen</th><td>{{ contract.notes }}</td></tr>{% endif %}
+    <tr><th>Erstellt</th><td>{{ contract.created_at|date:"d.m.Y H:i" }}</td></tr>
+    <tr><th>Zuletzt aktualisiert</th><td>{{ contract.updated_at|date:"d.m.Y H:i" }}</td></tr>
+</table>
+
+<h2>Unterrichtsstunden</h2>
+{% if contract.lessons.all %}
+<table>
+    <thead>
+        <tr>
+            <th>Datum</th>
+            <th>Zeit</th>
+            <th>Status</th>
+            <th>Aktionen</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lesson in contract.lessons.all %}
+        <tr>
+            <td>{{ lesson.date }}</td>
+            <td>{{ lesson.start_time }}</td>
+            <td>{{ lesson.get_status_display }}</td>
+            <td><a href="{% url 'lessons:detail' lesson.pk %}">Details</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <p>Keine Unterrichtsstunden für diesen Vertrag vorhanden.</p>
+</div>
+{% endif %}
+{% endblock %}
+
