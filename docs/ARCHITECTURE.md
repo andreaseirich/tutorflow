@@ -163,7 +163,9 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
    - PAID/CANCELLED werden nicht überschrieben
    - Wird sowohl bei manueller Erstellung als auch bei Recurring Lessons angewendet
 9. Bei Abschluss: Status auf "unterrichtet" → "ausgezahlt" (über Abrechnungssystem)
-10. **Filterung**: Nur zukünftige/aktuelle Lessons werden im Kalender angezeigt
+10. **Kalender zeigt alle Lessons**: Vergangene und zukünftige Lessons werden im Kalender angezeigt
+    - Vergangene Lessons sind optisch ausgegraut, aber anklickbar
+    - Alle Lessons sind bearbeitbar
 11. **Kalender-Datum-Synchronisation**: 
     - CalendarView verwendet ausschließlich year/month aus URL-Parametern (kein 'heute' für Monatsberechnung)
     - Zentrale Variable `current_month_date = date(year, month, 1)` für alle Berechnungen

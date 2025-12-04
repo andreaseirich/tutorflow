@@ -44,15 +44,19 @@
                 {% if day.lessons %}
                 <div style="margin-bottom: 5px;">
                     {% for lesson in day.lessons %}
-                    <a href="{% url 'lessons:update' lesson.pk %}" 
-                       style="display: block; background: #e3f2fd; padding: 3px; margin-bottom: 2px; font-size: 0.85em; border-left: 3px solid {% if lesson.id in conflicts_by_lesson %}#dc3545{% else %}#2196f3{% endif %}; text-decoration: none; color: #333;"
-                       title="Stunde bearbeiten">
-                        <strong>{{ lesson.start_time|time:"H:i" }}</strong> 
-                        {{ lesson.contract.student.first_name }}
-                        {% if lesson.id in conflicts_by_lesson %}
-                        <span style="color: #dc3545;" title="Konflikt">⚠</span>
-                        {% endif %}
-                    </a>
+                    <div style="display: block; background: {% if lesson.date < today %}#f5f5f5{% else %}#e3f2fd{% endif %}; padding: 3px; margin-bottom: 2px; font-size: 0.85em; border-left: 3px solid {% if lesson.id in conflicts_by_lesson %}#dc3545{% else %}#2196f3{% endif %}; {% if lesson.date < today %}opacity: 0.7;{% endif %}">
+                        <a href="{% url 'lessons:detail' lesson.pk %}" 
+                           style="text-decoration: none; color: #333; display: block;"
+                           title="Stunde anzeigen">
+                            <strong>{{ lesson.start_time|time:"H:i" }}</strong> 
+                            {{ lesson.contract.student.first_name }}
+                            {% if lesson.id in conflicts_by_lesson %}
+                            <a href="{% url 'lessons:conflicts' lesson.pk %}" 
+                               style="color: #dc3545; text-decoration: none; margin-left: 5px;"
+                               title="Konflikt-Details anzeigen">⚠ Details</a>
+                            {% endif %}
+                        </a>
+                    </div>
                     {% endfor %}
                 </div>
                 {% endif %}

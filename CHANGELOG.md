@@ -5,6 +5,30 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.3] - 2025-12-04
+
+### Hinzugefügt
+- **Konflikt-Detailansicht**: 
+  - ConflictDetailView zeigt alle kollidierenden Lessons und Blockzeiten
+  - Anklickbarer "Details"-Link im Kalender bei Konflikten
+  - Übersichtliche Liste mit Datum, Uhrzeit, Schüler, Ort und Bearbeiten-Links
+- **Lesson-Detailansicht**:
+  - LessonDetailView mit vollständigen Lesson-Informationen
+  - Abschnitt "Konflikte" zeigt alle kollidierenden Lessons
+  - Links zum Bearbeiten der kollidierenden Lessons
+
+### Geändert
+- **Kalender zeigt alle Lessons**: 
+  - Filterung für vergangene Lessons entfernt
+  - Vergangene und zukünftige Lessons werden angezeigt
+  - Vergangene Lessons optisch ausgegraut (opacity: 0.7), aber anklickbar
+  - Alle Lessons sind bearbeitbar
+
+### Tests
+- 4 Tests für Konflikt-Details und Kalender mit vergangenen Lessons
+
+---
+
 ## [0.8.2] - 2025-12-04
 
 ### Behoben
