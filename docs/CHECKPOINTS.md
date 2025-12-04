@@ -313,3 +313,56 @@ Alle ursprünglich mit `2025-01-27` dokumentierten Datumsangaben wurden auf das 
 2. Phase 4 abschließen
 3. Phase 5 vorbereiten (Polishing & Hackathon-Feinschliff)
 
+---
+
+## Checkpoint 6: Monatliche Vertragsplanung implementiert
+
+**Datum**: 2025-12-04
+
+**Phase**: Phase 6 – Monatliche Vertragsplanung
+
+**Status**: ✅ Abgeschlossen
+
+### Abgeschlossen
+- ✅ ContractMonthlyPlan Model erstellt:
+  - ForeignKey auf Contract
+  - Jahr, Monat, geplante Einheiten
+  - unique_together Constraint (contract, year, month)
+- ✅ Formset-Integration:
+  - ContractMonthlyPlanFormSet für Bearbeitung
+  - Automatische Generierung von Monatszeilen beim Erstellen/Bearbeiten
+  - Behandlung von Zeitraumänderungen (neue Monate ergänzen, alte entfernen)
+- ✅ IncomeSelector erweitert:
+  - Neue Methode `get_monthly_planned_vs_actual()`
+  - Berechnung von planned_units, planned_amount, actual_units, actual_amount
+  - Differenzberechnung
+- ✅ UI-Integration:
+  - contract_form.html erweitert um Formset-Anzeige
+  - income_overview.html erweitert um planned vs. actual Vergleich
+- ✅ Tests:
+  - 8 Tests für ContractMonthlyPlan, Generierung und IncomeSelector-Vergleich
+  - Alle Tests laufen erfolgreich
+
+### Validierungsergebnisse
+
+#### Funktionalität
+- [x] ContractMonthlyPlan Model funktioniert korrekt
+- [x] Automatische Generierung von Monatsplänen funktioniert
+- [x] Formset-Integration in Create/Update Views
+- [x] IncomeSelector-Vergleich funktioniert
+- [x] UI zeigt planned vs. actual korrekt an
+
+#### Tests
+- [x] 8 Tests implementiert
+- [x] Alle Tests laufen erfolgreich
+- [x] Tests decken verschiedene Szenarien ab (mit/ohne Plan, unterschiedliche Verteilungen)
+
+#### Dokumentation
+- [x] ARCHITECTURE.md aktualisiert (ContractMonthlyPlan dokumentiert)
+- [x] CHANGELOG.md aktualisiert (Version 0.6.0)
+- [x] PHASES.md aktualisiert (Phase 6 dokumentiert)
+- [x] CHECKPOINTS.md aktualisiert
+
+### Nächste Schritte
+1. Phase 6 abgeschlossen
+
