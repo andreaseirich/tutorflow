@@ -119,6 +119,14 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 4. Ergebnis wird als LessonPlan gespeichert
 5. Optional: Verknüpfung mit einer Lesson
 
+## Zeitzonen-Handling
+
+- **Zeitzone**: Europe/Berlin (gemäß Master Prompt)
+- Django ist konfiguriert mit `TIME_ZONE = 'Europe/Berlin'` und `USE_TZ = True`
+- Alle Zeitstempel, Datumsangaben und Log-Einträge verwenden die Zeitzone Europe/Berlin
+- Models mit DateTimeField nutzen Django's timezone-aware Datetime-Felder
+- Admin-Interfaces und Tests berücksichtigen die Zeitzone korrekt
+
 ## Sicherheit
 
 - Django-Standard-Sicherheitsfeatures aktiviert

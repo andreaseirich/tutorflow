@@ -43,6 +43,7 @@ Der Stil der Software soll von Ordnung und Zuverlässigkeit geprägt sein. Es we
 ### Transparenz
 - Nutzer werden über die Datennutzung informiert
 - Klare Datenschutzerklärung
+- **Transparenz bei Zeitangaben und Logs**: Alle Zeitstempel und Datumsangaben in der Anwendung verwenden die Zeitzone Europe/Berlin. Dies wird in der Dokumentation klar kommuniziert, und alle Log-Einträge, Zeitstempel und Datumsangaben sind konsistent in dieser Zeitzone. Nutzer werden über die verwendete Zeitzone informiert, um Verwirrung zu vermeiden.
 
 ### Sicherheit
 - Sichere Speicherung von Daten
