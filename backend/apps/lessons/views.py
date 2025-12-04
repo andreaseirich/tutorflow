@@ -150,6 +150,71 @@ class LessonUpdateView(UpdateView):
         return super().form_valid(form)
 
 
+class LessonDetailView(DetailView):
+    """Detailansicht einer Unterrichtsstunde mit Konfliktinformationen."""
+    model = Lesson
+    template_name = 'lessons/lesson_detail.html'
+    context_object_name = 'lesson'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lesson = self.object
+        
+        # Konflikte laden
+        conflicts = LessonConflictService.check_conflicts(lesson, exclude_self=True)
+        
+        # Konflikt-Lessons extrahieren
+        conflict_lessons = []
+        conflict_blocked_times = []
+        
+        for conflict in conflicts:
+            if conflict['type'] == 'lesson':
+                conflict_lessons.append(conflict['object'])
+            elif conflict['type'] == 'blocked_time':
+                conflict_blocked_times.append(conflict['object'])
+        
+        context.update({
+            'conflicts': conflicts,
+            'conflict_lessons': conflict_lessons,
+            'conflict_blocked_times': conflict_blocked_times,
+            'has_conflicts': len(conflicts) > 0,
+        })
+        
+        return context
+
+
+class ConflictDetailView(TemplateView):
+    """Detailansicht für Konflikte einer Lesson."""
+    template_name = 'lessons/conflict_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lesson_id = self.kwargs.get('pk')
+        lesson = get_object_or_404(Lesson, pk=lesson_id)
+        
+        # Konflikte laden
+        conflicts = LessonConflictService.check_conflicts(lesson, exclude_self=True)
+        
+        # Konflikt-Lessons extrahieren
+        conflict_lessons = []
+        conflict_blocked_times = []
+        
+        for conflict in conflicts:
+            if conflict['type'] == 'lesson':
+                conflict_lessons.append(conflict['object'])
+            elif conflict['type'] == 'blocked_time':
+                conflict_blocked_times.append(conflict['object'])
+        
+        context.update({
+            'lesson': lesson,
+            'conflicts': conflicts,
+            'conflict_lessons': conflict_lessons,
+            'conflict_blocked_times': conflict_blocked_times,
+        })
+        
+        return context
+
+
 class LessonDeleteView(DeleteView):
     """Unterrichtsstunde löschen."""
     model = Lesson
@@ -157,9 +222,8 @@ class LessonDeleteView(DeleteView):
 
     def get_success_url(self):
         """Weiterleitung zurück zum Kalender."""
-        from django.utils import timezone
-        today = timezone.localdate()
-        return reverse_lazy('lessons:calendar') + f'?year={today.year}&month={today.month}'
+        lesson = self.object
+        return reverse_lazy('lessons:calendar') + f'?year={lesson.date.year}&month={lesson.date.month}'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Unterrichtsstunde erfolgreich gelöscht.')
@@ -261,6 +325,9 @@ class CalendarView(TemplateView):
         else:
             next_year, next_month = year, month + 1
         
+        # Heute für Template-Vergleich
+        today = timezone.localdate()
+        
         context.update({
             'year': year,
             'month': month,
@@ -273,6 +340,7 @@ class CalendarView(TemplateView):
             'prev_month': prev_month,
             'next_year': next_year,
             'next_month': next_month,
+            'today': today,
         })
         
         return context

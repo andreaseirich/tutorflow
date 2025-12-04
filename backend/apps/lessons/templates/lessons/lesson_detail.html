@@ -1,64 +1,114 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Unterrichtsstunde - TutorFlow{% endblock %}
+{% block title %}Stunde {{ lesson.date }} - {{ lesson.contract.student }} - TutorFlow{% endblock %}
 
 {% block content %}
 <h1>Unterrichtsstunde</h1>
 
-<h2>Details</h2>
-<table>
-    <tr><th>Schüler</th><td>{{ lesson.contract.student }}</td></tr>
-    <tr><th>Datum</th><td>{{ lesson.date }}</td></tr>
-    <tr><th>Zeit</th><td>{{ lesson.start_time }}</td></tr>
-    <tr><th>Dauer</th><td>{{ lesson.duration_minutes }} Minuten</td></tr>
-    <tr><th>Status</th><td>{{ lesson.get_status_display }}</td></tr>
-    <tr><th>Ort</th><td>{{ lesson.location|default:"-" }}</td></tr>
-    {% if lesson.notes %}
-    <tr><th>Notizen</th><td>{{ lesson.notes }}</td></tr>
-    {% endif %}
-</table>
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'lessons:calendar' %}?year={{ lesson.date.year }}&month={{ lesson.date.month }}" class="btn">← Zurück zum Kalender</a>
+    <a href="{% url 'lessons:update' lesson.pk %}" class="btn btn-primary">✏️ Bearbeiten</a>
+    <a href="{% url 'lessons:delete' lesson.pk %}" class="btn btn-danger">🗑️ Löschen</a>
+</div>
 
-{% if conflicts %}
-<h2>Konflikte</h2>
-<div class="conflict">
-    <p>⚠ {{ conflicts|length }} Konflikt(e) erkannt:</p>
+<div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+    <h2>Details</h2>
+    <table style="width: 100%;">
+        <tr>
+            <td style="padding: 8px; font-weight: bold;">Datum:</td>
+            <td style="padding: 8px;">{{ lesson.date|date:"d.m.Y" }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; font-weight: bold;">Uhrzeit:</td>
+            <td style="padding: 8px;">{{ lesson.start_time|time:"H:i" }} Uhr ({{ lesson.duration_minutes }} Min.)</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; font-weight: bold;">Schüler:</td>
+            <td style="padding: 8px;">
+                <a href="{% url 'students:detail' lesson.contract.student.pk %}">{{ lesson.contract.student.full_name }}</a>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; font-weight: bold;">Ort:</td>
+            <td style="padding: 8px;">{{ lesson.location.name|default:"Nicht angegeben" }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; font-weight: bold;">Status:</td>
+            <td style="padding: 8px;">
+                {% if lesson.status == 'planned' %}Geplant
+                {% elif lesson.status == 'taught' %}Unterrichtet
+                {% elif lesson.status == 'paid' %}Ausgezahlt
+                {% elif lesson.status == 'cancelled' %}Ausgefallen
+                {% else %}{{ lesson.status }}{% endif %}
+            </td>
+        </tr>
+        {% if lesson.travel_time_before_minutes or lesson.travel_time_after_minutes %}
+        <tr>
+            <td style="padding: 8px; font-weight: bold;">Fahrtzeiten:</td>
+            <td style="padding: 8px;">
+                Vorher: {{ lesson.travel_time_before_minutes }} Min. | 
+                Nachher: {{ lesson.travel_time_after_minutes }} Min.
+            </td>
+        </tr>
+        {% endif %}
+        {% if lesson.notes %}
+        <tr>
+            <td style="padding: 8px; font-weight: bold;">Notizen:</td>
+            <td style="padding: 8px;">{{ lesson.notes }}</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+{% if has_conflicts %}
+<div style="background: #fff3cd; padding: 20px; border-radius: 5px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
+    <h2 style="color: #dc3545; margin-top: 0;">⚠ Konflikte</h2>
+    <p style="margin-bottom: 15px;">
+        <a href="{% url 'lessons:conflicts' lesson.pk %}" class="btn" style="background: #dc3545; color: white;">
+            Konflikt-Details anzeigen
+        </a>
+    </p>
+    
+    <h3>Kollidierende Unterrichtsstunden ({{ conflict_lessons|length }})</h3>
+    {% if conflict_lessons %}
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="background: #f5f5f5;">
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Datum</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Uhrzeit</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Schüler</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Ort</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Aktion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for conflict_lesson in conflict_lessons %}
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.date|date:"d.m.Y" }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.start_time|time:"H:i" }} Uhr</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.contract.student.full_name }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.location.name|default:"-" }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">
+                    <a href="{% url 'lessons:detail' conflict_lesson.pk %}" class="btn" style="font-size: 0.9em;">Anzeigen</a>
+                    <a href="{% url 'lessons:update' conflict_lesson.pk %}" class="btn btn-primary" style="font-size: 0.9em;">Bearbeiten</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Keine kollidierenden Unterrichtsstunden.</p>
+    {% endif %}
+    
+    {% if conflict_blocked_times %}
+    <h3 style="margin-top: 20px;">Kollidierende Blockzeiten ({{ conflict_blocked_times|length }})</h3>
     <ul>
-        {% for conflict in conflicts %}
-        <li>{{ conflict.message }}</li>
+        {% for blocked_time in conflict_blocked_times %}
+        <li>{{ blocked_time.title }} ({{ blocked_time.start_datetime|date:"d.m.Y H:i" }} - {{ blocked_time.end_datetime|date:"H:i" }})</li>
         {% endfor %}
     </ul>
-</div>
-{% endif %}
-
-<h2>Unterrichtsplan (KI-generiert)</h2>
-{% if is_premium %}
-    {% if has_lesson_plan %}
-    <div>
-        <h3>Aktueller Plan <span class="premium-badge">PREMIUM</span></h3>
-        <p><small>Erstellt: {{ latest_lesson_plan.created_at|date:"d.m.Y H:i" }} | Modell: {{ latest_lesson_plan.llm_model|default:"N/A" }}</small></p>
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 4px; white-space: pre-wrap; border: 1px solid #dee2e6; margin: 15px 0;">{{ latest_lesson_plan.content }}</div>
-        <form method="post" action="{% url 'ai:generate_lesson_plan' lesson.pk %}" style="margin-top: 10px;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-secondary">Neu generieren</button>
-        </form>
-    </div>
-    {% else %}
-    <p>Noch kein Unterrichtsplan vorhanden.</p>
-    <form method="post" action="{% url 'ai:generate_lesson_plan' lesson.pk %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-success">🤖 Unterrichtsplan mit KI generieren <span class="premium-badge">PREMIUM</span></button>
-    </form>
     {% endif %}
-{% else %}
-<div style="background: #fff3cd; padding: 15px; border-radius: 4px; color: #856404; border-left: 4px solid #ffc107;">
-    <p><strong>⚠ Premium-Funktion:</strong> Diese Funktion ist nur für Premium-User verfügbar.</p>
-    <p>Bitte kontaktieren Sie den Administrator, um Premium-Zugang zu erhalten.</p>
 </div>
 {% endif %}
 
-<div style="margin-top: 20px;">
-    <a href="{% url 'lessons:update' lesson.pk %}" class="btn">Bearbeiten</a>
-    <a href="{% url 'lessons:calendar' %}" class="btn">Zurück zum Kalender</a>
-</div>
 {% endblock %}
-

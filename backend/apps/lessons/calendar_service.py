@@ -35,23 +35,18 @@ class CalendarService:
         else:
             end_date = date(year, month + 1, 1)
         
-        # Heute (Europe/Berlin)
-        today = timezone.localdate()
-        
-        # Lade Lessons - nur zukünftige oder heutige (>= heute) im Monatsbereich
-        # Verwende max(today, start_date) um sicherzustellen, dass wir nicht vor heute gehen
-        effective_start = max(today, start_date)
+        # Lade Lessons - alle Lessons im Monatsbereich (Vergangenheit und Zukunft)
         lessons = Lesson.objects.filter(
-            date__gte=effective_start,
+            date__gte=start_date,
             date__lt=end_date
         ).select_related('contract', 'contract__student', 'location').order_by('date', 'start_time')
         
-        # Lade Blockzeiten - nur zukünftige oder heutige (ab heute)
-        today_datetime = timezone.make_aware(datetime.combine(today, datetime.min.time()))
+        # Lade Blockzeiten im Monatsbereich
+        start_datetime = timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
+        end_datetime = timezone.make_aware(datetime.combine(end_date, datetime.min.time()))
         blocked_times = BlockedTime.objects.filter(
-            start_datetime__gte=today_datetime,
-            start_datetime__lt=timezone.make_aware(datetime.combine(end_date, datetime.min.time())),
-            end_datetime__gte=timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
+            start_datetime__lt=end_datetime,
+            end_datetime__gt=start_datetime
         ).order_by('start_datetime')
         
         # Gruppiere Lessons nach Datum
