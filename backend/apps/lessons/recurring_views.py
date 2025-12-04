@@ -38,7 +38,41 @@ class RecurringLessonCreateView(CreateView):
     model = RecurringLesson
     form_class = RecurringLessonForm
     template_name = 'lessons/recurringlesson_form.html'
-    success_url = reverse_lazy('lessons:recurring_list')
+
+    def get_initial(self):
+        """Setzt initiale Werte, z. B. Contract aus Query-Parameter."""
+        initial = super().get_initial()
+        contract_id = self.request.GET.get('contract')
+        if contract_id:
+            initial['contract'] = contract_id
+        return initial
+
+    def get_success_url(self):
+        """Nach Erstellen: Generiere Lessons und weiter zum Kalender."""
+        recurring_lesson = self.object
+        # Generiere Lessons automatisch
+        result = RecurringLessonService.generate_lessons(
+            recurring_lesson,
+            check_conflicts=True
+        )
+        
+        if result['created'] > 0:
+            messages.success(
+                self.request,
+                f"Serientermin erstellt und {result['created']} Unterrichtsstunde(n) generiert."
+            )
+        
+        if result['conflicts']:
+            conflict_count = len(result['conflicts'])
+            messages.warning(
+                self.request,
+                f"{conflict_count} Unterrichtsstunde(n) mit Konflikten erkannt."
+            )
+        
+        # Weiterleitung zum Kalender
+        from django.utils import timezone
+        today = timezone.localdate()
+        return reverse_lazy('lessons:calendar') + f'?year={today.year}&month={today.month}'
 
     def form_valid(self, form):
         messages.success(self.request, 'Serientermin erfolgreich erstellt.')
@@ -96,6 +130,12 @@ def generate_lessons_from_recurring(request, pk):
             f"{conflict_count} Unterrichtsstunde(n) mit Konflikten erkannt. "
             f"Bitte prüfen Sie die Details."
         )
+    
+    # Weiterleitung zum Kalender, falls Lessons erstellt wurden
+    if result['created'] > 0:
+        from django.utils import timezone
+        today = timezone.localdate()
+        return redirect('lessons:calendar') + f'?year={today.year}&month={today.month}'
     
     return redirect('lessons:recurring_detail', pk=pk)
 

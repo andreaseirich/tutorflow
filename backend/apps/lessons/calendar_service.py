@@ -4,6 +4,7 @@ Service für Kalenderansicht - Gruppierung von Lessons und Blockzeiten nach Tage
 from datetime import date, datetime
 from typing import Dict, List
 from collections import defaultdict
+from django.utils import timezone
 from apps.lessons.models import Lesson
 from apps.blocked_times.models import BlockedTime
 from apps.lessons.services import LessonConflictService
@@ -34,16 +35,23 @@ class CalendarService:
         else:
             end_date = date(year, month + 1, 1)
         
-        # Lade Lessons
+        # Heute (Europe/Berlin)
+        today = timezone.localdate()
+        
+        # Lade Lessons - nur zukünftige oder heutige (>= heute) im Monatsbereich
+        # Verwende max(today, start_date) um sicherzustellen, dass wir nicht vor heute gehen
+        effective_start = max(today, start_date)
         lessons = Lesson.objects.filter(
-            date__gte=start_date,
+            date__gte=effective_start,
             date__lt=end_date
         ).select_related('contract', 'contract__student', 'location').order_by('date', 'start_time')
         
-        # Lade Blockzeiten
+        # Lade Blockzeiten - nur zukünftige oder heutige (ab heute)
+        today_datetime = timezone.make_aware(datetime.combine(today, datetime.min.time()))
         blocked_times = BlockedTime.objects.filter(
-            start_datetime__lt=end_date,
-            end_datetime__gte=start_date
+            start_datetime__gte=today_datetime,
+            start_datetime__lt=timezone.make_aware(datetime.combine(end_date, datetime.min.time())),
+            end_datetime__gte=timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
         ).order_by('start_datetime')
         
         # Gruppiere Lessons nach Datum

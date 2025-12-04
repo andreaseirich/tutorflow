@@ -60,7 +60,22 @@ class LessonCreateView(CreateView):
     model = Lesson
     form_class = LessonForm
     template_name = 'lessons/lesson_form.html'
-    success_url = reverse_lazy('lessons:list')
+
+    def get_initial(self):
+        """Setzt initiale Werte, z. B. Datum aus Query-Parameter."""
+        initial = super().get_initial()
+        date_param = self.request.GET.get('date')
+        if date_param:
+            try:
+                initial['date'] = date_param
+            except ValueError:
+                pass
+        return initial
+
+    def get_success_url(self):
+        """Weiterleitung zurück zum Kalender mit Jahr/Monat."""
+        lesson = self.object
+        return reverse_lazy('lessons:calendar') + f'?year={lesson.date.year}&month={lesson.date.month}'
 
     def form_valid(self, form):
         lesson = form.save()
@@ -80,7 +95,11 @@ class LessonUpdateView(UpdateView):
     model = Lesson
     form_class = LessonForm
     template_name = 'lessons/lesson_form.html'
-    success_url = reverse_lazy('lessons:list')
+
+    def get_success_url(self):
+        """Weiterleitung zurück zum Kalender mit Jahr/Monat."""
+        lesson = self.object
+        return reverse_lazy('lessons:calendar') + f'?year={lesson.date.year}&month={lesson.date.month}'
 
     def form_valid(self, form):
         lesson = form.save()

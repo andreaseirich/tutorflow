@@ -8,8 +8,13 @@
 <div class="btn-group">
     <a href="{% url 'lessons:calendar' %}?year={{ prev_year }}&month={{ prev_month }}" class="btn">← Vorheriger Monat</a>
     <a href="{% url 'lessons:calendar' %}?year={{ next_year }}&month={{ next_month }}" class="btn">Nächster Monat →</a>
-    <a href="{% url 'lessons:list' %}" class="btn btn-secondary">Zurück zur Liste</a>
+    <a href="{% url 'lessons:recurring_create' %}" class="btn btn-success">➕ Serientermin anlegen</a>
 </div>
+
+<p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+    <strong>Hinweis:</strong> Klicken Sie auf einen Tag, um eine neue Unterrichtsstunde anzulegen. 
+    Klicken Sie auf eine bestehende Stunde, um sie zu bearbeiten.
+</p>
 
 <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
     <thead>
@@ -23,21 +28,31 @@
         {% for week in weeks %}
         <tr>
             {% for day in week %}
-            <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top; {% if not day.is_current_month %}background: #f9f9f9; color: #999;{% endif %} min-height: 100px; width: 14.28%;">
+            <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top; {% if not day.is_current_month %}background: #f9f9f9; color: #999;{% endif %} min-height: 100px; width: 14.28%; position: relative;">
                 <div style="font-weight: bold; margin-bottom: 5px;">
-                    {% if day.is_current_month %}{{ day.date.day }}{% else %}{{ day.date.day }}{% endif %}
+                    {% if day.is_current_month %}
+                    <a href="{% url 'lessons:create' %}?date={{ day.date|date:'Y-m-d' }}" 
+                       style="color: #007bff; text-decoration: none; border-bottom: 1px dashed #007bff;"
+                       title="Neue Stunde anlegen">
+                        {{ day.date.day }}
+                    </a>
+                    {% else %}
+                    {{ day.date.day }}
+                    {% endif %}
                 </div>
                 
                 {% if day.lessons %}
                 <div style="margin-bottom: 5px;">
                     {% for lesson in day.lessons %}
-                    <div style="background: #e3f2fd; padding: 3px; margin-bottom: 2px; font-size: 0.85em; border-left: 3px solid {% if lesson.id in conflicts_by_lesson %}#dc3545{% else %}#2196f3{% endif %};">
+                    <a href="{% url 'lessons:update' lesson.pk %}" 
+                       style="display: block; background: #e3f2fd; padding: 3px; margin-bottom: 2px; font-size: 0.85em; border-left: 3px solid {% if lesson.id in conflicts_by_lesson %}#dc3545{% else %}#2196f3{% endif %}; text-decoration: none; color: #333;"
+                       title="Stunde bearbeiten">
                         <strong>{{ lesson.start_time|time:"H:i" }}</strong> 
                         {{ lesson.contract.student.first_name }}
                         {% if lesson.id in conflicts_by_lesson %}
                         <span style="color: #dc3545;" title="Konflikt">⚠</span>
                         {% endif %}
-                    </div>
+                    </a>
                     {% endfor %}
                 </div>
                 {% endif %}
@@ -60,9 +75,9 @@
 
 <div style="margin-top: 20px; padding: 10px; background: #f9f9f9; border-radius: 5px;">
     <strong>Legende:</strong>
-    <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #e3f2fd; border-left: 3px solid #2196f3;">Unterrichtsstunde</span>
+    <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #e3f2fd; border-left: 3px solid #2196f3;">Unterrichtsstunde (klickbar zum Bearbeiten)</span>
     <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #e3f2fd; border-left: 3px solid #dc3545;">⚠ Konflikt</span>
     <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #f5f5f5; border-left: 3px solid #999;">🚫 Blockzeit</span>
+    <span style="display: inline-block; margin-left: 10px; color: #007bff; border-bottom: 1px dashed #007bff;">Tage (klickbar zum Anlegen)</span>
 </div>
 {% endblock %}
-

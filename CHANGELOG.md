@@ -5,6 +5,36 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.7.1] - 2025-12-04
+
+### Geändert
+- **Kalender als zentrale UI**: Kalender ist jetzt die primäre Schnittstelle für Lesson-Verwaltung
+  - Lessons-Listenansicht aus Navigation entfernt (Endpoints bleiben für API/Debugging)
+  - Klick auf Tag im Kalender öffnet Formular zum Anlegen mit voreingestelltem Datum
+  - Klick auf bestehende Lesson öffnet Bearbeitungsformular
+  - Nach Create/Update Weiterleitung zurück zum Kalender
+- **Kalender zeigt nur zukünftige Lessons**: 
+  - Lessons in der Vergangenheit werden im Kalender nicht mehr angezeigt
+  - Blockzeiten in der Vergangenheit werden ebenfalls ausgeblendet
+  - Finanz-/Einnahmensichten zeigen weiterhin alle Lessons (inkl. vergangene)
+- **Recurring Lessons besser integriert**:
+  - Button "Serientermin anlegen" im Kalender-Header
+  - Link "Serientermin erstellen" auf Contract-Detailseite
+  - Automatische Generierung von Lessons nach Anlegen einer RecurringLesson
+  - Weiterleitung zum Kalender nach Generierung
+  - Hinweis im RecurringLesson-Formular erklärt Funktionalität
+
+### Tests
+- 3 neue Tests für Kalender-Filterung (vergangene Lessons werden ausgeblendet)
+- Tests für Kalender-Integration (Create mit Datum-Parameter, Redirect)
+
+### Dokumentation
+- ARCHITECTURE.md: Kalender als zentrale UI dokumentiert
+- README.md: Kalenderansicht und Serientermine erwähnt
+- API.md: Kalender-Endpoints dokumentiert
+
+---
+
 ## [0.7.0] - 2025-12-04
 
 ### Hinzugefügt
