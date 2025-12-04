@@ -161,6 +161,32 @@ Das Projekt TutorFlow wird in mehreren Phasen entwickelt, um eine strukturierte 
 
 ---
 
+## Phase 7 – Serientermine und Kalenderansicht
+
+**Status**: ✅ Abgeschlossen
+
+**Ziel**: Unterstützung für wiederholende Unterrichtsstunden (Serientermine) und Monatskalender-Ansicht.
+
+**Akzeptanzkriterien**:
+- ✅ RecurringLesson Model implementiert
+- ✅ RecurringLessonService für Generierung von Lessons
+- ✅ UI für Serientermine (CRUD)
+- ✅ Kalenderansicht mit Lessons und Blockzeiten
+- ✅ Tests für Serientermine und Kalender
+
+**Tests**:
+- ✅ 8 Tests für RecurringLesson, Service und Kalender
+- ✅ Alle Tests laufen erfolgreich
+
+**Fortschritt**:
+- RecurringLesson Model mit Wochentage-Auswahl
+- RecurringLessonService für automatische Generierung
+- CalendarService für Monatsansicht
+- CalendarView mit HTML-Kalender-Grid
+- Integration in Navigation und bestehende Logik
+
+---
+
 ## Phasenwechsel
 
 Vor dem Wechsel zu einer neuen Phase:

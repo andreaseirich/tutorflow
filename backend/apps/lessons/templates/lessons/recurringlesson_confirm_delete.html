@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Serientermin löschen - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Serientermin löschen</h1>
+<p>Sind Sie sicher, dass Sie den Serientermin für "{{ object.contract.student }}" ({{ object.get_active_weekdays_display }}, {{ object.start_time }}) löschen möchten?</p>
+<p><strong>Hinweis:</strong> Bereits generierte Lessons werden nicht gelöscht.</p>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="btn-group">
+        <button type="submit" class="btn btn-danger">Löschen bestätigen</button>
+        <a href="{% url 'lessons:recurring_detail' object.pk %}" class="btn btn-secondary">Abbrechen</a>
+    </div>
+</form>
+{% endblock %}
+

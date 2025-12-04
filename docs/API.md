@@ -43,6 +43,19 @@ Diese Dokumentation beschreibt die API-Endpoints von TutorFlow. Die API wird in 
 - `GET /lessons/<id>/delete/` - Bestätigungsseite
 - `POST /lessons/<id>/delete/` - Unterrichtsstunde löschen
 - `GET /lessons/month/<year>/<month>/` - Monatsansicht aller Stunden
+- `GET /lessons/calendar/` - Monatskalender-Ansicht (Lessons und Blockzeiten)
+- `GET /lessons/calendar/?year=<year>&month=<month>` - Kalender für bestimmten Monat
+
+### Serientermine (Recurring Lessons)
+- `GET /lessons/recurring/` - Liste aller Serientermine
+- `GET /lessons/recurring/<id>/` - Serientermin-Details (mit Vorschau)
+- `GET /lessons/recurring/create/` - Formular zum Erstellen
+- `POST /lessons/recurring/create/` - Neuen Serientermin erstellen
+- `GET /lessons/recurring/<id>/update/` - Formular zum Bearbeiten
+- `POST /lessons/recurring/<id>/update/` - Serientermin aktualisieren
+- `GET /lessons/recurring/<id>/delete/` - Bestätigungsseite
+- `POST /lessons/recurring/<id>/delete/` - Serientermin löschen
+- `POST /lessons/recurring/<id>/generate/` - Lessons aus Serientermin generieren
 
 ### Blockzeiten
 - `GET /blocked-times/` - Liste aller Blockzeiten
@@ -80,6 +93,13 @@ Diese Dokumentation beschreibt die API-Endpoints von TutorFlow. Die API wird in 
 - `get_lessons_for_month(year, month)`: Gibt alle Lessons für einen Monat zurück
 - `get_today_lessons()`: Gibt heutige Lessons zurück
 - `get_upcoming_lessons(days=7)`: Gibt nächste Lessons zurück
+
+### RecurringLessonService (apps.lessons.recurring_service)
+- `generate_lessons(recurring_lesson, check_conflicts=True, dry_run=False)`: Generiert Lessons aus einer RecurringLesson-Vorlage
+- `preview_lessons(recurring_lesson)`: Gibt Vorschau der zu erzeugenden Lessons zurück (ohne Speicherung)
+
+### CalendarService (apps.lessons.calendar_service)
+- `get_calendar_data(year, month)`: Lädt Lessons und Blockzeiten für einen Monat und gruppiert sie nach Tagen
 
 ### IncomeSelector (apps.core.selectors)
 - `get_monthly_income(year, month, status='paid')`: Monatliche Einnahmen

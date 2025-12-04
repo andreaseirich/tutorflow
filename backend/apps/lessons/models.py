@@ -3,6 +3,9 @@ from django.core.validators import MinValueValidator
 from apps.contracts.models import Contract
 from apps.locations.models import Location
 
+# Import RecurringLesson für Django-Erkennung
+from .recurring_models import RecurringLesson
+
 
 class Lesson(models.Model):
     """Nachhilfestunde mit Datum, Zeit, Status, Ort und Fahrtzeiten."""

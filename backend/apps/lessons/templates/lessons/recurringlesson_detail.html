@@ -1,0 +1,49 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ recurring_lesson }} - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Serientermin</h1>
+
+<div class="btn-group">
+    <a href="{% url 'lessons:recurring_update' recurring_lesson.pk %}" class="btn">Bearbeiten</a>
+    <a href="{% url 'lessons:recurring_delete' recurring_lesson.pk %}" class="btn btn-danger">Löschen</a>
+    <a href="{% url 'lessons:recurring_list' %}" class="btn btn-secondary">Zurück zur Liste</a>
+</div>
+
+<h2>Details</h2>
+<table>
+    <tr><th>Schüler</th><td><a href="{% url 'students:detail' recurring_lesson.contract.student.pk %}">{{ recurring_lesson.contract.student }}</a></td></tr>
+    <tr><th>Wochentage</th><td>{{ recurring_lesson.get_active_weekdays_display }}</td></tr>
+    <tr><th>Startdatum</th><td>{{ recurring_lesson.start_date }}</td></tr>
+    <tr><th>Enddatum</th><td>{{ recurring_lesson.end_date|default:"Bis Vertragsende" }}</td></tr>
+    <tr><th>Zeit</th><td>{{ recurring_lesson.start_time }}</td></tr>
+    <tr><th>Dauer</th><td>{{ recurring_lesson.duration_minutes }} Minuten</td></tr>
+    {% if recurring_lesson.location %}
+    <tr><th>Ort</th><td>{{ recurring_lesson.location }}</td></tr>
+    {% endif %}
+    <tr><th>Status</th><td>{% if recurring_lesson.is_active %}<span style="color: #28a745;">Aktiv</span>{% else %}<span style="color: #6c757d;">Inaktiv</span>{% endif %}</td></tr>
+    {% if recurring_lesson.notes %}
+    <tr><th>Notizen</th><td>{{ recurring_lesson.notes }}</td></tr>
+    {% endif %}
+</table>
+
+<h2>Vorschau</h2>
+<p>Diese Serie würde <strong>{{ preview_count }}</strong> Unterrichtsstunde(n) erzeugen.</p>
+{% if preview %}
+<p>Erste 10 Termine:</p>
+<ul>
+    {% for lesson in preview %}
+    <li>{{ lesson.date }} um {{ lesson.start_time }} - {{ lesson.contract.student }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h2>Aktionen</h2>
+<form method="post" action="{% url 'lessons:recurring_generate' recurring_lesson.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Lessons aus dieser Serie generieren</button>
+</form>
+<p><small>Hinweis: Bereits vorhandene Lessons werden übersprungen.</small></p>
+{% endblock %}
+

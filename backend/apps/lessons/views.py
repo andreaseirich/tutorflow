@@ -3,13 +3,15 @@ Views für Lesson-CRUD-Operationen und Planungsübersicht.
 """
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
 from django.utils import timezone
-from datetime import date
+from datetime import date, timedelta
+from calendar import monthrange
 from apps.lessons.models import Lesson
 from apps.lessons.forms import LessonForm
 from apps.lessons.services import LessonQueryService, LessonConflictService
+from apps.lessons.calendar_service import CalendarService
 
 
 class LessonListView(ListView):
@@ -127,4 +129,76 @@ class LessonMonthView(ListView):
         
         context['year'] = year
         context['month'] = month
+        return context
+
+
+class CalendarView(TemplateView):
+    """Monatskalender-Ansicht für Lessons und Blockzeiten."""
+    template_name = 'lessons/calendar.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        now = timezone.now()
+        
+        # Jahr und Monat aus URL-Parametern oder aktuelles Datum
+        year = int(self.request.GET.get('year', now.year))
+        month = int(self.request.GET.get('month', now.month))
+        
+        # Lade Kalenderdaten
+        calendar_data = CalendarService.get_calendar_data(year, month)
+        
+        # Erstelle Kalender-Grid
+        first_day = date(year, month, 1)
+        last_day = date(year, month, monthrange(year, month)[1])
+        
+        # Erster Wochentag (0=Montag, 6=Sonntag)
+        first_weekday = first_day.weekday()
+        
+        # Erstelle Kalender-Wochen
+        weeks = []
+        current_date = first_day - timedelta(days=first_weekday)  # Starte am Montag der ersten Woche
+        
+        while current_date <= last_day or len(weeks) == 0 or current_date.weekday() != 0:
+            week = []
+            for day in range(7):
+                day_date = current_date + timedelta(days=day)
+                week.append({
+                    'date': day_date,
+                    'is_current_month': day_date.month == month,
+                    'lessons': calendar_data['lessons_by_date'].get(day_date, []),
+                    'blocked_times': calendar_data['blocked_times_by_date'].get(day_date, []),
+                })
+            weeks.append(week)
+            current_date += timedelta(days=7)
+            
+            # Stoppe, wenn wir über den Monat hinaus sind
+            if current_date > last_day and current_date.weekday() == 0:
+                break
+        
+        context.update({
+            'year': year,
+            'month': month,
+            'weeks': weeks,
+            'conflicts_by_lesson': calendar_data['conflicts_by_lesson'],
+            'month_names': ['', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+                           'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+            'weekday_names': ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
+        })
+        
+        # Navigation
+        if month == 1:
+            prev_year, prev_month = year - 1, 12
+        else:
+            prev_year, prev_month = year, month - 1
+        
+        if month == 12:
+            next_year, next_month = year + 1, 1
+        else:
+            next_year, next_month = year, month + 1
+        
+        context['prev_year'] = prev_year
+        context['prev_month'] = prev_month
+        context['next_year'] = next_year
+        context['next_month'] = next_month
+        
         return context
