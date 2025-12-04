@@ -34,24 +34,24 @@
 {% if is_premium %}
     {% if has_lesson_plan %}
     <div>
-        <h3>Aktueller Plan ({{ latest_lesson_plan.created_at|date:"d.m.Y H:i" }})</h3>
-        <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; white-space: pre-wrap;">{{ latest_lesson_plan.content }}</div>
-        <p><small>Modell: {{ latest_lesson_plan.llm_model|default:"N/A" }}</small></p>
+        <h3>Aktueller Plan <span class="premium-badge">PREMIUM</span></h3>
+        <p><small>Erstellt: {{ latest_lesson_plan.created_at|date:"d.m.Y H:i" }} | Modell: {{ latest_lesson_plan.llm_model|default:"N/A" }}</small></p>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 4px; white-space: pre-wrap; border: 1px solid #dee2e6; margin: 15px 0;">{{ latest_lesson_plan.content }}</div>
         <form method="post" action="{% url 'ai:generate_lesson_plan' lesson.pk %}" style="margin-top: 10px;">
             {% csrf_token %}
-            <button type="submit" class="btn">Neu generieren</button>
+            <button type="submit" class="btn btn-secondary">Neu generieren</button>
         </form>
     </div>
     {% else %}
     <p>Noch kein Unterrichtsplan vorhanden.</p>
     <form method="post" action="{% url 'ai:generate_lesson_plan' lesson.pk %}">
         {% csrf_token %}
-        <button type="submit" class="btn">Unterrichtsplan mit KI generieren</button>
+        <button type="submit" class="btn btn-success">🤖 Unterrichtsplan mit KI generieren <span class="premium-badge">PREMIUM</span></button>
     </form>
     {% endif %}
 {% else %}
-<div style="background: #fff3cd; padding: 15px; border-radius: 4px; color: #856404;">
-    <p><strong>Premium-Funktion:</strong> Diese Funktion ist nur für Premium-User verfügbar.</p>
+<div style="background: #fff3cd; padding: 15px; border-radius: 4px; color: #856404; border-left: 4px solid #ffc107;">
+    <p><strong>⚠ Premium-Funktion:</strong> Diese Funktion ist nur für Premium-User verfügbar.</p>
     <p>Bitte kontaktieren Sie den Administrator, um Premium-Zugang zu erhalten.</p>
 </div>
 {% endif %}

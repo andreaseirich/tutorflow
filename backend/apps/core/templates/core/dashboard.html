@@ -24,9 +24,9 @@
             <td>{{ lesson.get_status_display }}</td>
             <td>
                 {% if lesson._conflicts %}
-                <span class="conflict">⚠ {{ lesson._conflicts|length }} Konflikt(e)</span>
+                <span class="conflict-icon">⚠</span> <span class="conflict">{{ lesson._conflicts|length }} Konflikt(e)</span>
                 {% else %}
-                ✓
+                <span style="color: #28a745;">✓ OK</span>
                 {% endif %}
             </td>
         </tr>
@@ -58,9 +58,9 @@
             <td>{{ lesson.get_status_display }}</td>
             <td>
                 {% if lesson._conflicts %}
-                <span class="conflict">⚠ {{ lesson._conflicts|length }} Konflikt(e)</span>
+                <span class="conflict-icon">⚠</span> <span class="conflict">{{ lesson._conflicts|length }} Konflikt(e)</span>
                 {% else %}
-                ✓
+                <span style="color: #28a745;">✓ OK</span>
                 {% endif %}
             </td>
         </tr>
