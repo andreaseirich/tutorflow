@@ -8,6 +8,7 @@ from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from apps.lessons.models import Lesson
 from apps.contracts.models import Contract, ContractMonthlyPlan
+from apps.billing.models import InvoiceItem
 
 
 class IncomeSelector:
@@ -194,3 +195,63 @@ class IncomeSelector:
             }
         
         return status_breakdown
+
+    @staticmethod
+    def get_billing_status(year: int = None, month: int = None) -> dict:
+        """
+        Gibt Informationen über abgerechnete vs. nicht abgerechnete Lessons zurück.
+        
+        Args:
+            year: Optional - Jahr
+            month: Optional - Monat
+            
+        Returns:
+            Dict mit 'invoiced' und 'not_invoiced' Informationen
+        """
+        query = Q(status='taught')  # Nur unterrichtete Lessons
+        if year and month:
+            start_date = date(year, month, 1)
+            if month == 12:
+                end_date = date(year + 1, 1, 1)
+            else:
+                end_date = date(year, month + 1, 1)
+            query &= Q(date__gte=start_date, date__lt=end_date)
+        elif year:
+            query &= Q(date__year=year)
+        
+        all_taught_lessons = Lesson.objects.filter(query).select_related('contract')
+        
+        # Lessons mit InvoiceItem (abgerechnet)
+        invoiced_lesson_ids = InvoiceItem.objects.filter(
+            lesson__isnull=False
+        ).values_list('lesson_id', flat=True)
+        invoiced_lessons = all_taught_lessons.filter(id__in=invoiced_lesson_ids)
+        
+        # Lessons ohne InvoiceItem (nicht abgerechnet)
+        not_invoiced_lessons = all_taught_lessons.exclude(id__in=invoiced_lesson_ids)
+        
+        # Berechne Einnahmen
+        invoiced_income = Decimal('0.00')
+        for lesson in invoiced_lessons:
+            hourly_rate = lesson.contract.hourly_rate
+            hours = Decimal(lesson.duration_minutes) / Decimal('60')
+            invoiced_income += hourly_rate * hours
+        
+        not_invoiced_income = Decimal('0.00')
+        for lesson in not_invoiced_lessons:
+            hourly_rate = lesson.contract.hourly_rate
+            hours = Decimal(lesson.duration_minutes) / Decimal('60')
+            not_invoiced_income += hourly_rate * hours
+        
+        return {
+            'invoiced': {
+                'lesson_count': invoiced_lessons.count(),
+                'income': invoiced_income,
+                'lessons': invoiced_lessons,
+            },
+            'not_invoiced': {
+                'lesson_count': not_invoiced_lessons.count(),
+                'income': not_invoiced_income,
+                'lessons': not_invoiced_lessons,
+            },
+        }

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rechnung {{ invoice.id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .invoice-info {
+            margin-bottom: 30px;
+        }
+        .payer-info {
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Rechnung</h1>
+        <p>Rechnungsnummer: {{ invoice.id }}</p>
+    </div>
+    
+    <div class="invoice-info">
+        <p><strong>Rechnungsdatum:</strong> {{ invoice.created_at|date:"d.m.Y" }}</p>
+        <p><strong>Zeitraum:</strong> {{ invoice.period_start|date:"d.m.Y" }} - {{ invoice.period_end|date:"d.m.Y" }}</p>
+    </div>
+    
+    <div class="payer-info">
+        <h3>Zahlungspflichtiger</h3>
+        <p><strong>{{ invoice.payer_name }}</strong></p>
+        {% if invoice.payer_address %}
+        <p>{{ invoice.payer_address|linebreaks }}</p>
+        {% endif %}
+    </div>
+    
+    <h3>Rechnungsposten</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Beschreibung</th>
+                <th>Dauer</th>
+                <th>Betrag</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.date|date:"d.m.Y" }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.duration_minutes }} Min.</td>
+                <td>{{ item.amount }}€</td>
+            </tr>
+            {% endfor %}
+            <tr class="total">
+                <td colspan="3"><strong>Gesamtbetrag:</strong></td>
+                <td><strong>{{ invoice.total_amount }}€</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="footer">
+        <p>Erstellt mit TutorFlow</p>
+    </div>
+</body>
+</html>
+

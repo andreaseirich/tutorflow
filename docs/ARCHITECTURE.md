@@ -97,6 +97,17 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
   - `get_monthly_planned_vs_actual()`: Vergleich geplanter vs. tatsächlicher Einheiten und Einnahmen pro Monat
 - **Zweck**: Abgeleitete Monats-/Jahresauswertungen ohne eigenes Model. Unterstützt Vergleich zwischen geplanten (aus ContractMonthlyPlan) und tatsächlichen (aus Lessons) Werten.
 
+#### LessonStatusService (apps.lessons.status_service)
+- **Kein Model**: Service-Layer für automatische Status-Verwaltung von Lessons
+- **Methoden**:
+  - `update_status_for_lesson(lesson)`: Aktualisiert Status basierend auf Datum/Zeit
+    - Vergangene Lessons (end_datetime < jetzt) mit Status PLANNED → TAUGHT
+    - Zukünftige Lessons (start_datetime >= jetzt) ohne Status → PLANNED
+    - PAID oder CANCELLED werden NICHT überschrieben
+  - `bulk_update_past_lessons()`: Setzt alle vergangenen PLANNED Lessons auf TAUGHT
+- **Zweck**: Automatische Status-Setzung beim Anlegen/Aktualisieren von Lessons
+- **Integration**: Wird in LessonCreateView und LessonUpdateView aufgerufen
+
 #### CalendarService (apps.lessons.calendar_service)
 - **Kein Model**: Service-Layer für Kalenderansicht
 - **Methoden**:
@@ -141,9 +152,27 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
    - Prüfung auf Überlappung mit anderen Lessons (inkl. deren Fahrtzeiten)
    - Prüfung auf Überlappung mit Blockzeiten
    - Konflikte werden als Warnung angezeigt
-7. Lesson wird erstellt mit Status "geplant"
-8. Bei Abschluss: Status auf "unterrichtet" → "ausgezahlt"
-9. **Filterung**: Nur zukünftige/aktuelle Lessons werden im Kalender angezeigt
+7. Lesson wird erstellt
+8. **Automatische Status-Setzung**: `LessonStatusService.update_status_for_lesson()`
+   - Vergangene Lessons → Status TAUGHT
+   - Zukünftige Lessons → Status PLANNED
+   - PAID/CANCELLED werden nicht überschrieben
+9. Bei Abschluss: Status auf "unterrichtet" → "ausgezahlt"
+10. **Filterung**: Nur zukünftige/aktuelle Lessons werden im Kalender angezeigt
+
+### Abrechnungs-Workflow
+1. **Auswahl von Lessons**: Benutzer wählt Zeitraum und optional Vertrag
+2. **Anzeige verfügbarer Lessons**: System zeigt alle TAUGHT Lessons ohne InvoiceItem
+3. **Auswahl**: Benutzer wählt Lessons per Checkbox aus
+4. **Rechnung erstellen**: `InvoiceService.create_invoice_from_lessons()`
+   - Erstellt Invoice mit period_start, period_end, payer_info
+   - Erstellt InvoiceItems für jede ausgewählte Lesson (mit Kopie der Daten)
+   - Berechnet total_amount
+   - Setzt Lessons auf Status PAID
+5. **Dokument generieren**: Optional `InvoiceDocumentService.save_document()`
+   - Generiert HTML-Dokument
+   - Speichert als FileField
+6. **Finanzansicht**: Zeigt abgerechnete vs. nicht abgerechnete Lessons
 
 ### Konfliktlogik (Phase 3)
 - **LessonConflictService**: Zentrale Service-Klasse für Konfliktprüfung

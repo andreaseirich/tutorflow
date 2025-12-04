@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps.blocked_times',
     'apps.lesson_plans',
     'apps.ai',
+    'apps.billing',
 ]
 
 MIDDLEWARE = [

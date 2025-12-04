@@ -52,6 +52,31 @@
 </table>
 {% endif %}
 
+{% if billing_status %}
+<h3>Abrechnungsstatus</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Status</th>
+            <th>Anzahl Stunden</th>
+            <th>Einnahmen</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Abgerechnet</strong></td>
+            <td>{{ billing_status.invoiced.lesson_count }}</td>
+            <td>{{ billing_status.invoiced.income }}€</td>
+        </tr>
+        <tr>
+            <td><strong>Nicht abgerechnet</strong></td>
+            <td>{{ billing_status.not_invoiced.lesson_count }}</td>
+            <td>{{ billing_status.not_invoiced.income }}€</td>
+        </tr>
+    </tbody>
+</table>
+{% endif %}
+
 <h3>Einnahmen nach Status</h3>
 <table>
     <thead>
