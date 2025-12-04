@@ -156,13 +156,18 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
    - Prüfung auf Überlappung mit anderen Lessons (inkl. deren Fahrtzeiten)
    - Prüfung auf Überlappung mit Blockzeiten
    - Konflikte werden als Warnung angezeigt
-7. Lesson wird erstellt
+7. Lesson wird erstellt (ohne manuelle Status-Auswahl im Formular)
 8. **Automatische Status-Setzung**: `LessonStatusService.update_status_for_lesson()`
    - Vergangene Lessons → Status TAUGHT
    - Zukünftige Lessons → Status PLANNED
    - PAID/CANCELLED werden nicht überschrieben
-9. Bei Abschluss: Status auf "unterrichtet" → "ausgezahlt"
+   - Wird sowohl bei manueller Erstellung als auch bei Recurring Lessons angewendet
+9. Bei Abschluss: Status auf "unterrichtet" → "ausgezahlt" (über Abrechnungssystem)
 10. **Filterung**: Nur zukünftige/aktuelle Lessons werden im Kalender angezeigt
+11. **Kalender-Datum-Synchronisation**: 
+    - Monatsname im Kalender entspricht dem angezeigten Monat (year/month Parameter)
+    - Default-Datum im Create-Formular entspricht dem angeklickten Tag (date Parameter)
+    - Redirect nach Create/Update führt zurück zum korrekten Monat
 
 ### Abrechnungs-Workflow
 1. **Auswahl von Lessons**: Benutzer wählt Zeitraum und optional Vertrag
