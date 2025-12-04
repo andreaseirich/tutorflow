@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Blockzeit löschen - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Blockzeit löschen</h1>
+<p>Sind Sie sicher, dass Sie die Blockzeit "{{ object.title }}" ({{ object.start_datetime|date:"d.m.Y H:i" }}) löschen möchten?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="btn-group">
+        <button type="submit" class="btn btn-danger">Löschen bestätigen</button>
+        <a href="{% url 'blocked_times:detail' object.pk %}" class="btn btn-secondary">Abbrechen</a>
+    </div>
+</form>
+{% endblock %}
+

@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ blocked_time }} - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>{{ blocked_time }}</h1>
+
+<div class="btn-group">
+    <a href="{% url 'blocked_times:update' blocked_time.pk %}" class="btn">Bearbeiten</a>
+    <a href="{% url 'blocked_times:delete' blocked_time.pk %}" class="btn btn-danger">Löschen</a>
+    <a href="{% url 'blocked_times:list' %}" class="btn btn-secondary">Zurück zur Liste</a>
+</div>
+
+<h2>Details</h2>
+<table>
+    <tr><th>Titel</th><td>{{ blocked_time.title }}</td></tr>
+    {% if blocked_time.description %}
+    <tr><th>Beschreibung</th><td>{{ blocked_time.description }}</td></tr>
+    {% endif %}
+    <tr><th>Start</th><td>{{ blocked_time.start_datetime|date:"d.m.Y H:i" }}</td></tr>
+    <tr><th>Ende</th><td>{{ blocked_time.end_datetime|date:"d.m.Y H:i" }}</td></tr>
+    <tr><th>Wiederkehrend</th><td>{% if blocked_time.is_recurring %}Ja{% else %}Nein{% endif %}</td></tr>
+    {% if blocked_time.recurring_pattern %}
+    <tr><th>Wiederholungsmuster</th><td>{{ blocked_time.recurring_pattern }}</td></tr>
+    {% endif %}
+    <tr><th>Erstellt</th><td>{{ blocked_time.created_at|date:"d.m.Y H:i" }}</td></tr>
+    <tr><th>Zuletzt aktualisiert</th><td>{{ blocked_time.updated_at|date:"d.m.Y H:i" }}</td></tr>
+</table>
+{% endblock %}
+
