@@ -121,7 +121,7 @@ class InvoiceServiceTest(TestCase):
             status='planned'
         )
         
-        billable = InvoiceService.get_billable_lessons(period_start, period_end)
+        billable = InvoiceService.get_billable_lessons(period_start, period_end, None)
         
         self.assertEqual(billable.count(), 2)
         self.assertIn(lesson1, billable)

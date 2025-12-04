@@ -31,6 +31,14 @@ class InvoiceCreateView(CreateView):
     """Erstellung einer neuen Rechnung aus Lessons."""
     form_class = InvoiceCreateForm
     template_name = 'billing/invoice_create.html'
+    model = None  # Kein Model, da wir ein normales Form verwenden
+    
+    def get_form_kwargs(self):
+        """Entfernt 'instance' aus kwargs, da InvoiceCreateForm kein ModelForm ist."""
+        kwargs = super().get_form_kwargs()
+        # Entferne 'instance', falls vorhanden (wird von CreateView hinzugefügt)
+        kwargs.pop('instance', None)
+        return kwargs
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

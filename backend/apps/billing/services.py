@@ -12,14 +12,14 @@ class InvoiceService:
     """Service für Invoice-Operationen."""
     
     @staticmethod
-    def get_billable_lessons(period_start, period_end, contract=None):
+    def get_billable_lessons(period_start, period_end, contract_id=None):
         """
         Gibt alle Lessons zurück, die für eine Abrechnung in Frage kommen.
         
         Args:
             period_start: Startdatum des Zeitraums
             period_end: Enddatum des Zeitraums
-            contract: Optional: Filter nach Vertrag
+            contract_id: Optional: Filter nach Vertrag-ID
             
         Returns:
             QuerySet von Lessons mit Status TAUGHT, die noch nicht in einer Invoice sind
@@ -32,8 +32,8 @@ class InvoiceService:
             invoice_items__isnull=False
         ).select_related('contract', 'contract__student', 'location')
         
-        if contract:
-            queryset = queryset.filter(contract=contract)
+        if contract_id:
+            queryset = queryset.filter(contract_id=contract_id)
         
         return queryset.order_by('date', 'start_time')
     
