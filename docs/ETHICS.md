@@ -50,6 +50,11 @@ Der Stil der Software soll von Ordnung und Zuverlässigkeit geprägt sein. Es we
 - Verschlüsselung sensibler Informationen
 - Regelmäßige Sicherheitsprüfungen
 
+### Demo-Daten und Datenschutz
+- **Keine echten Daten im Repository**: Das Repository enthält keine echten Schüler- oder Kundendaten
+- **Demo-Daten sind fiktiv**: Alle Demo-Daten (z. B. via `seed_demo_data` Command) sind vollständig fiktiv und dienen nur zu Demonstrationszwecken
+- **Verantwortungsvoller Umgang**: Nutzer werden ermutigt, verantwortungsvoll mit personenbezogenen Daten umzugehen und die Datenschutzbestimmungen einzuhalten
+
 ## KI-Einsatz (Premium-Funktion)
 
 ### Verantwortungsvoller KI-Einsatz
