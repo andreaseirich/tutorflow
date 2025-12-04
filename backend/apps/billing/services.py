@@ -18,6 +18,7 @@ class InvoiceService:
         
         Nur Lessons mit Status TAUGHT, die noch nicht in einer Invoice sind.
         Lessons mit Status PLANNED oder PAID werden ausgeschlossen.
+        Eine Lesson kann nur in einer Rechnung vorkommen.
         
         Args:
             period_start: Startdatum des Zeitraums
@@ -28,11 +29,11 @@ class InvoiceService:
             QuerySet von Lessons mit Status TAUGHT, die noch nicht in einem InvoiceItem sind
         """
         queryset = Lesson.objects.filter(
-            status='taught',  # Nur unterrichtete Lessons
+            status='taught',  # Nur unterrichtete Lessons (nicht PLANNED oder PAID)
             date__gte=period_start,
             date__lte=period_end
         ).exclude(
-            invoice_items__isnull=False  # Keine Lessons, die bereits in einer Rechnung sind
+            invoice_items__isnull=False  # Keine Lessons, die bereits in einer Rechnung sind (1:1-Beziehung)
         ).select_related('contract', 'contract__student', 'location')
         
         if contract_id:

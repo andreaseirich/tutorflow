@@ -8,7 +8,13 @@ from apps.contracts.models import Contract
 
 
 class InvoiceCreateForm(forms.Form):
-    """Form für die Erstellung einer Rechnung - automatische Auswahl aller Lessons im Zeitraum."""
+    """
+    Form für die Erstellung einer Rechnung - automatische Auswahl aller Lessons im Zeitraum.
+    
+    Alle unterrichteten Stunden (Status TAUGHT) im Zeitraum werden automatisch aufgenommen.
+    Stunden mit Status PLANNED oder PAID werden nicht berücksichtigt.
+    Eine Lesson kann nur in einer Rechnung vorkommen.
+    """
     
     period_start = forms.DateField(
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -22,7 +28,7 @@ class InvoiceCreateForm(forms.Form):
         queryset=Contract.objects.filter(is_active=True),
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'}),
-        help_text="Optional: Nach Vertrag filtern"
+        help_text="Optional: Nach Vertrag filtern (nur Stunden dieses Vertrags werden abgerechnet)"
     )
     
     def clean(self):
