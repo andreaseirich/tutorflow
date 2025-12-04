@@ -53,17 +53,28 @@ Das Projekt TutorFlow wird in mehreren Phasen entwickelt, um eine strukturierte 
 
 ## Phase 3 – Kernfunktionen (Planung & Einnahmen)
 
-**Status**: ⏳ Ausstehend
+**Status**: ✅ Abgeschlossen
 
 **Ziel**: CRUD für Schüler, Verträge, Lessons, Blockzeiten; Monatsansicht + Einnahmenberechnungen; einfache Konfliktprüfung.
 
 **Akzeptanzkriterien**:
-- Oberfläche/Endpoints zur Verwaltung
-- Einkommensberechnung pro Monat
-- Konfliktprüfung funktioniert in einfachen Szenarien
+- ✅ Vollständige CRUD-Views für alle Kern-Entitäten (Student, Contract, Lesson, BlockedTime, Location)
+- ✅ Konfliktprüfung mit Fahrtzeiten und Blockzeiten implementiert
+- ✅ Monatsansicht & Einnahmenübersicht funktionieren
+- ✅ Dashboard mit Übersicht über heutige/kommende Stunden und Konflikte
+- ✅ Basis-UI mit Navigation
 
 **Tests**:
-- Tests für Planungslogik und Summenberechnung
+- ✅ 7 neue Tests für Konfliktprüfung und Services
+- ✅ Tests für Planungslogik, Konfliktprüfung inkl. Fahrtzeiten und Blockzeiten
+- ✅ Alle Tests laufen erfolgreich
+
+**Fortschritt**:
+- LessonConflictService für Konfliktprüfung implementiert
+- LessonQueryService für Abfragen implementiert
+- CRUD-Views für alle Entitäten mit Django Class-Based Views
+- Dashboard und Einnahmenübersicht implementiert
+- Basis-Templates erstellt
 
 ---
 

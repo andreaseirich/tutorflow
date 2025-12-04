@@ -101,16 +101,33 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 
 ### Planung einer Unterrichtsstunde
 1. Benutzer wählt Schüler und Vertrag
-2. System prüft Konflikte (Blockzeiten, andere Lessons)
-3. System berechnet Fahrtzeiten (optional)
+2. System prüft Konflikte (Blockzeiten, andere Lessons) inkl. Fahrtzeiten
+3. **Konfliktprüfung**: 
+   - Berechnung des Gesamtzeitblocks: `start = start_time - travel_before`, `ende = start_time + duration + travel_after`
+   - Prüfung auf Überlappung mit anderen Lessons (inkl. deren Fahrtzeiten)
+   - Prüfung auf Überlappung mit Blockzeiten
+   - Konflikte werden als Warnung angezeigt
 4. Lesson wird erstellt mit Status "geplant"
 5. Bei Abschluss: Status auf "unterrichtet" → "ausgezahlt"
 
-### Einnahmenberechnung
-1. System sammelt alle Lessons mit Status "ausgezahlt" für einen Monat
-2. Berechnung basierend auf Vertragshonorar
-3. Aggregation nach Status und Monat
-4. Darstellung in IncomeOverview
+### Konfliktlogik (Phase 3)
+- **LessonConflictService**: Zentrale Service-Klasse für Konfliktprüfung
+- **Zeitblock-Berechnung**: Berücksichtigt Fahrtzeiten vor und nach der Stunde
+- **Konflikttypen**:
+  - `lesson`: Überschneidung mit anderen Unterrichtsstunden
+  - `blocked_time`: Überschneidung mit Blockzeiten
+- **Konfliktmarkierung**: Lessons haben `has_conflicts` Property und `get_conflicts()` Methode
+- **UI-Darstellung**: Konflikte werden in Listen und Detailansichten als Warnung angezeigt
+
+### Einnahmenberechnung (Phase 3)
+1. System sammelt alle Lessons für einen Monat/Jahr (filterbar nach Status)
+2. **IncomeSelector**: Service-Layer für Einnahmenberechnungen
+   - `get_monthly_income()`: Monatliche Einnahmen nach Status
+   - `get_yearly_income()`: Jährliche Einnahmen mit Monatsaufschlüsselung
+   - `get_income_by_status()`: Gruppierung nach Status (geplant, unterrichtet, ausgezahlt)
+3. Berechnung basierend auf Vertragshonorar × Dauer (in Stunden)
+4. Aggregation nach Status und Monat
+5. Darstellung in IncomeOverview-View mit Filterung nach Jahr/Monat
 
 ### KI-Unterrichtsplan-Generierung (Premium)
 1. Premium-User wählt Schüler und Thema

@@ -62,3 +62,44 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - `docs/CHECKPOINTS.md` - Datumsangaben in Checkpoint 1 und 2 korrigiert
 - `CHANGELOG.md` - Versionsdatumsangaben korrigiert
 
+## [0.3.0] - 2025-12-04
+
+### Hinzugefügt
+- **CRUD-Funktionen** für alle Kern-Entitäten:
+  - Student (List, Detail, Create, Update, Delete Views)
+  - Contract (List, Detail, Create, Update, Delete Views)
+  - Lesson (List, Detail, Create, Update, Delete, Month-View)
+  - BlockedTime (List, Detail, Create, Update, Delete Views)
+  - Location (List, Detail, Create, Update, Delete Views)
+- **Konfliktprüfung**:
+  - `apps.lessons.services.LessonConflictService` - Zentrale Service-Klasse für Konfliktprüfung
+  - Zeitblock-Berechnung inkl. Fahrtzeiten
+  - Prüfung auf Überlappung mit anderen Lessons und Blockzeiten
+  - Konfliktmarkierung in Lesson-Model (`has_conflicts` Property, `get_conflicts()` Methode)
+- **Planungslogik**:
+  - `apps.lessons.services.LessonQueryService` - Service für Lesson-Abfragen
+  - Monatsansicht für Lessons
+  - Abfragen für heutige und kommende Lessons
+- **Einnahmenübersicht**:
+  - Dashboard-View mit Übersicht über heutige/kommende Stunden und Konflikte
+  - IncomeOverview-View mit Monats-/Jahresansicht
+  - Integration von IncomeSelector in Views
+- **Basis-UI**:
+  - Navigation zwischen allen Bereichen
+  - Basis-Templates für alle CRUD-Operationen
+  - Dashboard-Template mit Konfliktanzeige
+- **Tests**:
+  - 7 neue Tests für Konfliktprüfung und Services
+  - Tests für Zeitblock-Berechnung, Konflikte mit Lessons und Blockzeiten, Abfragen
+
+### Geändert
+- `apps.lessons.models.Lesson` - Erweitert um Konfliktprüfungs-Methoden
+- `backend/tutorflow/urls.py` - URLs für alle Apps eingebunden
+- `docs/ARCHITECTURE.md` - Konfliktlogik und Einnahmenberechnung dokumentiert
+- `docs/API.md` - Implementierte Views dokumentiert
+- `docs/PHASES.md` - Phase 3 als abgeschlossen markiert
+- `docs/CHECKPOINTS.md` - Checkpoint 3 dokumentiert
+
+### Phase
+- Phase 3 – Kernfunktionen (Planung & Einnahmen) abgeschlossen
+
