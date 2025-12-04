@@ -37,6 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # TutorFlow apps
+    'apps.core',
+    'apps.locations',
+    'apps.students',
+    'apps.contracts',
+    'apps.lessons',
+    'apps.blocked_times',
+    'apps.lesson_plans',
 ]
 
 MIDDLEWARE = [
