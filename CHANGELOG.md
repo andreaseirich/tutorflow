@@ -5,6 +5,21 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.2] - 2025-12-04
+
+### Behoben
+- **Kalender-Monatsanzeige**: CalendarView verwendet jetzt ausschließlich year/month aus URL-Parametern
+  - Zentrale Variable `current_month_date = date(year, month, 1)` für alle Berechnungen
+  - Monatsname (month_label) wird korrekt aus angezeigtem Monat abgeleitet
+  - Keine Verwendung von 'heute' für Monatsberechnung mehr
+  - Template verwendet month_label statt month_names slice
+  - CreateView verwendet year/month aus Request als Fallback für initiales Datum
+
+### Tests
+- 3 neue Tests für Kalender-Monatsanzeige (inkl. Dezember-Test)
+
+---
+
 ## [0.8.1] - 2025-12-04
 
 ### Geändert

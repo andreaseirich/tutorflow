@@ -165,9 +165,11 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 9. Bei Abschluss: Status auf "unterrichtet" → "ausgezahlt" (über Abrechnungssystem)
 10. **Filterung**: Nur zukünftige/aktuelle Lessons werden im Kalender angezeigt
 11. **Kalender-Datum-Synchronisation**: 
-    - Monatsname im Kalender entspricht dem angezeigten Monat (year/month Parameter)
-    - Default-Datum im Create-Formular entspricht dem angeklickten Tag (date Parameter)
-    - Redirect nach Create/Update führt zurück zum korrekten Monat
+    - CalendarView verwendet ausschließlich year/month aus URL-Parametern (kein 'heute' für Monatsberechnung)
+    - Zentrale Variable `current_month_date = date(year, month, 1)` für alle Berechnungen
+    - Monatsname (month_label) wird aus current_month_date abgeleitet
+    - Default-Datum im Create-Formular entspricht dem angeklickten Tag (date Parameter) oder year/month
+    - Redirect nach Create/Update führt zurück zum korrekten Monat (year/month aus Request)
 
 ### Abrechnungs-Workflow
 1. **Auswahl von Lessons**: Benutzer wählt Zeitraum und optional Vertrag
