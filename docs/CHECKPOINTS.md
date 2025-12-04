@@ -8,7 +8,7 @@ Dieses Dokument protokolliert den Fortschritt des Projekts und wichtige Meilenst
 
 ## Checkpoint 1: Projektstart
 
-**Datum**: 2025-01-27
+**Datum**: 2025-12-04
 
 **Phase**: Phase 1 – Projekt-Setup & Architekturgrundlagen
 
@@ -71,7 +71,7 @@ Dieses Dokument protokolliert den Fortschritt des Projekts und wichtige Meilenst
 
 ## Checkpoint 2: Domain-Models implementiert
 
-**Datum**: 2025-01-27
+**Datum**: 2025-12-04
 
 **Phase**: Phase 2 – Domain-Datenmodell & Migrations
 
@@ -120,4 +120,12 @@ Dieses Dokument protokolliert den Fortschritt des Projekts und wichtige Meilenst
 1. Git-Commits erstellen
 2. Phase 2 abschließen
 3. Phase 3 vorbereiten (Kernfunktionen)
+
+---
+
+## Hinweis zur Datumskorrektur
+
+**Datum der Korrektur**: 2025-12-04
+
+Alle ursprünglich mit `2025-01-27` dokumentierten Datumsangaben wurden auf das korrekte Datum `2025-12-04` (Europe/Berlin) korrigiert, da das ursprüngliche Datum nicht mit dem tatsächlichen Projektstand übereinstimmte.
 
