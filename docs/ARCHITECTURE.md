@@ -194,7 +194,12 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 6. **Rechnung löschen**: `InvoiceService.delete_invoice()`
    - Löscht Invoice und alle InvoiceItems (CASCADE)
    - Setzt Lessons zurück auf TAUGHT (PAID → TAUGHT), da eine Lesson nur in einer Rechnung sein kann
-7. **Finanzansicht**: Unterscheidung zwischen abgerechneten und nicht abgerechneten Lessons
+7. **Bulk-Reset bezahlter Lessons**: Management Command `reset_paid_lessons`
+   - Setzt alle Lessons mit Status PAID auf TAUGHT zurück
+   - Option `--delete-invoices`: Löscht auch die zugehörigen Rechnungen
+   - Option `--dry-run`: Zeigt nur an, was geändert würde
+   - Verwendung: `python manage.py reset_paid_lessons [--delete-invoices] [--dry-run]`
+8. **Finanzansicht**: Unterscheidung zwischen abgerechneten und nicht abgerechneten Lessons
 
 ### Konfliktlogik (Phase 3)
 - **LessonConflictService**: Zentrale Service-Klasse für Konfliktprüfung
