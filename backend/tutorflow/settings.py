@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'apps.lessons',
     'apps.blocked_times',
     'apps.lesson_plans',
+    'apps.ai',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +131,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# AI/LLM Configuration
+# Diese Werte sollten über Umgebungsvariablen gesetzt werden
+# Beispiel: export LLM_API_KEY="your-key-here"
+LLM_API_BASE_URL = os.environ.get('LLM_API_BASE_URL', 'https://api.openai.com/v1')
+LLM_API_KEY = os.environ.get('LLM_API_KEY', '')
+LLM_MODEL_NAME = os.environ.get('LLM_MODEL_NAME', 'gpt-3.5-turbo')
+LLM_TIMEOUT_SECONDS = int(os.environ.get('LLM_TIMEOUT_SECONDS', '30'))
