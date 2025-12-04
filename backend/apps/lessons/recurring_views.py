@@ -134,8 +134,10 @@ def generate_lessons_from_recurring(request, pk):
     # Weiterleitung zum Kalender, falls Lessons erstellt wurden
     if result['created'] > 0:
         from django.utils import timezone
+        from django.urls import reverse
         today = timezone.localdate()
-        return redirect('lessons:calendar') + f'?year={today.year}&month={today.month}'
+        calendar_url = reverse('lessons:calendar') + f'?year={today.year}&month={today.month}'
+        return redirect(calendar_url)
     
     return redirect('lessons:recurring_detail', pk=pk)
 
