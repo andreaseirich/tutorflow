@@ -118,7 +118,12 @@ class LessonDeleteView(DeleteView):
     """Unterrichtsstunde löschen."""
     model = Lesson
     template_name = 'lessons/lesson_confirm_delete.html'
-    success_url = reverse_lazy('lessons:list')
+
+    def get_success_url(self):
+        """Weiterleitung zurück zum Kalender."""
+        from django.utils import timezone
+        today = timezone.localdate()
+        return reverse_lazy('lessons:calendar') + f'?year={today.year}&month={today.month}'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Unterrichtsstunde erfolgreich gelöscht.')
