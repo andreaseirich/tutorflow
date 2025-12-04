@@ -67,3 +67,57 @@ Dieses Dokument protokolliert den Fortschritt des Projekts und wichtige Meilenst
 - Projektstruktur folgt den Vorgaben aus dem Master Prompt
 - Dokumentation orientiert sich an den ethischen Leitlinien
 
+---
+
+## Checkpoint 2: Domain-Models implementiert
+
+**Datum**: 2025-01-27
+
+**Phase**: Phase 2 – Domain-Datenmodell & Migrations
+
+**Status**: ✅ Abgeschlossen
+
+### Abgeschlossen
+- ✅ 7 Django-Apps erstellt (locations, students, contracts, lessons, blocked_times, lesson_plans, core)
+- ✅ Alle Domain-Models implementiert:
+  - Location (mit optionalen Koordinaten)
+  - Student (mit Kontaktdaten, Schule, Fächern)
+  - Contract (mit Honorar, Dauer, Vertragszeitraum)
+  - Lesson (mit Status, Fahrtzeiten)
+  - BlockedTime (für eigene Termine)
+  - LessonPlan (für KI-generierte Pläne)
+  - UserProfile (Premium-Flag)
+- ✅ IncomeSelector als Service-Layer implementiert
+- ✅ Admin-Interfaces für alle Models
+- ✅ Migrations erstellt und ausgeführt
+- ✅ 14 Unit-Tests geschrieben und erfolgreich
+
+### Validierungsergebnisse
+
+#### Model-Validierung
+- [x] Alle Models haben korrekte Felder
+- [x] Beziehungen korrekt definiert (ForeignKeys, OneToOne)
+- [x] __str__-Methoden implementiert
+- [x] Meta-Optionen (ordering, verbose_name) gesetzt
+- [x] Indizes für performante Abfragen
+
+#### Migrationen
+- [x] Migrations für alle Apps erstellt
+- [x] Migrations erfolgreich ausgeführt
+- [x] Keine Fehler bei `python manage.py check`
+
+#### Tests
+- [x] 14 Tests implementiert
+- [x] Alle Tests laufen erfolgreich
+- [x] Tests decken CRUD, Beziehungen und Einnahmenberechnung ab
+
+#### Dokumentation
+- [x] ARCHITECTURE.md mit Datenmodell-Details aktualisiert
+- [x] PHASES.md aktualisiert (Phase 2 als abgeschlossen markiert)
+- [x] CHECKPOINTS.md aktualisiert
+
+### Nächste Schritte
+1. Git-Commits erstellen
+2. Phase 2 abschließen
+3. Phase 3 vorbereiten (Kernfunktionen)
+

@@ -23,27 +23,61 @@ backend/
 │   ├── wsgi.py         # WSGI-Konfiguration
 │   └── asgi.py         # ASGI-Konfiguration
 ├── apps/               # Feature-spezifische Django-Apps
-│   ├── students/       # Schülerverwaltung (geplant)
-│   ├── contracts/      # Vertragsverwaltung (geplant)
-│   ├── lessons/        # Unterrichtsplanung (geplant)
-│   ├── billing/        # Einnahmenauswertung (geplant)
-│   └── core/           # Kernfunktionalität (geplant)
+│   ├── students/       # Schülerverwaltung
+│   ├── contracts/      # Vertragsverwaltung
+│   ├── lessons/        # Unterrichtsplanung
+│   ├── locations/      # Ortsverwaltung
+│   ├── blocked_times/  # Blockzeiten-Verwaltung
+│   ├── lesson_plans/   # KI-generierte Unterrichtspläne
+│   └── core/           # Kernfunktionalität (User-Erweiterung, Income-Selector)
 ├── config/             # Zusätzliche Konfigurationsdateien
 └── manage.py           # Django-Management-Script
 ```
 
-### Domain-Modell (Konzeptionell)
+### Domain-Modell (Implementiert)
 
-Die folgenden Entitäten bilden das Kern-Domain-Modell:
+Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Models implementiert:
 
-- **Student**: Name, Kontaktdaten, Schule/Klasse, Fächer, Standard-Unterrichtsort
-- **Contract**: Student, Institut, Honorar pro Einheit, Dauer, Vertragszeitraum, geplante Einheiten/Monat
-- **Lesson**: Datum, Startzeit, Dauer, Status (geplant/unterrichtet/ausgefallen/ausgezahlt), Ort, Fahrtzeit vorher/nachher
-- **BlockedTime**: Eigene Termine/Blockzeiten (z. B. Uni, Job, Gemeinde)
-- **Location**: Name, Adresse, optional Koordinaten
-- **LessonPlan**: KI-generierter Unterrichtsplan (Text + Metadaten)
-- **User**: Django-User mit Zusatzfeld für Premium-Status
-- **IncomeOverview**: Abgeleitete Monats-/Jahresauswertungen
+#### Location (apps.locations)
+- **Felder**: name, address, latitude, longitude (optional)
+- **Beziehungen**: One-to-Many zu Student (default_location)
+- **Zweck**: Verwaltung von Unterrichtsorten mit optionalen Koordinaten
+
+#### Student (apps.students)
+- **Felder**: first_name, last_name, email, phone, school, grade, subjects, default_location (FK), notes
+- **Beziehungen**: Many-to-One zu Location, One-to-Many zu Contract
+- **Zweck**: Zentrale Verwaltung von Schülern mit Kontaktdaten und Schulinformationen
+
+#### Contract (apps.contracts)
+- **Felder**: student (FK), institute, hourly_rate, unit_duration_minutes, start_date, end_date, planned_units_per_month, is_active, notes
+- **Beziehungen**: Many-to-One zu Student, One-to-Many zu Lesson
+- **Zweck**: Verwaltung von Verträgen mit Honorar, Dauer und Vertragszeitraum
+
+#### Lesson (apps.lessons)
+- **Felder**: contract (FK), date, start_time, duration_minutes, status (choices), location (FK), travel_time_before_minutes, travel_time_after_minutes, notes
+- **Status**: 'planned', 'taught', 'cancelled', 'paid'
+- **Beziehungen**: Many-to-One zu Contract und Location
+- **Zweck**: Planung und Verwaltung von Unterrichtsstunden mit Status-Tracking
+
+#### BlockedTime (apps.blocked_times)
+- **Felder**: title, description, start_datetime, end_datetime, is_recurring, recurring_pattern
+- **Beziehungen**: Keine direkten Beziehungen
+- **Zweck**: Verwaltung eigener Termine/Blockzeiten (z. B. Uni, Job, Gemeinde)
+
+#### LessonPlan (apps.lesson_plans)
+- **Felder**: student (FK), lesson (FK, optional), topic, subject, content, grade_level, duration_minutes, llm_model
+- **Beziehungen**: Many-to-One zu Student und Lesson (optional)
+- **Zweck**: Speicherung von KI-generierten Unterrichtsplänen
+
+#### UserProfile (apps.core)
+- **Felder**: user (OneToOne), is_premium, premium_since
+- **Beziehungen**: One-to-One zu Django User
+- **Zweck**: Erweiterung des Django-User-Models um Premium-Flag
+
+#### IncomeSelector (apps.core.selectors)
+- **Kein Model**: Service-Layer für Einnahmenberechnungen
+- **Methoden**: get_monthly_income(), get_yearly_income(), get_income_by_status()
+- **Zweck**: Abgeleitete Monats-/Jahresauswertungen ohne eigenes Model
 
 ### Architekturprinzipien
 
@@ -102,9 +136,27 @@ Die Architektur ist darauf ausgelegt, einfach erweitert zu werden:
 - API-Endpoints können schrittweise hinzugefügt werden
 - Frontend kann später integriert werden (Django-Templates, HTMX, React, etc.)
 
+## Datenbank-Schema
+
+### Beziehungen
+- **Location** ← (1:N) → **Student** (default_location)
+- **Student** ← (1:N) → **Contract**
+- **Contract** ← (1:N) → **Lesson**
+- **Location** ← (1:N) → **Lesson**
+- **Student** ← (1:N) → **LessonPlan**
+- **Lesson** ← (1:N) → **LessonPlan** (optional)
+- **User** ← (1:1) → **UserProfile**
+
+### Indizes
+- Lesson: Index auf (date, start_time) und status für performante Abfragen
+- BlockedTime: Index auf (start_datetime, end_datetime) für Konfliktprüfung
+
 ## Status
 
-**Phase 1**: Grundstruktur angelegt, Django-Projekt initialisiert.
+**Phase 2**: Domain-Models implementiert, Migrations erstellt und ausgeführt, Tests geschrieben.
 
-Weitere Details werden in den folgenden Phasen ausgearbeitet.
+- Alle 7 Domain-Models sind implementiert
+- Migrations erfolgreich ausgeführt
+- 14 Unit-Tests laufen erfolgreich
+- IncomeSelector als Service-Layer implementiert
 

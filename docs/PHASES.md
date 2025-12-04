@@ -29,17 +29,25 @@ Das Projekt TutorFlow wird in mehreren Phasen entwickelt, um eine strukturierte 
 
 ## Phase 2 – Domain-Datenmodell & Migrations
 
-**Status**: ⏳ Ausstehend
+**Status**: ✅ Abgeschlossen
 
 **Ziel**: Zentrale Models (Student, Contract, Lesson, BlockedTime, Location, User-Erweiterung) definieren und migrieren.
 
 **Akzeptanzkriterien**:
-- Alle Models definiert
-- Migrationen laufen
-- ARCHITECTURE.md und ggf. API/Datenmodell-Doku aktualisiert
+- ✅ Alle Models definiert (7 Models: Location, Student, Contract, Lesson, BlockedTime, LessonPlan, UserProfile)
+- ✅ Migrationen erstellt und erfolgreich ausgeführt
+- ✅ ARCHITECTURE.md mit Datenmodell-Details aktualisiert
+- ✅ IncomeSelector als Service-Layer implementiert
 
 **Tests**:
-- Einfache Unit-Tests für Model-Logik (z. B. Berechnung von Honoraren)
+- ✅ 14 Unit-Tests implementiert und erfolgreich
+- ✅ Tests für Model-Logik (CRUD, Beziehungen, Einnahmenberechnung)
+
+**Fortschritt**:
+- Alle 7 Django-Apps erstellt (locations, students, contracts, lessons, blocked_times, lesson_plans, core)
+- Models mit korrekten Feldern, Beziehungen und Meta-Optionen
+- Admin-Interfaces für alle Models
+- IncomeSelector mit monatlicher/jährlicher Einnahmenberechnung
 
 ---
 
