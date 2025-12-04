@@ -8,7 +8,7 @@ from apps.contracts.models import Contract
 
 
 class InvoiceCreateForm(forms.Form):
-    """Form für die Erstellung einer Rechnung mit Lesson-Auswahl."""
+    """Form für die Erstellung einer Rechnung - automatische Auswahl aller Lessons im Zeitraum."""
     
     period_start = forms.DateField(
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -23,11 +23,6 @@ class InvoiceCreateForm(forms.Form):
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'}),
         help_text="Optional: Nach Vertrag filtern"
-    )
-    lesson_ids = forms.CharField(
-        widget=forms.HiddenInput(),
-        required=False,
-        help_text="IDs der ausgewählten Lessons (kommagetrennt)"
     )
     
     def clean(self):

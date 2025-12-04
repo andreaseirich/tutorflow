@@ -148,7 +148,6 @@ class InvoiceServiceTest(TestCase):
         )
         
         invoice = InvoiceService.create_invoice_from_lessons(
-            [lesson1.id, lesson2.id],
             period_start,
             period_end,
             self.contract
@@ -177,7 +176,6 @@ class InvoiceServiceTest(TestCase):
         )
         
         invoice = InvoiceService.create_invoice_from_lessons(
-            [lesson.id],
             date(2025, 1, 1),
             date(2025, 1, 31),
             self.contract

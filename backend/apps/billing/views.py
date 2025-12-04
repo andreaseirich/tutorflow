@@ -73,19 +73,17 @@ class InvoiceCreateView(CreateView):
         period_start = form.cleaned_data['period_start']
         period_end = form.cleaned_data['period_end']
         contract = form.cleaned_data.get('contract')
-        lesson_ids_str = form.cleaned_data.get('lesson_ids', '')
-        
-        if not lesson_ids_str:
-            messages.error(self.request, 'Bitte wählen Sie mindestens eine Unterrichtsstunde aus.')
-            return self.form_invalid(form)
-        
-        lesson_ids = [int(id.strip()) for id in lesson_ids_str.split(',') if id.strip()]
         
         try:
+            # Erstelle Rechnung automatisch mit allen verfügbaren Lessons im Zeitraum
             invoice = InvoiceService.create_invoice_from_lessons(
-                lesson_ids, period_start, period_end, contract
+                period_start, period_end, contract
             )
-            messages.success(self.request, f'Rechnung {invoice.id} erfolgreich erstellt.')
+            lesson_count = invoice.items.count()
+            messages.success(
+                self.request,
+                f'Rechnung {invoice.id} erfolgreich erstellt mit {lesson_count} Unterrichtsstunde(n).'
+            )
             return redirect('billing:invoice_detail', pk=invoice.pk)
         except ValueError as e:
             messages.error(self.request, str(e))
