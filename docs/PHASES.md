@@ -134,6 +134,33 @@ Das Projekt TutorFlow wird in mehreren Phasen entwickelt, um eine strukturierte 
 
 ---
 
+## Phase 6 – Monatliche Vertragsplanung
+
+**Status**: ✅ Abgeschlossen
+
+**Ziel**: Explizite monatliche Planung von geplanten Einheiten pro Vertrag statt Gleichverteilung.
+
+**Akzeptanzkriterien**:
+- ✅ ContractMonthlyPlan Model implementiert
+- ✅ Formset-Integration für monatliche Planung in Contract-Views
+- ✅ Automatische Generierung von Monatszeilen beim Erstellen/Bearbeiten
+- ✅ IncomeSelector erweitert um planned vs. actual Vergleich
+- ✅ Einnahmenübersicht zeigt geplant vs. tatsächlich
+- ✅ Tests für alle neuen Funktionen
+
+**Tests**:
+- ✅ 8 Tests für ContractMonthlyPlan, Generierung und IncomeSelector-Vergleich
+- ✅ Alle Tests laufen erfolgreich
+
+**Fortschritt**:
+- ContractMonthlyPlan Model mit unique_together Constraint
+- Formsets für monatliche Planung integriert
+- Automatische Generierung und Bereinigung von Monatsplänen
+- IncomeSelector erweitert um get_monthly_planned_vs_actual()
+- UI erweitert um Vergleich geplant vs. tatsächlich
+
+---
+
 ## Phasenwechsel
 
 Vor dem Wechsel zu einer neuen Phase:

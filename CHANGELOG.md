@@ -5,6 +5,40 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.6.0] - 2025-12-04
+
+### Hinzugefügt
+- **ContractMonthlyPlan Model**: Neue Entität für explizite monatliche Planung von geplanten Einheiten pro Vertrag
+  - Erlaubt ungleichmäßige Verteilung über das Jahr (z. B. mehr Einheiten in Prüfungsphasen)
+  - Unique Constraint auf (contract, year, month)
+- **Monatliche Planung in Contract-Views**: 
+  - Formset-Integration für Bearbeitung von geplanten Einheiten pro Monat
+  - Automatische Generierung von Monatszeilen beim Erstellen/Bearbeiten von Verträgen
+  - Behandlung von Zeitraumänderungen (neue Monate werden ergänzt, alte entfernt)
+- **IncomeSelector-Erweiterung**:
+  - Neue Methode `get_monthly_planned_vs_actual()` für Vergleich geplant vs. tatsächlich
+  - Berechnung von planned_units, planned_amount, actual_units, actual_amount pro Monat
+- **Einnahmenübersicht erweitert**: 
+  - Anzeige von geplanten vs. tatsächlichen Einheiten und Einnahmen in der Monatsansicht
+  - Differenzberechnung (Differenz_units, Differenz_amount)
+
+### Geändert
+- `Contract.planned_units_per_month`: Als deprecated markiert (verwende ContractMonthlyPlan)
+- `IncomeOverviewView`: Erweitert um planned_vs_actual Daten
+- `contract_form.html`: Template erweitert um Formset für monatliche Planung
+
+### Tests
+- 8 neue Tests für ContractMonthlyPlan, Generierung von Monatsplänen und IncomeSelector-Vergleich
+
+### Dokumentation
+- `docs/ARCHITECTURE.md`: ContractMonthlyPlan dokumentiert, IncomeSelector erweitert
+- Geplante Einheiten werden nicht mehr gleichmäßig verteilt, sondern explizit pro Monat erfasst
+
+### Phase
+- Neue Funktionalität: Monatliche Vertragsplanung
+
+---
+
 ## [0.5.0] - 2025-12-04
 
 ### Hinzugefügt
