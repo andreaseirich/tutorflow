@@ -7,7 +7,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from apps.contracts.models import Contract, ContractMonthlyPlan
 from apps.contracts.forms import ContractForm
-from apps.contracts.formsets import ContractMonthlyPlanFormSet, generate_monthly_plans_for_contract
+from apps.contracts.formsets import ContractMonthlyPlanFormSet, generate_monthly_plans_for_contract, iter_contract_months
 
 
 class ContractListView(ListView):
@@ -75,26 +75,19 @@ class ContractUpdateView(UpdateView):
             if self.object.start_date:
                 # Stelle sicher, dass alle Monate im Zeitraum abgedeckt sind
                 generate_monthly_plans_for_contract(self.object)
-                # Lösche Pläne außerhalb des Zeitraums
-                if self.object.end_date:
-                    ContractMonthlyPlan.objects.filter(
-                        contract=self.object
-                    ).exclude(
-                        year__gte=self.object.start_date.year,
-                        month__gte=self.object.start_date.month
-                    ).filter(
-                        year__lte=self.object.end_date.year,
-                        month__lte=self.object.end_date.month
-                    ).delete()
-                else:
-                    # Bei unbefristeten Verträgen: Lösche nur sehr alte Pläne (älter als 2 Jahre)
-                    from datetime import date
-                    today = date.today()
-                    ContractMonthlyPlan.objects.filter(
-                        contract=self.object
-                    ).filter(
-                        year__lt=today.year - 2
-                    ).delete()
+                
+                # Lösche Pläne außerhalb des Vertragszeitraums
+                valid_months = set(iter_contract_months(self.object.start_date, self.object.end_date))
+                plans_to_delete = ContractMonthlyPlan.objects.filter(
+                    contract=self.object
+                ).exclude(
+                    year__in=[year for year, _ in valid_months]
+                )
+                
+                # Filtere präzise: Nur Pläne, deren (year, month) nicht in valid_months ist
+                for plan in ContractMonthlyPlan.objects.filter(contract=self.object):
+                    if (plan.year, plan.month) not in valid_months:
+                        plan.delete()
             
             context['formset'] = ContractMonthlyPlanFormSet(instance=self.object)
         return context
@@ -108,6 +101,13 @@ class ContractUpdateView(UpdateView):
         
         # Wenn Zeitraum geändert wurde, generiere neue Pläne
         generate_monthly_plans_for_contract(self.object)
+        
+        # Lösche Pläne außerhalb des neuen Zeitraums
+        if self.object.start_date:
+            valid_months = set(iter_contract_months(self.object.start_date, self.object.end_date))
+            for plan in ContractMonthlyPlan.objects.filter(contract=self.object):
+                if (plan.year, plan.month) not in valid_months:
+                    plan.delete()
         
         # Formset aktualisieren
         formset.instance = self.object
