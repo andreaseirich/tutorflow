@@ -28,7 +28,9 @@ TutorFlow löst diese Probleme mit einer benutzerfreundlichen, strukturierten L�
    - Unterscheidung zwischen Privat- und Institut-Verträgen
 
 3. **Intelligente Unterrichtsplanung**
+   - **Kalenderansicht**: Zentrale UI für die Stundenplanung - Lessons werden primär über die Kalenderansicht geplant und bearbeitet
    - Planung mit Datum, Zeit, Ort
+   - **Serientermine**: Unterstützung für wiederholende Unterrichtsstunden (z. B. jeden Montag 14 Uhr)
    - **Automatische Konfliktprüfung**: Erkennt Überschneidungen inkl. Fahrtzeiten
    - **Blockzeiten**: Eigene Termine (Uni, Job, etc.) werden als belegt markiert
    - **Fahrtzeiten**: Vor und nach der Stunde werden berücksichtigt

@@ -97,6 +97,17 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
   - `get_monthly_planned_vs_actual()`: Vergleich geplanter vs. tatsächlicher Einheiten und Einnahmen pro Monat
 - **Zweck**: Abgeleitete Monats-/Jahresauswertungen ohne eigenes Model. Unterstützt Vergleich zwischen geplanten (aus ContractMonthlyPlan) und tatsächlichen (aus Lessons) Werten.
 
+#### CalendarService (apps.lessons.calendar_service)
+- **Kein Model**: Service-Layer für Kalenderansicht
+- **Methoden**:
+  - `get_calendar_data(year, month)`: Lädt Lessons und Blockzeiten für einen Monat und gruppiert sie nach Tagen
+- **Zweck**: Bereitstellung von Daten für die Monatskalender-Ansicht. Gruppiert Lessons und Blockzeiten nach Datum und prüft Konflikte.
+- **Wichtig**: 
+  - **Kalender ist die zentrale UI für Lesson-Verwaltung** - Lessons werden primär über die Kalenderansicht geplant und bearbeitet.
+  - **Lessons in der Vergangenheit werden im Kalender nicht mehr angezeigt** (nur zukünftige/aktuelle), sind aber weiterhin in der Finanzsicht vorhanden.
+  - **Blockzeiten in der Vergangenheit werden ebenfalls ausgeblendet** (nur ab heute).
+  - **RecurringLesson kann über Kalender/Contract ausgelöst werden** - Serientermine werden automatisch generiert und erscheinen im Kalender.
+
 ### Architekturprinzipien
 
 #### Modultrennung
@@ -118,15 +129,21 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 ## Datenfluss
 
 ### Planung einer Unterrichtsstunde
-1. Benutzer wählt Schüler und Vertrag
-2. System prüft Konflikte (Blockzeiten, andere Lessons) inkl. Fahrtzeiten
-3. **Konfliktprüfung**: 
+1. **Kalender als zentrale UI**: Benutzer öffnet Kalenderansicht
+2. **Anlegen**: Klick auf Tag im Kalender → Formular mit voreingestelltem Datum
+   - Benutzer wählt Schüler/Vertrag, Zeit, Ort, Fahrtzeiten
+3. **Bearbeiten**: Klick auf bestehende Lesson → Bearbeitungsformular
+4. **Serientermine**: Button "Serientermin anlegen" → RecurringLesson-Formular
+   - Nach Speichern: Automatische Generierung aller Lessons im Zeitraum
+5. System prüft Konflikte (Blockzeiten, andere Lessons) inkl. Fahrtzeiten
+6. **Konfliktprüfung**: 
    - Berechnung des Gesamtzeitblocks: `start = start_time - travel_before`, `ende = start_time + duration + travel_after`
    - Prüfung auf Überlappung mit anderen Lessons (inkl. deren Fahrtzeiten)
    - Prüfung auf Überlappung mit Blockzeiten
    - Konflikte werden als Warnung angezeigt
-4. Lesson wird erstellt mit Status "geplant"
-5. Bei Abschluss: Status auf "unterrichtet" → "ausgezahlt"
+7. Lesson wird erstellt mit Status "geplant"
+8. Bei Abschluss: Status auf "unterrichtet" → "ausgezahlt"
+9. **Filterung**: Nur zukünftige/aktuelle Lessons werden im Kalender angezeigt
 
 ### Konfliktlogik (Phase 3)
 - **LessonConflictService**: Zentrale Service-Klasse für Konfliktprüfung

@@ -431,3 +431,66 @@ Alle ursprünglich mit `2025-01-27` dokumentierten Datumsangaben wurden auf das 
 ### Nächste Schritte
 1. Phase 7 abgeschlossen
 
+---
+
+## Checkpoint 8: Kalender als zentrale UI und Recurring Lessons Integration
+
+**Datum**: 2025-12-04
+
+**Phase**: Phase 7 – Serientermine und Kalenderansicht (Erweiterung)
+
+**Status**: ✅ Abgeschlossen
+
+### Abgeschlossen
+- ✅ **Kalender als zentrale UI**:
+  - Lessons-Listenansicht aus Navigation entfernt (Endpoints bleiben für API/Debugging)
+  - Kalender ist jetzt primäre Schnittstelle für Lesson-Verwaltung
+  - Klick auf Tag im Kalender öffnet Formular zum Anlegen mit voreingestelltem Datum
+  - Klick auf bestehende Lesson öffnet Bearbeitungsformular
+  - Nach Create/Update Weiterleitung zurück zum Kalender
+- ✅ **Kalender zeigt nur zukünftige Lessons**:
+  - Lessons in der Vergangenheit werden im Kalender nicht mehr angezeigt
+  - Blockzeiten in der Vergangenheit werden ebenfalls ausgeblendet
+  - Finanz-/Einnahmensichten zeigen weiterhin alle Lessons (inkl. vergangene)
+- ✅ **Recurring Lessons besser integriert**:
+  - Button "Serientermin anlegen" im Kalender-Header
+  - Link "Serientermin erstellen" auf Contract-Detailseite
+  - Automatische Generierung von Lessons nach Anlegen einer RecurringLesson
+  - Weiterleitung zum Kalender nach Generierung
+  - Hinweis im RecurringLesson-Formular erklärt Funktionalität
+- ✅ **Tests**:
+  - 3 neue Tests für Kalender-Filterung (vergangene Lessons werden ausgeblendet)
+  - Tests für Kalender-Integration (Create mit Datum-Parameter, Redirect)
+  - Alle Tests laufen erfolgreich
+- ✅ **Dokumentation**:
+  - ARCHITECTURE.md: Kalender als zentrale UI dokumentiert
+  - README.md: Kalenderansicht und Serientermine erwähnt
+  - DEVPOST.md: Kalender und Serientermine in Features aufgenommen
+  - CHANGELOG.md: Version 0.7.1 dokumentiert
+
+### Validierungsergebnisse
+
+#### Funktionalität
+- [x] Kalender ist zentrale UI für Lesson-Verwaltung
+- [x] Navigation zeigt keine Lessons-Listenansicht mehr
+- [x] Klick auf Tag öffnet Create-Formular mit Datum
+- [x] Klick auf Lesson öffnet Update-Formular
+- [x] Kalender zeigt nur zukünftige/aktuelle Lessons
+- [x] Recurring Lessons Button im Kalender sichtbar
+- [x] Recurring Lessons Link auf Contract-Detailseite
+- [x] Automatische Generierung nach Anlegen funktioniert
+
+#### Tests
+- [x] 3 neue Tests implementiert
+- [x] Alle Tests laufen erfolgreich
+- [x] Tests decken Filterung und Integration ab
+
+#### Dokumentation
+- [x] ARCHITECTURE.md aktualisiert
+- [x] README.md aktualisiert
+- [x] DEVPOST.md aktualisiert
+- [x] CHANGELOG.md aktualisiert
+
+### Nächste Schritte
+1. Phase 7 vollständig abgeschlossen
+

@@ -212,34 +212,102 @@ class CalendarServiceTest(TestCase):
     
     def test_get_calendar_data_groups_lessons(self):
         """Test: Kalenderdaten gruppieren Lessons korrekt nach Tagen."""
-        # Erstelle Lessons für Januar 2025
+        from django.utils import timezone
+        today = timezone.localdate()
+        
+        # Erstelle Lessons für aktuellen Monat (zukünftige)
+        future_date1 = today + timedelta(days=5)
+        future_date2 = today + timedelta(days=10)
+        
         Lesson.objects.create(
             contract=self.contract,
-            date=date(2025, 1, 5),
+            date=future_date1,
             start_time=time(14, 0),
             duration_minutes=60,
             status='planned'
         )
         Lesson.objects.create(
             contract=self.contract,
-            date=date(2025, 1, 5),
+            date=future_date1,
             start_time=time(16, 0),
             duration_minutes=60,
             status='planned'
         )
         Lesson.objects.create(
             contract=self.contract,
-            date=date(2025, 1, 10),
+            date=future_date2,
             start_time=time(15, 0),
             duration_minutes=60,
             status='planned'
         )
         
-        calendar_data = CalendarService.get_calendar_data(2025, 1)
+        calendar_data = CalendarService.get_calendar_data(today.year, today.month)
         
         # Prüfe Gruppierung
-        self.assertIn(date(2025, 1, 5), calendar_data['lessons_by_date'])
-        self.assertEqual(len(calendar_data['lessons_by_date'][date(2025, 1, 5)]), 2)
-        self.assertIn(date(2025, 1, 10), calendar_data['lessons_by_date'])
-        self.assertEqual(len(calendar_data['lessons_by_date'][date(2025, 1, 10)]), 1)
+        self.assertIn(future_date1, calendar_data['lessons_by_date'])
+        self.assertEqual(len(calendar_data['lessons_by_date'][future_date1]), 2)
+        self.assertIn(future_date2, calendar_data['lessons_by_date'])
+        self.assertEqual(len(calendar_data['lessons_by_date'][future_date2]), 1)
+    
+    def test_calendar_hides_past_lessons(self):
+        """Test: Kalender zeigt keine Lessons aus der Vergangenheit."""
+        from django.utils import timezone
+        today = timezone.localdate()
+        
+        # Erstelle Lesson in der Vergangenheit
+        past_date = today - timedelta(days=5)
+        Lesson.objects.create(
+            contract=self.contract,
+            date=past_date,
+            start_time=time(14, 0),
+            duration_minutes=60,
+            status='planned'
+        )
+        
+        # Erstelle Lesson in der Zukunft
+        future_date = today + timedelta(days=5)
+        Lesson.objects.create(
+            contract=self.contract,
+            date=future_date,
+            start_time=time(14, 0),
+            duration_minutes=60,
+            status='planned'
+        )
+        
+        calendar_data = CalendarService.get_calendar_data(today.year, today.month)
+        
+        # Vergangene Lesson sollte NICHT im Kalender sein
+        self.assertNotIn(past_date, calendar_data['lessons_by_date'])
+        # Zukünftige Lesson sollte im Kalender sein
+        self.assertIn(future_date, calendar_data['lessons_by_date'])
+    
+    def test_recurring_lessons_appear_in_calendar(self):
+        """Test: Serientermine erzeugen Lessons, die im Kalender auftauchen (nur zukünftige)."""
+        from django.utils import timezone
+        today = timezone.localdate()
+        
+        # Erstelle RecurringLesson ab heute
+        recurring = RecurringLesson.objects.create(
+            contract=self.contract,
+            start_date=today,
+            end_date=today + timedelta(days=14),
+            start_time=time(14, 0),
+            duration_minutes=60,
+            monday=True,
+            wednesday=True
+        )
+        
+        # Generiere Lessons
+        RecurringLessonService.generate_lessons(recurring, check_conflicts=False)
+        
+        # Prüfe Kalender
+        calendar_data = CalendarService.get_calendar_data(today.year, today.month)
+        
+        # Sollte Lessons im Kalender haben (nur zukünftige/aktuelle)
+        total_lessons = sum(len(lessons) for lessons in calendar_data['lessons_by_date'].values())
+        self.assertGreater(total_lessons, 0)
+        
+        # Alle Lessons im Kalender sollten >= heute sein
+        for lesson_date, lessons in calendar_data['lessons_by_date'].items():
+            self.assertGreaterEqual(lesson_date, today)
 

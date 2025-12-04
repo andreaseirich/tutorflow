@@ -5,13 +5,21 @@
 {% block content %}
 <h1>{% if object %}Serientermin bearbeiten{% else %}Neuer Serientermin{% endif %}</h1>
 
+<div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #2196f3;">
+    <strong>💡 Was sind Serientermine?</strong>
+    <p style="margin: 5px 0 0 0; font-size: 0.9em;">
+        Serientermine ermöglichen es, wiederholende Unterrichtsstunden anzulegen (z. B. "jeden Montag 14 Uhr"). 
+        Nach dem Speichern werden automatisch alle Lessons für den angegebenen Zeitraum generiert.
+    </p>
+</div>
+
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     
     <div class="btn-group">
-        <button type="submit" class="btn btn-success">Speichern</button>
-        <a href="{% url 'lessons:recurring_list' %}" class="btn btn-secondary">Abbrechen</a>
+        <button type="submit" class="btn btn-success">Speichern und Lessons generieren</button>
+        <a href="{% url 'lessons:calendar' %}" class="btn btn-secondary">Abbrechen</a>
     </div>
 </form>
 {% endblock %}
