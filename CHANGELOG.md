@@ -30,6 +30,27 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [0.8.6] - 2025-12-04
+
+### Geändert
+- **Automatische Rechnungserstellung**:
+  - Keine manuelle Auswahl einzelner Lessons mehr (keine Checkbox-Auswahl)
+  - Alle TAUGHT Lessons im Zeitraum werden automatisch aufgenommen
+  - Zeitraum und optional Vertrag als Filter
+- **Nur unterrichtete Stunden abrechnen**:
+  - Nur Lessons mit Status TAUGHT werden in Rechnungserstellung angezeigt
+  - Lessons mit Status PLANNED oder PAID werden ausgeschlossen
+- **Lesson-Eindeutigkeit**:
+  - Eine Lesson kann nur in einer Rechnung vorkommen
+  - `get_billable_lessons()` schließt Lessons aus, die bereits in einem InvoiceItem sind
+  - Technisch über `exclude(invoice_items__isnull=False)`
+
+### Tests
+- 6 neue Tests für automatische Rechnungserstellung
+- Tests für: nur TAUGHT Lessons, Lesson-Eindeutigkeit, automatische Auswahl, Status-Übergänge
+
+---
+
 ## [0.8.5] - 2025-12-04
 
 ### Behoben

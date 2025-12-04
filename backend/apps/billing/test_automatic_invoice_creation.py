@@ -1,5 +1,5 @@
 """
-Tests für automatische Rechnungserstellung mit allen Lessons im Zeitraum.
+Tests für automatische Rechnungserstellung und Lesson-Eindeutigkeit.
 """
 from django.test import TestCase
 from datetime import date, time
@@ -64,10 +64,50 @@ class AutomaticInvoiceCreationTest(TestCase):
         # Nur TAUGHT Lesson sollte in Rechnung sein
         self.assertEqual(invoice.items.count(), 1)
         self.assertEqual(invoice.items.first().lesson, taught_lesson)
-        self.assertNotIn(planned_lesson, [item.lesson for item in invoice.items.all() if item.lesson])
-        self.assertNotIn(paid_lesson, [item.lesson for item in invoice.items.all() if item.lesson])
+        
+        # Prüfe, dass PLANNED und PAID Lessons nicht aufgenommen wurden
+        lesson_ids = [item.lesson_id for item in invoice.items.all() if item.lesson_id]
+        self.assertIn(taught_lesson.id, lesson_ids)
+        self.assertNotIn(planned_lesson.id, lesson_ids)
+        self.assertNotIn(paid_lesson.id, lesson_ids)
     
-    def test_all_taught_lessons_in_period_included(self):
+    def test_lesson_can_only_be_in_one_invoice(self):
+        """Test: Eine Lesson kann nicht in zwei Rechnungen landen."""
+        # Erstelle Lesson
+        lesson = Lesson.objects.create(
+            contract=self.contract,
+            date=date(2025, 8, 15),
+            start_time=time(14, 0),
+            duration_minutes=60,
+            status='taught'
+        )
+        
+        # Erstelle erste Rechnung
+        invoice1 = InvoiceService.create_invoice_from_lessons(
+            date(2025, 8, 1),
+            date(2025, 8, 31),
+            self.contract
+        )
+        
+        # Prüfe, dass Lesson in erster Rechnung ist
+        self.assertEqual(invoice1.items.count(), 1)
+        self.assertEqual(invoice1.items.first().lesson, lesson)
+        
+        # Versuche zweite Rechnung zu erstellen (sollte ValueError werfen, da keine Lessons mehr verfügbar)
+        with self.assertRaises(ValueError) as context:
+            InvoiceService.create_invoice_from_lessons(
+                date(2025, 8, 1),
+                date(2025, 8, 31),
+                self.contract
+            )
+        
+        # Prüfe, dass die Fehlermeldung korrekt ist
+        self.assertIn("Keine abrechenbaren Unterrichtsstunden", str(context.exception))
+        
+        # Prüfe, dass Lesson immer noch nur in erster Rechnung ist
+        self.assertEqual(InvoiceItem.objects.filter(lesson=lesson).count(), 1)
+    
+    def test_automatic_selection_all_taught_lessons_in_period(self):
         """Test: Alle TAUGHT Lessons im Zeitraum werden automatisch aufgenommen."""
         # Erstelle mehrere TAUGHT Lessons
         lesson1 = Lesson.objects.create(
@@ -91,6 +131,14 @@ class AutomaticInvoiceCreationTest(TestCase):
             duration_minutes=60,
             status='taught'
         )
+        # Lesson außerhalb des Zeitraums
+        lesson_outside = Lesson.objects.create(
+            contract=self.contract,
+            date=date(2025, 9, 1),
+            start_time=time(14, 0),
+            duration_minutes=60,
+            status='taught'
+        )
         
         # Erstelle Rechnung
         invoice = InvoiceService.create_invoice_from_lessons(
@@ -99,16 +147,16 @@ class AutomaticInvoiceCreationTest(TestCase):
             self.contract
         )
         
-        # Alle drei Lessons sollten in Rechnung sein
+        # Alle 3 Lessons im Zeitraum sollten aufgenommen sein
         self.assertEqual(invoice.items.count(), 3)
         lesson_ids = [item.lesson_id for item in invoice.items.all() if item.lesson_id]
         self.assertIn(lesson1.id, lesson_ids)
         self.assertIn(lesson2.id, lesson_ids)
         self.assertIn(lesson3.id, lesson_ids)
+        self.assertNotIn(lesson_outside.id, lesson_ids)
     
-    def test_lesson_cannot_be_in_multiple_invoices(self):
-        """Test: Eine Lesson kann nicht in zwei Rechnungen landen."""
-        # Erstelle Lesson
+    def test_lessons_set_to_paid_on_invoice_creation(self):
+        """Test: Lessons werden auf PAID gesetzt beim Erstellen einer Rechnung."""
         lesson = Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 15),
@@ -117,57 +165,6 @@ class AutomaticInvoiceCreationTest(TestCase):
             status='taught'
         )
         
-        # Erstelle erste Rechnung
-        invoice1 = InvoiceService.create_invoice_from_lessons(
-            date(2025, 8, 1),
-            date(2025, 8, 31),
-            self.contract
-        )
-        
-        # Prüfe, dass Lesson in erster Rechnung ist
-        self.assertEqual(invoice1.items.count(), 1)
-        self.assertEqual(invoice1.items.first().lesson, lesson)
-        
-        # Versuche zweite Rechnung zu erstellen
-        # Lesson sollte nicht mehr in get_billable_lessons erscheinen
-        billable = InvoiceService.get_billable_lessons(
-            date(2025, 8, 1),
-            date(2025, 8, 31),
-            self.contract.id
-        )
-        
-        self.assertNotIn(lesson, billable)
-        
-        # Zweite Rechnung sollte leer sein
-        try:
-            invoice2 = InvoiceService.create_invoice_from_lessons(
-                date(2025, 8, 1),
-                date(2025, 8, 31),
-                self.contract
-            )
-            # Sollte ValueError werfen oder leer sein
-            self.assertEqual(invoice2.items.count(), 0)
-        except ValueError:
-            # Erwartetes Verhalten: ValueError wenn keine Lessons gefunden
-            pass
-    
-    def test_lessons_set_to_paid_on_invoice_creation(self):
-        """Test: Lessons werden auf PAID gesetzt beim Erstellen einer Rechnung."""
-        lesson1 = Lesson.objects.create(
-            contract=self.contract,
-            date=date(2025, 8, 15),
-            start_time=time(14, 0),
-            duration_minutes=60,
-            status='taught'
-        )
-        lesson2 = Lesson.objects.create(
-            contract=self.contract,
-            date=date(2025, 8, 16),
-            start_time=time(15, 0),
-            duration_minutes=60,
-            status='taught'
-        )
-        
         # Erstelle Rechnung
         invoice = InvoiceService.create_invoice_from_lessons(
             date(2025, 8, 1),
@@ -175,11 +172,9 @@ class AutomaticInvoiceCreationTest(TestCase):
             self.contract
         )
         
-        # Prüfe, dass Lessons auf PAID gesetzt wurden
-        lesson1.refresh_from_db()
-        lesson2.refresh_from_db()
-        self.assertEqual(lesson1.status, 'paid')
-        self.assertEqual(lesson2.status, 'paid')
+        # Prüfe, dass Lesson auf PAID gesetzt wurde
+        lesson.refresh_from_db()
+        self.assertEqual(lesson.status, 'paid')
     
     def test_lessons_reset_to_taught_on_invoice_deletion(self):
         """Test: Lessons werden auf TAUGHT zurückgesetzt beim Löschen einer Rechnung."""
@@ -227,24 +222,30 @@ class AutomaticInvoiceCreationTest(TestCase):
             status='taught'
         )
         
-        # Erstelle Rechnung mit lesson1
+        # Prüfe, dass beide Lessons vorher verfügbar sind
+        billable_before = InvoiceService.get_billable_lessons(
+            date(2025, 8, 1),
+            date(2025, 8, 31),
+            self.contract.id
+        )
+        self.assertEqual(billable_before.count(), 2)
+        
+        # Erstelle Rechnung (beide Lessons sollten aufgenommen werden)
         invoice = InvoiceService.create_invoice_from_lessons(
             date(2025, 8, 1),
             date(2025, 8, 31),
             self.contract
         )
         
-        # get_billable_lessons sollte nur lesson2 zurückgeben (lesson1 ist bereits in Rechnung)
-        billable = InvoiceService.get_billable_lessons(
+        # Prüfe, dass beide in Rechnung sind
+        self.assertEqual(invoice.items.count(), 2)
+        
+        # Nach Erstellung sollten beide nicht mehr in get_billable_lessons erscheinen
+        billable_after = InvoiceService.get_billable_lessons(
             date(2025, 8, 1),
             date(2025, 8, 31),
             self.contract.id
         )
         
-        # lesson1 sollte nicht mehr in billable sein
-        self.assertNotIn(lesson1, billable)
-        # lesson2 sollte noch in billable sein (wenn invoice nur lesson1 enthält)
-        # Aber da automatisch alle Lessons aufgenommen werden, sind beide in invoice
-        # Also sollte billable leer sein
-        self.assertEqual(billable.count(), 0)
-
+        # Keine Lessons sollten mehr verfügbar sein
+        self.assertEqual(billable_after.count(), 0)
