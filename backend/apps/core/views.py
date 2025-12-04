@@ -28,8 +28,9 @@ class DashboardView(TemplateView):
         for lesson in upcoming_lessons:
             lesson._conflicts = LessonConflictService.check_conflicts(lesson)
         
-        # Konflikte zählen
-        conflict_count = sum(1 for lesson in today_lessons + upcoming_lessons if lesson._conflicts)
+        # Konflikte zählen (beide QuerySets zu Listen konvertieren für Kombination)
+        all_lessons = list(today_lessons) + list(upcoming_lessons)
+        conflict_count = sum(1 for lesson in all_lessons if lesson._conflicts)
         
         # Einnahmen für aktuellen Monat
         current_month_income = IncomeSelector.get_monthly_income(
