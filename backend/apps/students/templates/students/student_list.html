@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Schüler - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Schüler</h1>
+<a href="{% url 'students:create' %}" class="btn">Neuer Schüler</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Schule</th>
+            <th>Klasse</th>
+            <th>Aktionen</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.full_name }}</td>
+            <td>{{ student.school|default:"-" }}</td>
+            <td>{{ student.grade|default:"-" }}</td>
+            <td>
+                <a href="{% url 'students:detail' student.pk %}">Details</a> |
+                <a href="{% url 'students:update' student.pk %}">Bearbeiten</a> |
+                <a href="{% url 'students:delete' student.pk %}">Löschen</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">Keine Schüler vorhanden.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
