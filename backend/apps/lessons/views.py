@@ -26,7 +26,7 @@ class LessonListView(ListView):
         )
         # Füge Konflikt-Info hinzu
         for lesson in queryset:
-            lesson._conflicts = LessonConflictService.check_conflicts(lesson)
+            lesson.conflicts = LessonConflictService.check_conflicts(lesson)
         return queryset
 
 
@@ -123,7 +123,7 @@ class LessonMonthView(ListView):
         
         # Füge Konflikt-Info hinzu
         for lesson in context['lessons']:
-            lesson._conflicts = LessonConflictService.check_conflicts(lesson)
+            lesson.conflicts = LessonConflictService.check_conflicts(lesson)
         
         context['year'] = year
         context['month'] = month
