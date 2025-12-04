@@ -19,6 +19,8 @@ TutorFlow bietet eine vollständige Lösung für die Verwaltung von Nachhilfetä
   - **Serientermine**: Unterstützung für wiederholende Unterrichtsstunden (z. B. jeden Montag 14 Uhr)
 - **Blockzeiten**: Verwaltung eigener Termine und Blockzeiten (z. B. Uni, Job, Gemeinde)
 - **Einnahmenauswertung**: Monats- und Jahresauswertungen der Einnahmen nach Status
+- **Automatische Status-Verwaltung**: Vergangene Lessons werden automatisch als unterrichtet markiert
+- **Abrechnungssystem**: Rechnungen erstellen aus ausgewählten Unterrichtsstunden mit HTML-Dokument-Generierung
 - **Premium-Funktion**: KI-gestützte Generierung von Unterrichtsplänen mithilfe einer LLM-API
 
 ## Features

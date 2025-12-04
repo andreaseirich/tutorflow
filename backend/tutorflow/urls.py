@@ -15,5 +15,6 @@ urlpatterns = [
     path('lessons/', include('apps.lessons.urls')),
     path('blocked-times/', include('apps.blocked_times.urls')),
     path('locations/', include('apps.locations.urls')),
+    path('billing/', include('apps.billing.urls')),
     path('ai/', include('apps.ai.urls')),
 ]

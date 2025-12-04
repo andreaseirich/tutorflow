@@ -72,6 +72,7 @@ class IncomeOverviewView(TemplateView):
             monthly_income = IncomeSelector.get_monthly_income(year, month, status='paid')
             income_by_status = IncomeSelector.get_income_by_status(year=year, month=month)
             planned_vs_actual = IncomeSelector.get_monthly_planned_vs_actual(year, month)
+            billing_status = IncomeSelector.get_billing_status(year=year, month=month)
             context.update({
                 'view_type': 'month',
                 'year': year,
@@ -79,16 +80,19 @@ class IncomeOverviewView(TemplateView):
                 'monthly_income': monthly_income,
                 'income_by_status': income_by_status,
                 'planned_vs_actual': planned_vs_actual,
+                'billing_status': billing_status,
             })
         else:
             # Jahresansicht
             yearly_income = IncomeSelector.get_yearly_income(year, status='paid')
             income_by_status = IncomeSelector.get_income_by_status(year=year)
+            billing_status = IncomeSelector.get_billing_status(year=year)
             context.update({
                 'view_type': 'year',
                 'year': year,
                 'yearly_income': yearly_income,
                 'income_by_status': income_by_status,
+                'billing_status': billing_status,
             })
         
         return context

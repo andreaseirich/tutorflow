@@ -12,6 +12,7 @@ from apps.lessons.models import Lesson
 from apps.lessons.forms import LessonForm
 from apps.lessons.services import LessonQueryService, LessonConflictService
 from apps.lessons.calendar_service import CalendarService
+from apps.lessons.status_service import LessonStatusService
 
 
 class LessonListView(ListView):
@@ -79,6 +80,10 @@ class LessonCreateView(CreateView):
 
     def form_valid(self, form):
         lesson = form.save()
+        
+        # Automatische Status-Setzung
+        LessonStatusService.update_status_for_lesson(lesson)
+        
         conflicts = LessonConflictService.check_conflicts(lesson, exclude_self=False)
         if conflicts:
             messages.warning(
@@ -103,6 +108,10 @@ class LessonUpdateView(UpdateView):
 
     def form_valid(self, form):
         lesson = form.save()
+        
+        # Automatische Status-Setzung
+        LessonStatusService.update_status_for_lesson(lesson)
+        
         conflicts = LessonConflictService.check_conflicts(lesson)
         if conflicts:
             messages.warning(

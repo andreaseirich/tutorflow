@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Rechnungen - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Rechnungen</h1>
+
+<div class="btn-group">
+    <a href="{% url 'billing:invoice_create' %}" class="btn btn-success">➕ Neue Rechnung erstellen</a>
+</div>
+
+{% if invoices %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Zahlungspflichtiger</th>
+            <th>Zeitraum</th>
+            <th>Betrag</th>
+            <th>Status</th>
+            <th>Erstellt</th>
+            <th>Aktionen</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for invoice in invoices %}
+        <tr>
+            <td>{{ invoice.id }}</td>
+            <td>{{ invoice.payer_name }}</td>
+            <td>{{ invoice.period_start|date:"d.m.Y" }} - {{ invoice.period_end|date:"d.m.Y" }}</td>
+            <td>{{ invoice.total_amount }}€</td>
+            <td>{{ invoice.get_status_display }}</td>
+            <td>{{ invoice.created_at|date:"d.m.Y H:i" }}</td>
+            <td>
+                <a href="{% url 'billing:invoice_detail' invoice.pk %}">Details</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <p>Keine Rechnungen vorhanden.</p>
+</div>
+{% endif %}
+{% endblock %}
+

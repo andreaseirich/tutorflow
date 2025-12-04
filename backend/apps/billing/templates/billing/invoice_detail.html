@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Rechnung {{ invoice.id }} - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Rechnung {{ invoice.id }}</h1>
+
+<div class="btn-group">
+    <a href="{% url 'billing:invoice_list' %}" class="btn btn-secondary">Zurück zur Liste</a>
+    {% if not invoice.document %}
+    <a href="{% url 'billing:invoice_generate_document' invoice.pk %}" class="btn">📄 Dokument generieren</a>
+    {% else %}
+    <a href="{{ invoice.document.url }}" class="btn" target="_blank">📄 Dokument anzeigen</a>
+    {% endif %}
+</div>
+
+<h2>Details</h2>
+<table>
+    <tr><th>Zahlungspflichtiger</th><td>{{ invoice.payer_name }}</td></tr>
+    {% if invoice.payer_address %}<tr><th>Adresse</th><td>{{ invoice.payer_address|linebreaks }}</td></tr>{% endif %}
+    {% if invoice.contract %}<tr><th>Vertrag</th><td><a href="{% url 'contracts:detail' invoice.contract.pk %}">{{ invoice.contract }}</a></td></tr>{% endif %}
+    <tr><th>Zeitraum</th><td>{{ invoice.period_start|date:"d.m.Y" }} - {{ invoice.period_end|date:"d.m.Y" }}</td></tr>
+    <tr><th>Status</th><td>{{ invoice.get_status_display }}</td></tr>
+    <tr><th>Gesamtbetrag</th><td><strong>{{ invoice.total_amount }}€</strong></td></tr>
+    <tr><th>Erstellt</th><td>{{ invoice.created_at|date:"d.m.Y H:i" }}</td></tr>
+</table>
+
+<h2>Rechnungsposten</h2>
+{% if invoice.items.all %}
+<table>
+    <thead>
+        <tr>
+            <th>Datum</th>
+            <th>Beschreibung</th>
+            <th>Dauer</th>
+            <th>Betrag</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in invoice.items.all %}
+        <tr>
+            <td>{{ item.date|date:"d.m.Y" }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.duration_minutes }} Min.</td>
+            <td>{{ item.amount }}€</td>
+        </tr>
+        {% endfor %}
+        <tr style="font-weight: bold; border-top: 2px solid #333;">
+            <td colspan="3">Gesamt:</td>
+            <td>{{ invoice.total_amount }}€</td>
+        </tr>
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <p>Keine Rechnungsposten vorhanden.</p>
+</div>
+{% endif %}
+{% endblock %}
+

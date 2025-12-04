@@ -5,6 +5,37 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.0] - 2025-12-04
+
+### Hinzugefügt
+- **LessonStatusService**: Automatische Status-Setzung für Lessons
+  - Vergangene Lessons (end_datetime < jetzt) mit Status PLANNED → TAUGHT
+  - Zukünftige Lessons ohne Status → PLANNED
+  - PAID/CANCELLED werden nicht überschrieben
+  - Integration in LessonCreateView und LessonUpdateView
+  - bulk_update_past_lessons() für Batch-Updates
+- **Billing-System**: Abrechnungssystem mit Rechnungen
+  - Invoice und InvoiceItem Models
+  - InvoiceService für Abrechnungs-Workflow
+  - UI zum Auswählen von Lessons und Erstellen von Rechnungen
+  - InvoiceDocumentService für HTML-Dokument-Generierung
+  - Lessons werden nach Rechnungszuordnung auf Status PAID gesetzt
+- **Erweiterte Finanzansicht**:
+  - Unterscheidung zwischen abgerechneten und nicht abgerechneten Lessons
+  - get_billing_status() im IncomeSelector
+  - Anzeige in IncomeOverviewView
+
+### Tests
+- 5 Tests für LessonStatusService (vergangene/zukünftige Lessons, PAID/CANCELLED Schutz, bulk_update)
+- 5 Tests für Billing (Invoice Model, InvoiceService, InvoiceItems Persistenz)
+
+### Dokumentation
+- ARCHITECTURE.md: LessonStatusService, Invoice/InvoiceItem, InvoiceService, InvoiceDocumentService dokumentiert
+- ARCHITECTURE.md: Abrechnungs-Workflow beschrieben
+- README.md: Automatische Status-Verwaltung und Abrechnungssystem erwähnt
+
+---
+
 ## [0.7.1] - 2025-12-04
 
 ### Geändert
