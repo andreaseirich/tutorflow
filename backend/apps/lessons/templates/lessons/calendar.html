@@ -31,7 +31,7 @@
             <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top; {% if not day.is_current_month %}background: #f9f9f9; color: #999;{% endif %} min-height: 100px; width: 14.28%; position: relative;">
                 <div style="font-weight: bold; margin-bottom: 5px;">
                     {% if day.is_current_month %}
-                    <a href="{% url 'lessons:create' %}?date={{ day.date|date:'Y-m-d' }}" 
+                    <a href="{% url 'lessons:create' %}?date={{ day.date|date:'Y-m-d' }}&year={{ year }}&month={{ month }}" 
                        style="color: #007bff; text-decoration: none; border-bottom: 1px dashed #007bff;"
                        title="Neue Stunde anlegen">
                         {{ day.date.day }}
