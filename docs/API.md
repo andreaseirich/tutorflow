@@ -121,9 +121,11 @@ Diese Dokumentation beschreibt die API-Endpoints von TutorFlow. Die API wird in 
 - `GET /api/income/monthly/` - Monatliche Einnahmen
 - `GET /api/income/yearly/` - Jährliche Einnahmen
 
-### Premium-Funktionen
-- `POST /api/lesson-plans/generate/` - KI-generierten Unterrichtsplan erstellen (Premium)
-- `GET /api/lesson-plans/` - Liste aller Unterrichtspläne
+### Premium-Funktionen (Phase 4)
+- `POST /ai/lessons/<lesson_id>/generate-plan/` - KI-generierten Unterrichtsplan erstellen (nur Premium-User)
+  - Erfordert: Authentifizierung + Premium-Status
+  - Generiert LessonPlan für die angegebene Lesson
+  - Bei Fehlern: Fehlermeldung, keine Retries
 
 ## Authentifizierung
 

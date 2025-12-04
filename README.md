@@ -37,6 +37,16 @@ TutorFlow bietet eine vollständige Lösung für die Verwaltung von Nachhilfetä
 - **Framework**: Django 5.2.9
 - **Datenbank**: SQLite (Entwicklung), PostgreSQL (optional für Produktion)
 - **Python**: 3.11+
+- **Abhängigkeiten**: Django, requests (siehe `requirements.txt`)
+
+### Premium-Funktionen (KI)
+- **LLM-Integration**: OpenAI-kompatible API für KI-generierte Unterrichtspläne
+- **Konfiguration**: API-Keys über Umgebungsvariablen:
+  ```bash
+  export LLM_API_KEY="your-api-key"
+  export LLM_API_BASE_URL="https://api.openai.com/v1"  # Optional
+  export LLM_MODEL_NAME="gpt-3.5-turbo"  # Optional
+  ```
 
 ### Frontend
 - Wird in späteren Phasen definiert (z. B. Django-Templates, HTMX, Tailwind)
