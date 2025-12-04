@@ -17,10 +17,9 @@
     {% if contract.institute %}<tr><th>Institut</th><td>{{ contract.institute }}</td></tr>{% endif %}
     <tr><th>Honorar</th><td>{{ contract.hourly_rate }}€ pro Einheit</td></tr>
     <tr><th>Dauer pro Einheit</th><td>{{ contract.unit_duration_minutes }} Minuten</td></tr>
-    <tr><th>Vertragsbeginn</th><td>{{ contract.start_date }}</td></tr>
-    <tr><th>Vertragsende</th><td>{{ contract.end_date|default:"unbefristet" }}</td></tr>
-    {% if contract.planned_units_per_month %}<tr><th>Geplante Einheiten/Monat</th><td>{{ contract.planned_units_per_month }}</td></tr>{% endif %}
-    <tr><th>Status</th><td>{% if contract.is_active %}<span style="color: #28a745;">Aktiv</span>{% else %}<span style="color: #6c757d;">Inaktiv</span>{% endif %}</td></tr>
+        <tr><th>Vertragsbeginn</th><td>{{ contract.start_date }}</td></tr>
+        <tr><th>Vertragsende</th><td>{{ contract.end_date|default:"unbefristet" }}</td></tr>
+        <tr><th>Status</th><td>{% if contract.is_active %}<span style="color: #28a745;">Aktiv</span>{% else %}<span style="color: #6c757d;">Inaktiv</span>{% endif %}</td></tr>
     {% if contract.notes %}<tr><th>Notizen</th><td>{{ contract.notes }}</td></tr>{% endif %}
     <tr><th>Erstellt</th><td>{{ contract.created_at|date:"d.m.Y H:i" }}</td></tr>
     <tr><th>Zuletzt aktualisiert</th><td>{{ contract.updated_at|date:"d.m.Y H:i" }}</td></tr>

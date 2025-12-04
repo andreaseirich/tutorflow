@@ -35,11 +35,6 @@ class Contract(models.Model):
         blank=True,
         help_text="Vertragsende (optional, leer = unbefristet)"
     )
-    planned_units_per_month = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        help_text="Geplante Einheiten pro Monat (optional, deprecated - use ContractMonthlyPlan)"
-    )
     is_active = models.BooleanField(
         default=True,
         help_text="Ist der Vertrag aktiv?"

@@ -49,10 +49,10 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Zweck**: Zentrale Verwaltung von Schülern mit Kontaktdaten und Schulinformationen
 
 #### Contract (apps.contracts)
-- **Felder**: student (FK), institute, hourly_rate, unit_duration_minutes, start_date, end_date, planned_units_per_month (deprecated), is_active, notes
+- **Felder**: student (FK), institute, hourly_rate, unit_duration_minutes, start_date, end_date, is_active, notes
 - **Beziehungen**: Many-to-One zu Student, One-to-Many zu Lesson, One-to-Many zu ContractMonthlyPlan
 - **Zweck**: Verwaltung von Verträgen mit Honorar, Dauer und Vertragszeitraum
-- **Hinweis**: Geplante Einheiten pro Monat werden nicht mehr gleichmäßig verteilt, sondern explizit pro Monat in `ContractMonthlyPlan` erfasst.
+- **Hinweis**: Geplante Einheiten pro Monat werden explizit pro Monat in `ContractMonthlyPlan` erfasst (nicht mehr über das alte Feld `planned_units_per_month`).
 
 #### ContractMonthlyPlan (apps.contracts)
 - **Felder**: contract (FK), year, month, planned_units

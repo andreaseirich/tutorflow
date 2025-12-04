@@ -100,7 +100,6 @@ class Command(BaseCommand):
             hourly_rate=Decimal('25.00'),
             unit_duration_minutes=60,
             start_date=date(2025, 11, 1),
-            planned_units_per_month=8,
             is_active=True,
             notes="Wöchentlich 2x Mathe"
         )
@@ -111,7 +110,6 @@ class Command(BaseCommand):
             hourly_rate=Decimal('30.00'),
             unit_duration_minutes=90,
             start_date=date(2025, 10, 15),
-            planned_units_per_month=4,
             is_active=True
         )
         
