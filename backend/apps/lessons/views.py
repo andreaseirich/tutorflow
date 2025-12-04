@@ -72,11 +72,29 @@ class LessonCreateView(CreateView):
                 parsed_date = date.fromisoformat(date_param)
                 initial['date'] = parsed_date
             except (ValueError, TypeError):
-                # Falls ungültig, verwende aktuelles Datum
-                initial['date'] = timezone.localdate()
+                # Falls ungültig, versuche year/month aus Request
+                year_param = self.request.GET.get('year')
+                month_param = self.request.GET.get('month')
+                if year_param and month_param:
+                    try:
+                        initial['date'] = date(int(year_param), int(month_param), 1)
+                    except (ValueError, TypeError):
+                        initial['date'] = timezone.localdate()
+                else:
+                    initial['date'] = timezone.localdate()
         else:
-            # Kein Datum-Parameter: verwende aktuelles Datum
-            initial['date'] = timezone.localdate()
+            # Kein Datum-Parameter: versuche year/month aus Request
+            year_param = self.request.GET.get('year')
+            month_param = self.request.GET.get('month')
+            if year_param and month_param:
+                try:
+                    # Verwende ersten Tag des angegebenen Monats
+                    initial['date'] = date(int(year_param), int(month_param), 1)
+                except (ValueError, TypeError):
+                    initial['date'] = timezone.localdate()
+            else:
+                # Keine Parameter: verwende aktuelles Datum als Fallback
+                initial['date'] = timezone.localdate()
         return initial
 
     def get_success_url(self):
@@ -180,25 +198,35 @@ class CalendarView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        now = timezone.now()
         
-        # Jahr und Monat aus URL-Parametern oder aktuelles Datum
-        year = int(self.request.GET.get('year', now.year))
-        month = int(self.request.GET.get('month', now.month))
+        # Jahr und Monat ausschließlich aus URL-Parametern (Fallback: aktuelles Datum)
+        year_param = self.request.GET.get('year')
+        month_param = self.request.GET.get('month')
+        
+        if year_param and month_param:
+            year = int(year_param)
+            month = int(month_param)
+        else:
+            # Fallback nur wenn Parameter fehlen
+            now = timezone.now()
+            year = now.year
+            month = now.month
+        
+        # Zentrale Variable: aktueller Monat
+        current_month_date = date(year, month, 1)
         
         # Lade Kalenderdaten
         calendar_data = CalendarService.get_calendar_data(year, month)
         
         # Erstelle Kalender-Grid
-        first_day = date(year, month, 1)
         last_day = date(year, month, monthrange(year, month)[1])
         
         # Erster Wochentag (0=Montag, 6=Sonntag)
-        first_weekday = first_day.weekday()
+        first_weekday = current_month_date.weekday()
         
         # Erstelle Kalender-Wochen
         weeks = []
-        current_date = first_day - timedelta(days=first_weekday)  # Starte am Montag der ersten Woche
+        current_date = current_month_date - timedelta(days=first_weekday)  # Starte am Montag der ersten Woche
         
         while current_date <= last_day or len(weeks) == 0 or current_date.weekday() != 0:
             week = []
@@ -217,17 +245,12 @@ class CalendarView(TemplateView):
             if current_date > last_day and current_date.weekday() == 0:
                 break
         
-        context.update({
-            'year': year,
-            'month': month,
-            'weeks': weeks,
-            'conflicts_by_lesson': calendar_data['conflicts_by_lesson'],
-            'month_names': ['', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-                           'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
-            'weekday_names': ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
-        })
+        # Monatsname aus current_month_date ableiten
+        month_names = ['', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+                      'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
+        month_label = month_names[month]
         
-        # Navigation
+        # Navigation basierend auf current_month_date
         if month == 1:
             prev_year, prev_month = year - 1, 12
         else:
@@ -238,9 +261,18 @@ class CalendarView(TemplateView):
         else:
             next_year, next_month = year, month + 1
         
-        context['prev_year'] = prev_year
-        context['prev_month'] = prev_month
-        context['next_year'] = next_year
-        context['next_month'] = next_month
+        context.update({
+            'year': year,
+            'month': month,
+            'month_label': month_label,
+            'weeks': weeks,
+            'conflicts_by_lesson': calendar_data['conflicts_by_lesson'],
+            'month_names': month_names,
+            'weekday_names': ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
+            'prev_year': prev_year,
+            'prev_month': prev_month,
+            'next_year': next_year,
+            'next_month': next_month,
+        })
         
         return context

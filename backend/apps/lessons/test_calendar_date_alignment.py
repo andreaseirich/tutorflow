@@ -41,8 +41,36 @@ class CalendarDateAlignmentTest(TestCase):
         
         self.assertEqual(context['year'], 2025)
         self.assertEqual(context['month'], 8)
-        # Prüfe, dass Monatsname korrekt ist (August ist Index 8)
-        self.assertEqual(context['month_names'][8], 'August')
+        # Prüfe, dass Monatsname korrekt ist
+        self.assertEqual(context['month_label'], 'August')
+    
+    def test_calendar_view_december_shows_december(self):
+        """Test: ?year=2025&month=12 zeigt auch wirklich 'Dezember 2025' im Titel."""
+        request = self.factory.get('/lessons/calendar/?year=2025&month=12')
+        view = CalendarView()
+        view.request = request
+        view.setup(request)
+        
+        context = view.get_context_data()
+        
+        self.assertEqual(context['year'], 2025)
+        self.assertEqual(context['month'], 12)
+        self.assertEqual(context['month_label'], 'Dezember')
+    
+    def test_calendar_view_uses_only_url_parameters(self):
+        """Test: CalendarView verwendet ausschließlich year/month aus URL, nicht 'heute'."""
+        # Test mit explizitem Jahr/Monat in der Vergangenheit
+        request = self.factory.get('/lessons/calendar/?year=2024&month=6')
+        view = CalendarView()
+        view.request = request
+        view.setup(request)
+        
+        context = view.get_context_data()
+        
+        # Sollte 2024/6 sein, nicht aktuelles Datum
+        self.assertEqual(context['year'], 2024)
+        self.assertEqual(context['month'], 6)
+        self.assertEqual(context['month_label'], 'Juni')
     
     def test_create_view_uses_date_parameter(self):
         """Test: LessonCreateView verwendet date-Parameter für initiales Datum."""
