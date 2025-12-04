@@ -58,7 +58,7 @@ class InvoiceCreateView(CreateView):
                     contract = Contract.objects.get(pk=contract_id)
                 
                 billable_lessons = InvoiceService.get_billable_lessons(
-                    period_start, period_end, contract
+                    period_start, period_end, contract_id
                 )
                 context['billable_lessons'] = billable_lessons
                 context['period_start'] = period_start
