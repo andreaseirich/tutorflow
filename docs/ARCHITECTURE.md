@@ -49,9 +49,16 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Zweck**: Zentrale Verwaltung von Schülern mit Kontaktdaten und Schulinformationen
 
 #### Contract (apps.contracts)
-- **Felder**: student (FK), institute, hourly_rate, unit_duration_minutes, start_date, end_date, planned_units_per_month, is_active, notes
-- **Beziehungen**: Many-to-One zu Student, One-to-Many zu Lesson
+- **Felder**: student (FK), institute, hourly_rate, unit_duration_minutes, start_date, end_date, planned_units_per_month (deprecated), is_active, notes
+- **Beziehungen**: Many-to-One zu Student, One-to-Many zu Lesson, One-to-Many zu ContractMonthlyPlan
 - **Zweck**: Verwaltung von Verträgen mit Honorar, Dauer und Vertragszeitraum
+- **Hinweis**: Geplante Einheiten pro Monat werden nicht mehr gleichmäßig verteilt, sondern explizit pro Monat in `ContractMonthlyPlan` erfasst.
+
+#### ContractMonthlyPlan (apps.contracts)
+- **Felder**: contract (FK), year, month, planned_units
+- **Beziehungen**: Many-to-One zu Contract
+- **Unique Constraint**: (contract, year, month)
+- **Zweck**: Explizite monatliche Planung von geplanten Einheiten pro Vertrag. Erlaubt ungleichmäßige Verteilung über das Jahr (z. B. mehr Einheiten in Prüfungsphasen).
 
 #### Lesson (apps.lessons)
 - **Felder**: contract (FK), date, start_time, duration_minutes, status (choices), location (FK), travel_time_before_minutes, travel_time_after_minutes, notes
@@ -76,8 +83,12 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 
 #### IncomeSelector (apps.core.selectors)
 - **Kein Model**: Service-Layer für Einnahmenberechnungen
-- **Methoden**: get_monthly_income(), get_yearly_income(), get_income_by_status()
-- **Zweck**: Abgeleitete Monats-/Jahresauswertungen ohne eigenes Model
+- **Methoden**: 
+  - `get_monthly_income()`: Einnahmen für einen Monat basierend auf tatsächlichen Lessons
+  - `get_yearly_income()`: Einnahmen für ein Jahr
+  - `get_income_by_status()`: Gruppierung nach Status
+  - `get_monthly_planned_vs_actual()`: Vergleich geplanter vs. tatsächlicher Einheiten und Einnahmen pro Monat
+- **Zweck**: Abgeleitete Monats-/Jahresauswertungen ohne eigenes Model. Unterstützt Vergleich zwischen geplanten (aus ContractMonthlyPlan) und tatsächlichen (aus Lessons) Werten.
 
 ### Architekturprinzipien
 
