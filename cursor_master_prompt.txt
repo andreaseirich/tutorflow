@@ -255,6 +255,26 @@ validierungsskripte:
         - Stimmen Zeitstempel und Versionen im CHANGELOG?
         - Entsprechen Models der Dokumentation?
 
+zeitzone_und_datumsregeln:
+  - Cursor MUSS für alle Dateierstellungen, Dokumentation, Zeitstempel,
+    Log-Einträge und generierten Inhalte die Zeitzone **Europe/Berlin**
+    verwenden.
+  - Alle Datumsangaben sollen im ISO-Format YYYY-MM-DD dokumentiert werden.
+  - Cursor DARF keine anderen Zeitzonen oder automatisch berechneten UTC-Zeiten
+    verwenden.
+  - Cursor MUSS die Systemlogik der Anwendung so konfigurieren, dass Django
+    und alle zugehörigen Komponenten in der Zeitzone Europe/Berlin laufen.
+  - Cursor MUSS in der Dokumentation (PHASES.md, CHECKPOINTS.md, CHANGELOG.md)
+    rückwirkend alle falschen Datumsangaben erkennen und auf Europe/Berlin
+    korrekt anpassen.
+  - Wenn ein Datum aus dem Kontext unklar ist oder nicht exakt rekonstruierbar:
+        → Cursor soll ein Platzhalterdatum setzen und darauf hinweisen.
+  - Diese Zeitzonenregel ist dauerhaft und gilt für alle zukünftigen Phasen.
+  - Wenn Datumsangaben bereits existieren und offensichtlich nicht mit der realen Projektzeit übereinstimmen 
+  (z. B. liegen sie deutlich in der Zukunft oder vor Projektstart), dann muss Cursor das als Fehler behandeln:
+    * entweder den Nutzer nach dem korrekten Datum fragen
+    * oder – falls der Nutzer explizit ein Ziel-Datum vorgibt – alle betroffenen Stellen konsistent korrigieren.
+
 Cursor muss solche Skripte erzeugen und regelmäßig ausführen,
 insbesondere vor Commits, Phasenwechseln und vor Hackathon-Submission.
 
