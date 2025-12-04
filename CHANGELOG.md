@@ -5,6 +5,32 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.5] - 2025-12-04
+
+### Behoben
+- **Rechnungsberechnung korrigiert**:
+  - Berechnung basiert jetzt auf Einheiten statt Stunden
+  - Formel: `units = lesson_duration_minutes / contract_unit_duration_minutes`, `amount = units * hourly_rate`
+  - Beispiel: 90 Min bei 45 Min/Einheit und 12€/Einheit → 24€ (statt vorherige Stundenberechnung)
+  - Gesamtsumme ist die Summe aller InvoiceItems
+
+### Hinzugefügt
+- **Status-Übergänge bei Rechnungen**:
+  - Lessons werden automatisch auf PAID gesetzt beim Erstellen einer Rechnung
+  - Lessons werden auf TAUGHT zurückgesetzt beim Löschen einer Rechnung (nur wenn nicht in anderen Rechnungen)
+- **Rechnungen löschbar**:
+  - InvoiceDeleteView mit Bestätigungsseite
+  - Löschen-Button in Rechnungsdetailansicht
+  - Sichere Delete-View (POST only, CSRF)
+
+### Tests
+- 5 neue Tests für Rechnungsberechnung und Status-Übergänge
+- Tests für korrekte Einheitenberechnung (90 Min / 45 Min = 2 Einheiten)
+- Tests für Status-Übergänge TAUGHT → PAID und PAID → TAUGHT
+- Tests für korrekte Behandlung von Lessons in mehreren Rechnungen
+
+---
+
 ## [0.8.4] - 2025-12-04
 
 ### Hinzugefügt

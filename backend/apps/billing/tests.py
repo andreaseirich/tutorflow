@@ -156,7 +156,9 @@ class InvoiceServiceTest(TestCase):
         
         self.assertIsNotNone(invoice)
         self.assertEqual(invoice.items.count(), 2)
-        self.assertEqual(invoice.total_amount, Decimal('50.00'))  # 2 * 25€
+        # Berechnung: 60 Min / 60 Min = 1 Einheit, 1 * 25€ = 25€ pro Lesson
+        # 2 Lessons = 2 * 25€ = 50€
+        self.assertEqual(invoice.total_amount, Decimal('50.00'))
         
         # Prüfe, dass Lessons auf PAID gesetzt wurden
         lesson1.refresh_from_db()

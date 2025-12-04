@@ -12,6 +12,7 @@
     {% else %}
     <a href="{{ invoice.document.url }}" class="btn" target="_blank">📄 Dokument anzeigen</a>
     {% endif %}
+    <a href="{% url 'billing:invoice_delete' invoice.pk %}" class="btn btn-danger">🗑️ Löschen</a>
 </div>
 
 <h2>Details</h2>

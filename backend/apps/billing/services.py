@@ -79,10 +79,15 @@ class InvoiceService:
         # Erstelle InvoiceItems
         total_amount = Decimal('0.00')
         for lesson in lessons:
-            # Berechne Betrag basierend auf Vertrag
-            hourly_rate = lesson.contract.hourly_rate
-            hours = Decimal(str(lesson.duration_minutes)) / Decimal('60')
-            amount = hourly_rate * hours
+            # Berechne Betrag basierend auf Einheiten
+            # units = lesson_duration_minutes / contract_unit_duration_minutes
+            # amount = units * rate_per_unit
+            contract = lesson.contract
+            unit_duration = Decimal(str(contract.unit_duration_minutes))
+            lesson_duration = Decimal(str(lesson.duration_minutes))
+            units = lesson_duration / unit_duration
+            rate_per_unit = contract.hourly_rate
+            amount = units * rate_per_unit
             
             InvoiceItem.objects.create(
                 invoice=invoice,
@@ -99,9 +104,48 @@ class InvoiceService:
             lesson.status = 'paid'
             lesson.save(update_fields=['status', 'updated_at'])
         
-        # Setze Gesamtbetrag
+        # Setze Gesamtbetrag (Summe aller InvoiceItems)
         invoice.total_amount = total_amount
         invoice.save(update_fields=['total_amount', 'updated_at'])
         
         return invoice
+    
+    @staticmethod
+    def delete_invoice(invoice: Invoice):
+        """
+        Löscht eine Rechnung und setzt Lessons zurück auf TAUGHT, falls sie nicht in anderen Rechnungen sind.
+        
+        Args:
+            invoice: Die zu löschende Invoice
+            
+        Returns:
+            Anzahl der zurückgesetzten Lessons
+        """
+        # Sammle alle Lessons dieser Rechnung (vor dem Löschen!)
+        invoice_items = list(invoice.items.all())
+        lesson_ids = [item.lesson_id for item in invoice_items if item.lesson_id]
+        
+        # Lösche die Invoice (CASCADE löscht automatisch alle InvoiceItems)
+        invoice.delete()
+        
+        # Setze Lessons zurück auf TAUGHT, falls sie nicht in anderen Rechnungen sind
+        reset_count = 0
+        for lesson_id in lesson_ids:
+            if not lesson_id:
+                continue
+                
+            lesson = Lesson.objects.filter(pk=lesson_id).first()
+            if lesson:
+                # Prüfe, ob Lesson noch in anderen Rechnungen ist
+                other_invoices = InvoiceItem.objects.filter(
+                    lesson_id=lesson_id
+                ).exists()
+                
+                # Nur zurücksetzen, wenn Lesson nicht in anderen Rechnungen ist
+                if not other_invoices and lesson.status == 'paid':
+                    lesson.status = 'taught'
+                    lesson.save(update_fields=['status', 'updated_at'])
+                    reset_count += 1
+        
+        return reset_count
 

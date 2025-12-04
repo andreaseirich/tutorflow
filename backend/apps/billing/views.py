@@ -3,7 +3,7 @@ Views für Billing-App.
 """
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, DeleteView
 from django.urls import reverse_lazy
 from datetime import date
 from apps.billing.models import Invoice, InvoiceItem
@@ -90,6 +90,28 @@ class InvoiceCreateView(CreateView):
         except ValueError as e:
             messages.error(self.request, str(e))
             return self.form_invalid(form)
+
+
+class InvoiceDeleteView(DeleteView):
+    """Löschen einer Rechnung."""
+    model = Invoice
+    template_name = 'billing/invoice_confirm_delete.html'
+    success_url = reverse_lazy('billing:invoice_list')
+    
+    def delete(self, request, *args, **kwargs):
+        """Löscht die Rechnung und setzt Lessons zurück."""
+        invoice = self.get_object()
+        reset_count = InvoiceService.delete_invoice(invoice)
+        
+        if reset_count > 0:
+            messages.success(
+                request,
+                f'Rechnung gelöscht. {reset_count} Unterrichtsstunde(n) wurden auf "unterrichtet" zurückgesetzt.'
+            )
+        else:
+            messages.success(request, 'Rechnung erfolgreich gelöscht.')
+        
+        return redirect(self.success_url)
 
 
 def generate_invoice_document(request, pk):
