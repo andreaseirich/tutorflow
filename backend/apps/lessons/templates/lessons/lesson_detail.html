@@ -1,0 +1,64 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Unterrichtsstunde - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Unterrichtsstunde</h1>
+
+<h2>Details</h2>
+<table>
+    <tr><th>Schüler</th><td>{{ lesson.contract.student }}</td></tr>
+    <tr><th>Datum</th><td>{{ lesson.date }}</td></tr>
+    <tr><th>Zeit</th><td>{{ lesson.start_time }}</td></tr>
+    <tr><th>Dauer</th><td>{{ lesson.duration_minutes }} Minuten</td></tr>
+    <tr><th>Status</th><td>{{ lesson.get_status_display }}</td></tr>
+    <tr><th>Ort</th><td>{{ lesson.location|default:"-" }}</td></tr>
+    {% if lesson.notes %}
+    <tr><th>Notizen</th><td>{{ lesson.notes }}</td></tr>
+    {% endif %}
+</table>
+
+{% if conflicts %}
+<h2>Konflikte</h2>
+<div class="conflict">
+    <p>⚠ {{ conflicts|length }} Konflikt(e) erkannt:</p>
+    <ul>
+        {% for conflict in conflicts %}
+        <li>{{ conflict.message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<h2>Unterrichtsplan (KI-generiert)</h2>
+{% if is_premium %}
+    {% if has_lesson_plan %}
+    <div>
+        <h3>Aktueller Plan ({{ latest_lesson_plan.created_at|date:"d.m.Y H:i" }})</h3>
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; white-space: pre-wrap;">{{ latest_lesson_plan.content }}</div>
+        <p><small>Modell: {{ latest_lesson_plan.llm_model|default:"N/A" }}</small></p>
+        <form method="post" action="{% url 'ai:generate_lesson_plan' lesson.pk %}" style="margin-top: 10px;">
+            {% csrf_token %}
+            <button type="submit" class="btn">Neu generieren</button>
+        </form>
+    </div>
+    {% else %}
+    <p>Noch kein Unterrichtsplan vorhanden.</p>
+    <form method="post" action="{% url 'ai:generate_lesson_plan' lesson.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn">Unterrichtsplan mit KI generieren</button>
+    </form>
+    {% endif %}
+{% else %}
+<div style="background: #fff3cd; padding: 15px; border-radius: 4px; color: #856404;">
+    <p><strong>Premium-Funktion:</strong> Diese Funktion ist nur für Premium-User verfügbar.</p>
+    <p>Bitte kontaktieren Sie den Administrator, um Premium-Zugang zu erhalten.</p>
+</div>
+{% endif %}
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'lessons:update' lesson.pk %}" class="btn">Bearbeiten</a>
+    <a href="{% url 'lessons:list' %}" class="btn">Zurück zur Liste</a>
+</div>
+{% endblock %}
+

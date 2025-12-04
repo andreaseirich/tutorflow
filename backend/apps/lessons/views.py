@@ -39,6 +39,17 @@ class LessonDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['conflicts'] = LessonConflictService.check_conflicts(self.object)
+        
+        # LessonPlan-Informationen
+        from apps.lesson_plans.models import LessonPlan
+        from apps.core.utils import is_premium_user
+        
+        lesson_plans = LessonPlan.objects.filter(lesson=self.object).order_by('-created_at')
+        context['lesson_plans'] = lesson_plans
+        context['has_lesson_plan'] = lesson_plans.exists()
+        context['latest_lesson_plan'] = lesson_plans.first() if lesson_plans.exists() else None
+        context['is_premium'] = is_premium_user(self.request.user) if self.request.user.is_authenticated else False
+        
         return context
 
 
