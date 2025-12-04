@@ -10,7 +10,7 @@
     {% if not invoice.document %}
     <a href="{% url 'billing:invoice_generate_document' invoice.pk %}" class="btn">📄 Dokument generieren</a>
     {% else %}
-    <a href="{{ invoice.document.url }}" class="btn" target="_blank">📄 Dokument anzeigen</a>
+    <a href="{% url 'billing:invoice_document' invoice.pk %}" class="btn" target="_blank">📄 Dokument anzeigen</a>
     {% endif %}
     <a href="{% url 'billing:invoice_delete' invoice.pk %}" class="btn btn-danger">🗑️ Löschen</a>
 </div>

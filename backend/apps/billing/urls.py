@@ -12,5 +12,6 @@ urlpatterns = [
     path('<int:pk>/delete/', views.InvoiceDeleteView.as_view(), name='invoice_delete'),
     path('create/', views.InvoiceCreateView.as_view(), name='invoice_create'),
     path('<int:pk>/generate-document/', views.generate_invoice_document, name='invoice_generate_document'),
+    path('<int:pk>/document/', views.serve_invoice_document, name='invoice_document'),
 ]
 
