@@ -82,12 +82,26 @@ class Invoice(models.Model):
         
         Beim Löschen einer Rechnung werden alle zugehörigen Lessons,
         die den Status PAID haben, auf TAUGHT zurückgesetzt.
-        Da eine Lesson nur in einer Rechnung vorkommen kann, ist keine
-        Prüfung auf andere Rechnungen nötig.
+        Eine Lesson wird nur zurückgesetzt, wenn sie nicht in anderen Rechnungen ist.
         """
         # Sammle alle Lessons dieser Rechnung (vor dem Löschen!)
         invoice_items = list(self.items.all())
         lesson_ids = [item.lesson_id for item in invoice_items if item.lesson_id]
+        
+        # Prüfe für jede Lesson, ob sie in anderen Rechnungen ist (vor dem Löschen!)
+        lessons_to_reset = []
+        for lesson_id in lesson_ids:
+            if not lesson_id:
+                continue
+            
+            # Prüfe, ob Lesson in anderen Rechnungen ist
+            other_invoice_items = InvoiceItem.objects.filter(
+                lesson_id=lesson_id
+            ).exclude(invoice=self)
+            
+            # Nur zurücksetzen, wenn Lesson nicht in anderen Rechnungen ist
+            if not other_invoice_items.exists():
+                lessons_to_reset.append(lesson_id)
         
         # Lösche die Invoice (CASCADE löscht automatisch alle InvoiceItems)
         super().delete(*args, **kwargs)
@@ -95,10 +109,7 @@ class Invoice(models.Model):
         # Setze Lessons zurück auf TAUGHT
         from apps.lessons.models import Lesson
         reset_count = 0
-        for lesson_id in lesson_ids:
-            if not lesson_id:
-                continue
-                
+        for lesson_id in lessons_to_reset:
             lesson = Lesson.objects.filter(pk=lesson_id).first()
             if lesson and lesson.status == 'paid':
                 lesson.status = 'taught'
