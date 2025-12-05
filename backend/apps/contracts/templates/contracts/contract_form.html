@@ -1,25 +1,26 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}{% if object %}Vertrag bearbeiten{% else %}Neuer Vertrag{% endif %} - TutorFlow{% endblock %}
+{% block title %}{% if object %}{% trans "Edit Contract" %}{% else %}{% trans "New Contract" %}{% endif %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>{% if object %}Vertrag bearbeiten{% else %}Neuer Vertrag{% endif %}</h1>
+<h1>{% if object %}{% trans "Edit Contract" %}{% else %}{% trans "New Contract" %}{% endif %}</h1>
 
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     
     {% if formset %}
-    <h2>Monatliche Planung</h2>
-    <p>Geben Sie für jeden Monat im Vertragszeitraum die geplanten Einheiten ein.</p>
+    <h2>{% trans "Monthly Planning" %}</h2>
+    <p>{% trans "Enter the planned units for each month in the contract period." %}</p>
     
     {{ formset.management_form }}
     <table>
         <thead>
             <tr>
-                <th>Jahr</th>
-                <th>Monat</th>
-                <th>Geplante Einheiten</th>
+                <th>{% trans "Year" %}</th>
+                <th>{% trans "Month" %}</th>
+                <th>{% trans "Planned Units" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -43,8 +44,8 @@
     {% endif %}
     
     <div class="btn-group">
-        <button type="submit" class="btn btn-success">Speichern</button>
-        <a href="{% url 'contracts:list' %}" class="btn btn-secondary">Abbrechen</a>
+        <button type="submit" class="btn btn-success">{% trans "Save" %}</button>
+        <a href="{% url 'contracts:list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
     </div>
 </form>
 

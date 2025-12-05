@@ -1,8 +1,20 @@
-# Architektur – TutorFlow
+# Architecture – TutorFlow
 
-## Übersicht
+## Overview
 
-TutorFlow ist eine Django-basierte Web-Anwendung, die nach modernen Best Practices strukturiert ist. Die Architektur folgt dem Prinzip der klaren Trennung von Verantwortlichkeiten und Modularität.
+TutorFlow is a Django-based web application structured according to modern best practices. The architecture follows the principle of clear separation of responsibilities and modularity.
+
+## Internationalization (i18n)
+
+TutorFlow is fully internationalized with English as the default language and German as a secondary language.
+
+- **Default Language**: English (`en`)
+- **Supported Languages**: English (`en`), German (`de`)
+- **Implementation**: All templates use `{% trans %}` and `{% blocktrans %}` tags for translatable strings
+- **Models**: All model fields, choices, and verbose names use `gettext_lazy()` for translation
+- **Language Switching**: Available via dropdown in the navigation bar
+- **Translation Files**: Located in `backend/locale/` with separate `.po` files for each language
+- **Status**: All templates are fully translated with English as the source language
 
 ## Technische Architektur
 

@@ -1,22 +1,23 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Verträge - TutorFlow{% endblock %}
+{% block title %}{% trans "Contracts" %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Verträge</h1>
-<a href="{% url 'contracts:create' %}" class="btn">Neuer Vertrag</a>
+<h1>{% trans "Contracts" %}</h1>
+<a href="{% url 'contracts:create' %}" class="btn">{% trans "New Contract" %}</a>
 
 <table>
     <thead>
         <tr>
-            <th>Schüler</th>
-            <th>Institut</th>
-            <th>Honorar</th>
-            <th>Dauer</th>
-            <th>Von</th>
-            <th>Bis</th>
-            <th>Status</th>
-            <th>Aktionen</th>
+            <th>{% trans "Student" %}</th>
+            <th>{% trans "Institute" %}</th>
+            <th>{% trans "Rate" %}</th>
+            <th>{% trans "Duration" %}</th>
+            <th>{% trans "From" %}</th>
+            <th>{% trans "To" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Actions" %}</th>
         </tr>
     </thead>
     <tbody>
@@ -25,18 +26,18 @@
             <td>{{ contract.student.full_name }}</td>
             <td>{{ contract.institute|default:"-" }}</td>
             <td>{{ contract.hourly_rate }}€</td>
-            <td>{{ contract.unit_duration_minutes }} Min.</td>
+            <td>{% blocktrans with minutes=contract.unit_duration_minutes %}{{ minutes }} Min.{% endblocktrans %}</td>
             <td>{{ contract.start_date }}</td>
-            <td>{{ contract.end_date|default:"unbefristet" }}</td>
-            <td>{% if contract.is_active %}<span style="color: #28a745;">Aktiv</span>{% else %}<span style="color: #6c757d;">Inaktiv</span>{% endif %}</td>
+            <td>{{ contract.end_date|default:_("unlimited") }}</td>
+            <td>{% if contract.is_active %}<span style="color: #28a745;">{% trans "Active" %}</span>{% else %}<span style="color: #6c757d;">{% trans "Inactive" %}</span>{% endif %}</td>
             <td>
-                <a href="{% url 'contracts:detail' contract.pk %}">Details</a> |
-                <a href="{% url 'contracts:update' contract.pk %}">Bearbeiten</a> |
-                <a href="{% url 'contracts:delete' contract.pk %}">Löschen</a>
+                <a href="{% url 'contracts:detail' contract.pk %}">{% trans "Details" %}</a> |
+                <a href="{% url 'contracts:update' contract.pk %}">{% trans "Edit" %}</a> |
+                <a href="{% url 'contracts:delete' contract.pk %}">{% trans "Delete" %}</a>
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="8">Keine Verträge vorhanden.</td></tr>
+        <tr><td colspan="8">{% trans "No contracts available." %}</td></tr>
         {% endfor %}
     </tbody>
 </table>

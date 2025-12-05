@@ -1,16 +1,17 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Unterrichtsstunde löschen - TutorFlow{% endblock %}
+{% block title %}{% trans "Delete Lesson" %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Unterrichtsstunde löschen</h1>
-<p>Sind Sie sicher, dass Sie die Unterrichtsstunde für "{{ object.contract.student }}" am {{ object.date }} um {{ object.start_time }} löschen möchten?</p>
+<h1>{% trans "Delete Lesson" %}</h1>
+<p>{% blocktrans with student=object.contract.student date=object.date time=object.start_time %}Are you sure you want to delete the lesson for "{{ student }}" on {{ date }} at {{ time }}?{% endblocktrans %}</p>
 
 <form method="post">
     {% csrf_token %}
     <div class="btn-group">
-        <button type="submit" class="btn btn-danger">Löschen bestätigen</button>
-        <a href="{% url 'lessons:detail' object.pk %}" class="btn btn-secondary">Abbrechen</a>
+        <button type="submit" class="btn btn-danger">{% trans "Confirm Delete" %}</button>
+        <a href="{% url 'lessons:detail' object.pk %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
     </div>
 </form>
 {% endblock %}
