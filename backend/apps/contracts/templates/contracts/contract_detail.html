@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
 {% block title %}{{ contract }} - TutorFlow{% endblock %}
 
@@ -6,35 +7,35 @@
 <h1>{{ contract }}</h1>
 
 <div class="btn-group">
-    <a href="{% url 'contracts:update' contract.pk %}" class="btn">Bearbeiten</a>
-    <a href="{% url 'contracts:delete' contract.pk %}" class="btn btn-danger">Löschen</a>
-    <a href="{% url 'lessons:recurring_create' %}?contract={{ contract.pk }}" class="btn btn-success">➕ Serientermin erstellen</a>
-    <a href="{% url 'contracts:list' %}" class="btn btn-secondary">Zurück zur Liste</a>
+    <a href="{% url 'contracts:update' contract.pk %}" class="btn">{% trans "Edit" %}</a>
+    <a href="{% url 'contracts:delete' contract.pk %}" class="btn btn-danger">{% trans "Delete" %}</a>
+    <a href="{% url 'lessons:recurring_create' %}?contract={{ contract.pk }}" class="btn btn-success">➕ {% trans "Create Recurring Lesson" %}</a>
+    <a href="{% url 'contracts:list' %}" class="btn btn-secondary">{% trans "Back to List" %}</a>
 </div>
 
-<h2>Details</h2>
+<h2>{% trans "Details" %}</h2>
 <table>
-    <tr><th>Schüler</th><td><a href="{% url 'students:detail' contract.student.pk %}">{{ contract.student.full_name }}</a></td></tr>
-    {% if contract.institute %}<tr><th>Institut</th><td>{{ contract.institute }}</td></tr>{% endif %}
-    <tr><th>Honorar</th><td>{{ contract.hourly_rate }}€ pro Einheit</td></tr>
-    <tr><th>Dauer pro Einheit</th><td>{{ contract.unit_duration_minutes }} Minuten</td></tr>
-        <tr><th>Vertragsbeginn</th><td>{{ contract.start_date }}</td></tr>
-        <tr><th>Vertragsende</th><td>{{ contract.end_date|default:"unbefristet" }}</td></tr>
-        <tr><th>Status</th><td>{% if contract.is_active %}<span style="color: #28a745;">Aktiv</span>{% else %}<span style="color: #6c757d;">Inaktiv</span>{% endif %}</td></tr>
-    {% if contract.notes %}<tr><th>Notizen</th><td>{{ contract.notes }}</td></tr>{% endif %}
-    <tr><th>Erstellt</th><td>{{ contract.created_at|date:"d.m.Y H:i" }}</td></tr>
-    <tr><th>Zuletzt aktualisiert</th><td>{{ contract.updated_at|date:"d.m.Y H:i" }}</td></tr>
+    <tr><th>{% trans "Student" %}</th><td><a href="{% url 'students:detail' contract.student.pk %}">{{ contract.student.full_name }}</a></td></tr>
+    {% if contract.institute %}<tr><th>{% trans "Institute" %}</th><td>{{ contract.institute }}</td></tr>{% endif %}
+    <tr><th>{% trans "Rate" %}</th><td>{% blocktrans with rate=contract.hourly_rate %}{{ rate }}€ per unit{% endblocktrans %}</td></tr>
+    <tr><th>{% trans "Duration per unit" %}</th><td>{% blocktrans with minutes=contract.unit_duration_minutes %}{{ minutes }} minutes{% endblocktrans %}</td></tr>
+        <tr><th>{% trans "Contract start" %}</th><td>{{ contract.start_date }}</td></tr>
+        <tr><th>{% trans "Contract end" %}</th><td>{{ contract.end_date|default:_("unlimited") }}</td></tr>
+        <tr><th>{% trans "Status" %}</th><td>{% if contract.is_active %}<span style="color: #28a745;">{% trans "Active" %}</span>{% else %}<span style="color: #6c757d;">{% trans "Inactive" %}</span>{% endif %}</td></tr>
+    {% if contract.notes %}<tr><th>{% trans "Notes" %}</th><td>{{ contract.notes }}</td></tr>{% endif %}
+    <tr><th>{% trans "Created" %}</th><td>{{ contract.created_at|date:"d.m.Y H:i" }}</td></tr>
+    <tr><th>{% trans "Last updated" %}</th><td>{{ contract.updated_at|date:"d.m.Y H:i" }}</td></tr>
 </table>
 
-<h2>Unterrichtsstunden</h2>
+<h2>{% trans "Lessons" %}</h2>
 {% if contract.lessons.all %}
 <table>
     <thead>
         <tr>
-            <th>Datum</th>
-            <th>Zeit</th>
-            <th>Status</th>
-            <th>Aktionen</th>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Time" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Actions" %}</th>
         </tr>
     </thead>
     <tbody>
@@ -43,14 +44,14 @@
             <td>{{ lesson.date }}</td>
             <td>{{ lesson.start_time }}</td>
             <td>{{ lesson.get_status_display }}</td>
-            <td><a href="{% url 'lessons:detail' lesson.pk %}">Details</a></td>
+            <td><a href="{% url 'lessons:detail' lesson.pk %}">{% trans "Details" %}</a></td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 {% else %}
 <div class="empty-state">
-    <p>Keine Unterrichtsstunden für diesen Vertrag vorhanden.</p>
+    <p>{% trans "No lessons available for this contract." %}</p>
 </div>
 {% endif %}
 {% endblock %}

@@ -1,18 +1,19 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Schüler - TutorFlow{% endblock %}
+{% block title %}{% trans "Students" %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Schüler</h1>
-<a href="{% url 'students:create' %}" class="btn">Neuer Schüler</a>
+<h1>{% trans "Students" %}</h1>
+<a href="{% url 'students:create' %}" class="btn">{% trans "New Student" %}</a>
 
 <table>
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Schule</th>
-            <th>Klasse</th>
-            <th>Aktionen</th>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "School" %}</th>
+            <th>{% trans "Grade" %}</th>
+            <th>{% trans "Actions" %}</th>
         </tr>
     </thead>
     <tbody>
@@ -22,13 +23,13 @@
             <td>{{ student.school|default:"-" }}</td>
             <td>{{ student.grade|default:"-" }}</td>
             <td>
-                <a href="{% url 'students:detail' student.pk %}">Details</a> |
-                <a href="{% url 'students:update' student.pk %}">Bearbeiten</a> |
-                <a href="{% url 'students:delete' student.pk %}">Löschen</a>
+                <a href="{% url 'students:detail' student.pk %}">{% trans "Details" %}</a> |
+                <a href="{% url 'students:update' student.pk %}">{% trans "Edit" %}</a> |
+                <a href="{% url 'students:delete' student.pk %}">{% trans "Delete" %}</a>
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="4">Keine Schüler vorhanden.</td></tr>
+        <tr><td colspan="4">{% trans "No students available." %}</td></tr>
         {% endfor %}
     </tbody>
 </table>
