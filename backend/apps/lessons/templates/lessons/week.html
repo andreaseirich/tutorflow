@@ -13,7 +13,7 @@
     <a href="{% url 'blocked_times:recurring_create' %}" class="btn btn-warning">🚫 {% trans "Create Recurring Blocked Time" %}</a>
 </div>
 
-<p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+<p style="margin-top: 10px; color: #495057; font-size: 0.9em;">
     <strong>{% trans "Note:" %}</strong> {% trans "Drag a time range in the calendar to create a new appointment. Click on an existing appointment to edit it." %}
 </p>
 
@@ -117,7 +117,7 @@
 <!-- Dialog for appointment creation -->
 <div id="create-dialog" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000; min-width: 400px;">
     <h3 style="margin-top: 0;">{% trans "Create New Appointment" %}</h3>
-    <p id="dialog-time-info" style="margin-bottom: 15px; color: #666;"></p>
+    <p id="dialog-time-info" style="margin-bottom: 15px; color: #2c3e50;"></p>
     <div style="margin-bottom: 15px;">
         <label>
             <input type="radio" name="event-type" value="lesson" checked> {% trans "Tutoring Lesson" %}
