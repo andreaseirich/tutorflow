@@ -9,7 +9,6 @@
 <div class="btn-group">
     <a href="{% url 'lessons:calendar' %}?year={{ prev_year }}&month={{ prev_month }}" class="btn">← {% trans "Previous Month" %}</a>
     <a href="{% url 'lessons:calendar' %}?year={{ next_year }}&month={{ next_month }}" class="btn">{% trans "Next Month" %} →</a>
-    <a href="{% url 'blocked_times:recurring_create' %}" class="btn btn-warning">🚫 {% trans "Create Recurring Blocked Time" %}</a>
 </div>
 
 <p style="margin-top: 10px; color: #495057; font-size: 0.9em;">

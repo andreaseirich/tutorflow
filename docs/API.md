@@ -43,10 +43,14 @@ This documentation describes the API endpoints of TutorFlow. The API will be imp
 - `GET /lessons/<id>/delete/` - Confirmation page
 - `POST /lessons/<id>/delete/` - Delete lesson
 - `GET /lessons/month/<year>/<month>/` - Month view of all lessons
-- `GET /lessons/calendar/` - Monthly calendar view (lessons and blocked times)
-- `GET /lessons/calendar/?year=<year>&month=<month>` - Calendar for specific month
-- `GET /lessons/week/` - Interactive week view (Monday-Sunday, 08:00-22:00)
+- `GET /lessons/calendar/` - Monthly calendar view (redirects to week view)
+- `GET /lessons/week/` - Interactive week view (Monday-Sunday, 08:00-22:00) - **Default calendar view**
 - `GET /lessons/week/?year=<year>&month=<month>&day=<day>` - Week view for specific week
+- **Click behavior**: Click on lesson block opens lesson plan view; click on edit icon (✏️) opens lesson edit form
+
+### Lesson Plans
+- `GET /lesson-plans/lessons/<lesson_id>/` - Lesson plan view (display/create AI lesson plans)
+- **Note**: Clicking on a lesson in the week view opens this view. Premium users can generate AI lesson plans here.
 
 ### Recurring Lessons
 - `GET /lessons/recurring/` - List of all recurring lessons
@@ -69,15 +73,13 @@ This documentation describes the API endpoints of TutorFlow. The API will be imp
 - `POST /blocked-times/<id>/delete/` - Delete blocked time
 
 ### Recurring Blocked Times
-- `GET /blocked-times/recurring/` - List of all recurring blocked times
 - `GET /blocked-times/recurring/<id>/` - Recurring blocked time details
-- `GET /blocked-times/recurring/create/` - Form to create
-- `POST /blocked-times/recurring/create/` - Create new recurring blocked time
 - `GET /blocked-times/recurring/<id>/update/` - Form to edit
 - `POST /blocked-times/recurring/<id>/update/` - Update recurring blocked time
 - `GET /blocked-times/recurring/<id>/delete/` - Confirmation page
 - `POST /blocked-times/recurring/<id>/delete/` - Delete recurring blocked time
 - `POST /blocked-times/recurring/<id>/generate/` - Generate blocked times from recurring blocked time
+- **Note**: Recurring blocked times can no longer be created directly from the UI. They are managed internally but have no visible creation button.
 
 ### Billing
 - `GET /billing/invoices/` - List of all invoices

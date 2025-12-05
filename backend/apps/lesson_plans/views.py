@@ -1,3 +1,38 @@
-from django.shortcuts import render
+"""
+Views for lesson plan management.
+"""
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.views.generic import TemplateView
+from django.utils.translation import gettext_lazy as _
+from apps.lessons.models import Lesson
+from apps.lesson_plans.models import LessonPlan
+from apps.core.utils import is_premium_user
 
-# Create your views here.
+
+class LessonPlanView(TemplateView):
+    """View for displaying and managing lesson plans for a lesson."""
+    template_name = 'lesson_plans/lesson_plan.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lesson_id = self.kwargs.get('lesson_id')
+        lesson = get_object_or_404(Lesson, pk=lesson_id)
+        
+        # Get existing lesson plans for this lesson
+        lesson_plans = LessonPlan.objects.filter(lesson=lesson).order_by('-created_at')
+        latest_lesson_plan = lesson_plans.first() if lesson_plans.exists() else None
+        
+        # Premium status
+        context['lesson'] = lesson
+        context['lesson_plans'] = lesson_plans
+        context['has_lesson_plan'] = lesson_plans.exists()
+        context['latest_lesson_plan'] = latest_lesson_plan
+        context['is_premium'] = is_premium_user(self.request.user) if self.request.user.is_authenticated else False
+        
+        # Week view parameters for redirect
+        context['year'] = self.request.GET.get('year', lesson.date.year)
+        context['month'] = self.request.GET.get('month', lesson.date.month)
+        context['day'] = self.request.GET.get('day', lesson.date.day)
+        
+        return context

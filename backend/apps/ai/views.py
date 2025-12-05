@@ -26,6 +26,10 @@ def generate_lesson_plan(request, lesson_id):
             request,
             _("This function is only available for premium users.")
         )
+        # Redirect to lesson plan view if 'next' parameter is provided, otherwise to lesson detail
+        next_url = request.POST.get('next') or request.GET.get('next')
+        if next_url:
+            return redirect(next_url)
         return redirect('lessons:detail', pk=lesson_id)
     
     # Generiere LessonPlan
@@ -49,4 +53,8 @@ def generate_lesson_plan(request, lesson_id):
             _("An unexpected error occurred. Please try again later.")
         )
     
+    # Redirect to lesson plan view if 'next' parameter is provided, otherwise to lesson detail
+    next_url = request.POST.get('next') or request.GET.get('next')
+    if next_url:
+        return redirect(next_url)
     return redirect('lessons:detail', pk=lesson_id)
