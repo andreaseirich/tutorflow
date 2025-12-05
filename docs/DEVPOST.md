@@ -1,199 +1,198 @@
-# TutorFlow – Devpost-Einreichung
+# TutorFlow – Devpost Submission
 
-## Kurzbeschreibung
+## Short Description
 
-TutorFlow ist eine Web-Anwendung für Nachhilfelehrer zur strukturierten Verwaltung von Schülern, Verträgen, Unterrichtsstunden und Einnahmen. Die Anwendung bietet intelligente Konfliktprüfung, Einnahmenauswertung und optional KI-gestützte Unterrichtsplanung.
+TutorFlow is a web application for tutors to manage students, contracts, lessons, and income in a structured way. The application offers intelligent conflict detection, income analysis, and optional AI-powered lesson planning.
 
 ## Problem & Motivation
 
-Nachhilfelehrer stehen vor der Herausforderung, ihre Tätigkeit professionell zu organisieren:
-- **Terminplanung**: Überschneidungen vermeiden, Fahrtzeiten berücksichtigen, Blockzeiten einplanen
-- **Verwaltung**: Schüler, Verträge, Honorare und Unterrichtsstunden strukturiert verwalten
-- **Einnahmenübersicht**: Monatliche und jährliche Einnahmen nach Status (geplant, unterrichtet, ausgezahlt) nachvollziehen
-- **Unterrichtsvorbereitung**: Zeitaufwändige Erstellung von Unterrichtsplänen
+Tutors face the challenge of organizing their work professionally:
+- **Scheduling**: Avoiding overlaps, considering travel times, planning blocked times
+- **Management**: Structurally managing students, contracts, fees, and lessons
+- **Income Overview**: Tracking monthly and yearly income by status (planned, taught, paid)
+- **Lesson Preparation**: Time-consuming creation of lesson plans
 
-TutorFlow löst diese Probleme mit einer benutzerfreundlichen, strukturierten Lösung.
+TutorFlow solves these problems with a user-friendly, structured solution.
 
-## Was TutorFlow macht
+## What TutorFlow Does
 
-### Kernfunktionen
+### Core Features
 
-1. **Schülerverwaltung**
-   - Zentrale Verwaltung mit Kontaktdaten, Schule, Klasse, Fächern
-   - Standard-Unterrichtsort pro Schüler
+1. **Student Management**
+   - Centralized management with contact data, school, grade, subjects
+   - Standard lesson location per student
 
-2. **Vertragsverwaltung**
-   - Honorar pro Einheit, Dauer, Vertragszeitraum
-   - Geplante Einheiten pro Monat
-   - Unterscheidung zwischen Privat- und Institut-Verträgen
+2. **Contract Management**
+   - Fee per unit, duration, contract period
+   - Planned units per month
+   - Distinction between private and institute contracts
 
-3. **Intelligente Unterrichtsplanung**
-   - **Kalenderansicht**: Zentrale UI für die Stundenplanung - Lessons werden primär über die Kalenderansicht geplant und bearbeitet
-   - Planung mit Datum, Zeit, Ort
-   - **Serientermine**: Unterstützung für wiederholende Unterrichtsstunden (z. B. jeden Montag 14 Uhr)
-   - **Automatische Konfliktprüfung**: Erkennt Überschneidungen inkl. Fahrtzeiten
-   - **Blockzeiten**: Eigene Termine (Uni, Job, etc.) werden als belegt markiert
-   - **Fahrtzeiten**: Vor und nach der Stunde werden berücksichtigt
+3. **Intelligent Lesson Planning**
+   - **Calendar View**: Central UI for scheduling - lessons are primarily planned and edited via the calendar view
+   - Planning with date, time, location
+   - **Recurring Lessons**: Support for repeating lessons (e.g., every Monday at 2 PM)
+   - **Automatic Conflict Detection**: Detects overlaps including travel times
+   - **Blocked Times**: Personal appointments (university, job, etc.) are marked as occupied
+   - **Travel Times**: Before and after the lesson are considered
 
-4. **Einnahmenübersicht**
-   - Monats- und Jahresauswertungen
-   - Filterung nach Status (geplant, unterrichtet, ausgezahlt)
-   - Aufschlüsselung nach Verträgen/Schülern
+4. **Income Overview**
+   - Monthly and yearly reports
+   - Filtering by status (planned, taught, paid)
+   - Breakdown by contracts/students
 
 5. **Dashboard**
-   - Übersicht über heutige und kommende Stunden
-   - Konflikthinweise
-   - Aktuelle Monatseinnahmen
+   - Overview of today's and upcoming lessons
+   - Conflict warnings
+   - Current monthly income
 
-### Premium-Funktion: KI-gestützte Unterrichtspläne
+### Premium Feature: AI-Powered Lesson Plans
 
-- **Automatische Generierung**: Detaillierte Unterrichtspläne via LLM-API
-- **Human-in-the-Loop**: Generierte Pläne können angepasst und verantwortet werden
-- **Datenschutz**: Nur notwendige Daten werden an die API gesendet (Name, Klasse, Fach, Dauer)
-- **Transparenz**: Verwendetes Modell wird dokumentiert
+- **Automatic Generation**: Detailed lesson plans via LLM API
+- **Human-in-the-Loop**: Generated plans can be adjusted and verified
+- **Privacy**: Only necessary data is sent to the API (name, grade, subject, duration)
+- **Transparency**: Used model is documented
 
 ## Tech Stack
 
 ### Backend
 - **Framework**: Django 5.2.9
-- **Datenbank**: SQLite (Entwicklung), PostgreSQL (Produktion)
+- **Database**: SQLite (development), PostgreSQL (production)
 - **Python**: 3.11+
-- **Zeitzone**: Europe/Berlin (konsistent in allen Komponenten)
+- **Timezone**: Europe/Berlin (consistent across all components)
 
-### Premium-Funktionen (KI)
-- **LLM-Integration**: OpenAI-kompatible API
-- **Konfiguration**: API-Keys über Umgebungsvariablen
-- **Modell**: Konfigurierbar (Standard: gpt-3.5-turbo)
+### Premium Features (AI)
+- **LLM Integration**: OpenAI-compatible API
+- **Configuration**: API keys via environment variables
+- **Model**: Configurable (default: gpt-3.5-turbo)
 
 ### Frontend
-- **Templates**: Django-Templates mit modernem, responsivem Design
-- **Styling**: Inline CSS für einfache Wartbarkeit
+- **Templates**: Django templates with modern, responsive design
+- **Styling**: Inline CSS for easy maintenance
 
-## Besonderheiten
+## Special Features
 
-### 1. Intelligente Konfliktprüfung
-- Berücksichtigt nicht nur die Unterrichtszeit, sondern auch Fahrtzeiten vor und nach der Stunde
-- Erkennt Überschneidungen mit anderen Lessons und Blockzeiten
-- Visuelle Hervorhebung von Konflikten in der UI
+### 1. Intelligent Conflict Detection
+- Considers not only lesson time but also travel times before and after the lesson
+- Detects overlaps with other lessons and blocked times
+- Visual highlighting of conflicts in the UI
 
-### 2. Fahrtzeiten-Integration
-- Jede Lesson kann individuelle Fahrtzeiten vor und nach der Stunde haben
-- Der "Gesamtzeitblock" wird automatisch berechnet
-- Konflikte werden basierend auf dem Gesamtzeitblock erkannt
+### 2. Travel Time Integration
+- Each lesson can have individual travel times before and after
+- The "total time block" is automatically calculated
+- Conflicts are detected based on the total time block
 
-### 3. Einnahmenberechnung
-- Flexible Berechnung nach Status (geplant, unterrichtet, ausgezahlt)
-- Monatliche und jährliche Übersichten
-- Aufschlüsselung nach Verträgen/Schülern
+### 3. Income Calculation
+- Flexible calculation by status (planned, taught, paid)
+- Monthly and yearly overviews
+- Breakdown by contracts/students
 
-### 4. KI-Integration mit Datenschutz
-- Minimale Datensammlung: Nur notwendige Informationen werden an die LLM-API gesendet
-- Keine sensiblen Daten (Adressen, Telefonnummern, E-Mails) werden übertragen
-- Generierte Pläne werden lokal gespeichert
+### 4. AI Integration with Privacy
+- Minimal data collection: Only necessary information is sent to the LLM API
+- No sensitive data (addresses, phone numbers, emails) is transmitted
+- Generated plans are stored locally
 
-### 5. Ethisch-christliche Leitlinien
-- Transparenz und Ehrlichkeit
-- Ordnung und Klarheit
-- Dienst am Nutzer
-- Kein Datenmissbrauch
-- Verantwortungsvoller KI-Einsatz
+### 5. Ethical-Christian Guidelines
+- Transparency and honesty
+- Order and clarity
+- Service to the user
+- No data misuse
+- Responsible AI usage
 
 ## Challenges & Learnings
 
-### Herausforderungen
+### Challenges
 
-1. **Konfliktprüfung mit Fahrtzeiten**
-   - Problem: Fahrtzeiten müssen in die Zeitblock-Berechnung einbezogen werden
-   - Lösung: Zentrale Service-Funktion `LessonConflictService` berechnet Gesamtzeitblock inkl. Fahrtzeiten
+1. **Conflict Detection with Travel Times**
+   - Problem: Travel times must be included in time block calculation
+   - Solution: Central service function `LessonConflictService` calculates total time block including travel times
 
-2. **Zeitzonen-Handling**
-   - Problem: Konsistente Verwendung von Europe/Berlin in allen Komponenten
-   - Lösung: Django `TIME_ZONE` konfiguriert, alle DateTime-Operationen timezone-aware
+2. **Timezone Handling**
+   - Problem: Consistent use of Europe/Berlin across all components
+   - Solution: Django `TIME_ZONE` configured, all DateTime operations timezone-aware
 
-3. **Modulare Architektur**
-   - Problem: Code-Dateien sollen nicht zu groß werden (< 300-400 Zeilen)
-   - Lösung: Klare Trennung in Services, Selectors, Views, Models
+3. **Modular Architecture**
+   - Problem: Code files should not become too large (< 300-400 lines)
+   - Solution: Clear separation into services, selectors, views, models
 
-4. **KI-Integration mit Datenschutz**
-   - Problem: Balance zwischen Funktionalität und Datenschutz
-   - Lösung: Minimale Datensammlung, klare Dokumentation, Human-in-the-Loop
+4. **AI Integration with Privacy**
+   - Problem: Balance between functionality and privacy
+   - Solution: Minimal data collection, clear documentation, Human-in-the-Loop
 
 ### Learnings
 
-- **Django Best Practices**: Klare App-Struktur, Service-Layer für Business-Logik
-- **Timezone-Handling**: Konsistente Verwendung von timezone-aware Datetime-Objekten
-- **Modularität**: Kleine, fokussierte Dateien erleichtern Wartbarkeit
-- **Ethik in der Entwicklung**: Ethische Prinzipien von Anfang an integrieren
+- **Django Best Practices**: Clear app structure, service layer for business logic
+- **Timezone Handling**: Consistent use of timezone-aware datetime objects
+- **Modularity**: Small, focused files facilitate maintainability
+- **Ethics in Development**: Integrate ethical principles from the start
 
 ## Demo
 
-### Demo-Daten laden
+### Load Demo Data
 
 ```bash
 cd backend
 python manage.py seed_demo_data
 ```
 
-**Demo-Login:**
+**Demo Login:**
 - Username: `demo_premium`
 - Password: `demo123`
 
-### Demo-Szenario
+### Demo Scenario
 
-Die Demo zeigt:
-- 3 Schüler mit unterschiedlichen Profilen
-- Verträge (privat und über Institut)
-- Mehrere Unterrichtsstunden
-- **Ein Konflikt** zwischen zwei Lessons (zur Demonstration)
-- Blockzeiten (z. B. Uni-Vorlesung)
-- Premium-User mit KI-generiertem Unterrichtsplan
+The demo shows:
+- 3 students with different profiles
+- Contracts (private and via institute)
+- Multiple lessons
+- **One conflict** between two lessons (for demonstration)
+- Blocked times (e.g., university lecture)
+- Premium user with AI-generated lesson plan
 
 ## Setup
 
-Siehe `README.md` für detaillierte Installationsanweisungen.
+See `README.md` for detailed installation instructions.
 
-Kurzfassung:
-1. Repository klonen
-2. Virtuelles Environment erstellen
-3. Abhängigkeiten installieren
-4. Datenbank migrieren
-5. Demo-Daten laden (optional)
-6. Server starten
+Summary:
+1. Clone repository
+2. Create virtual environment
+3. Install dependencies
+4. Migrate database
+5. Load demo data (optional)
+6. Start server
 
-## Validierung
+## Validation
 
-Ein Validierungsskript ist verfügbar:
+A validation script is available:
 
 ```bash
 ./scripts/validate.sh
 ```
 
-Prüft: Django Check, Tests, TODO-Kommentare, Debug-Ausgaben, Dokumentation.
+Checks: Django Check, Tests, TODO comments, Debug output, Documentation.
 
-## Dokumentation
+## Documentation
 
-- **README.md**: Projektübersicht, Setup, Features
-- **docs/ARCHITECTURE.md**: Technische Architektur, Domain-Modell, Use-Cases
-- **docs/ETHICS.md**: Ethisch-christliche Leitlinien, Datenschutz
-- **docs/API.md**: API-Dokumentation
-- **docs/PHASES.md**: Entwicklungsphasen
-- **docs/CHECKPOINTS.md**: Fortschrittsprotokoll
+- **README.md**: Project overview, setup, features
+- **docs/ARCHITECTURE.md**: Technical architecture, domain model, use cases
+- **docs/ETHICS.md**: Ethical-Christian guidelines, privacy
+- **docs/API.md**: API documentation
+- **docs/PHASES.md**: Development phases
+- **docs/CHECKPOINTS.md**: Progress log
 
-## Zukunftsvision
+## Future Vision
 
 - Mobile App (React Native)
-- Kalender-Integration (iCal, Google Calendar)
-- PDF-Upload für Auftragsbestätigungen mit Datenextraktion
-- Erweiterte KI-Funktionen (z. B. Anpassung an Lernfortschritt)
-- Multi-User-Support (mehrere Tutoren in einer Instanz)
+- Calendar Integration (iCal, Google Calendar)
+- PDF Upload for order confirmations with data extraction
+- Extended AI features (e.g., adaptation to learning progress)
+- Multi-User Support (multiple tutors in one instance)
 
 ## Team
 
-Entwickelt im Rahmen des Teca-Hacks-Hackathons.
+Developed as part of the Teca-Hacks Hackathon.
 
-## Lizenz
+## License
 
-Dieses Projekt ist unter der Apache License 2.0 lizenziert – siehe [LICENSE](../LICENSE) für Details.
+This project is licensed under the Apache License 2.0 – see [LICENSE](../LICENSE) for details.
 
 Copyright (c) 2025 Andreas Eirich
-

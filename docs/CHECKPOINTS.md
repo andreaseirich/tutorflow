@@ -1,496 +1,495 @@
 # Checkpoints – TutorFlow
 
-## Checkpoint-System
+## Checkpoint System
 
-Dieses Dokument protokolliert den Fortschritt des Projekts und wichtige Meilensteine.
+This document logs the project's progress and important milestones.
 
 ---
 
-## Checkpoint 1: Projektstart
+## Checkpoint 1: Project Start
 
-**Datum**: 2025-12-04
+**Date**: 2025-12-04
 
-**Phase**: Phase 1 – Projekt-Setup & Architekturgrundlagen
+**Phase**: Phase 1 – Project Setup & Architecture Foundations
 
-**Status**: ✅ In Bearbeitung
+**Status**: ✅ In Progress
 
-### Abgeschlossen
-- ✅ Grundstruktur des Projekts angelegt (backend/, docs/, scripts/)
-- ✅ Django-Projekt initialisiert (Django 5.2.9)
-- ✅ Virtuelles Environment erstellt
-- ✅ requirements.txt angelegt
-- ✅ Dokumentation erstellt:
+### Completed
+- ✅ Basic project structure created (backend/, docs/, scripts/)
+- ✅ Django project initialized (Django 5.2.9)
+- ✅ Virtual environment created
+- ✅ requirements.txt created
+- ✅ Documentation created:
   - README.md
   - docs/ARCHITECTURE.md
   - docs/ETHICS.md
   - docs/PHASES.md
   - docs/CHECKPOINTS.md
-  - docs/API.md (Platzhalter)
-- ✅ CHANGELOG.md angelegt
+  - docs/API.md (placeholder)
+- ✅ CHANGELOG.md created
 
-### Offene ToDos
-- [x] Django-Smoke-Tests durchführen (`python manage.py check`)
-- [x] Entwicklungsserver starten und testen
-- [x] Git-Commits erstellen
-- [x] Validierung der Struktur
+### Open ToDos
+- [x] Run Django smoke tests (`python manage.py check`)
+- [x] Start and test development server
+- [x] Create git commits
+- [x] Validate structure
 
-### Nächste Schritte
-1. ✅ Validierung durchgeführt
-2. ✅ Git-Commits erstellt
-3. ⏳ Phase 1 abschließen (Push zu main-Branch)
-
----
-
-## Validierungsergebnisse
-
-### Strukturprüfung
-- [x] Alle Ordner vorhanden (backend/, docs/, scripts/)
-- [x] Django-Projekt korrekt initialisiert
-- [x] Dokumentation vollständig (README, ARCHITECTURE, ETHICS, PHASES, CHECKPOINTS, API)
-
-### Django-Checks
-- [x] `python manage.py check` erfolgreich (0 issues)
-- [x] Entwicklungsserver startet (Port-Test durchgeführt)
-- [x] Keine kritischen Fehler
-
-### Git-Commits
-- [x] `.gitignore` hinzugefügt
-- [x] Dokumentation committed
-- [x] Django-Projekt committed
-- [x] Basis-Struktur committed
+### Next Steps
+1. ✅ Validation performed
+2. ✅ Git commits created
+3. ⏳ Complete Phase 1 (push to main branch)
 
 ---
 
-## Notizen
+## Validation Results
 
-- Django 5.2.9 ist die aktuellste stabile Version
-- Projektstruktur folgt den Vorgaben aus dem Master Prompt
-- Dokumentation orientiert sich an den ethischen Leitlinien
+### Structure Check
+- [x] All folders present (backend/, docs/, scripts/)
+- [x] Django project correctly initialized
+- [x] Documentation complete (README, ARCHITECTURE, ETHICS, PHASES, CHECKPOINTS, API)
+
+### Django Checks
+- [x] `python manage.py check` successful (0 issues)
+- [x] Development server starts (port test performed)
+- [x] No critical errors
+
+### Git Commits
+- [x] `.gitignore` added
+- [x] Documentation committed
+- [x] Django project committed
+- [x] Basic structure committed
 
 ---
 
-## Checkpoint 2: Domain-Models implementiert
+## Notes
 
-**Datum**: 2025-12-04
+- Django 5.2.9 is the latest stable version
+- Project structure follows the master prompt guidelines
+- Documentation oriented to ethical guidelines
 
-**Phase**: Phase 2 – Domain-Datenmodell & Migrations
+---
 
-**Status**: ✅ Abgeschlossen
+## Checkpoint 2: Domain Models Implemented
 
-### Abgeschlossen
-- ✅ 7 Django-Apps erstellt (locations, students, contracts, lessons, blocked_times, lesson_plans, core)
-- ✅ Alle Domain-Models implementiert:
-  - Location (mit optionalen Koordinaten)
-  - Student (mit Kontaktdaten, Schule, Fächern)
-  - Contract (mit Honorar, Dauer, Vertragszeitraum)
-  - Lesson (mit Status, Fahrtzeiten)
-  - BlockedTime (für eigene Termine)
-  - LessonPlan (für KI-generierte Pläne)
-  - UserProfile (Premium-Flag)
-- ✅ IncomeSelector als Service-Layer implementiert
-- ✅ Admin-Interfaces für alle Models
-- ✅ Migrations erstellt und ausgeführt
-- ✅ 14 Unit-Tests geschrieben und erfolgreich
+**Date**: 2025-12-04
 
-### Validierungsergebnisse
+**Phase**: Phase 2 – Domain Data Model & Migrations
 
-#### Model-Validierung
-- [x] Alle Models haben korrekte Felder
-- [x] Beziehungen korrekt definiert (ForeignKeys, OneToOne)
-- [x] __str__-Methoden implementiert
-- [x] Meta-Optionen (ordering, verbose_name) gesetzt
-- [x] Indizes für performante Abfragen
+**Status**: ✅ Completed
 
-#### Migrationen
-- [x] Migrations für alle Apps erstellt
-- [x] Migrations erfolgreich ausgeführt
-- [x] Keine Fehler bei `python manage.py check`
+### Completed
+- ✅ 7 Django apps created (locations, students, contracts, lessons, blocked_times, lesson_plans, core)
+- ✅ All domain models implemented:
+  - Location (with optional coordinates)
+  - Student (with contact data, school, subjects)
+  - Contract (with fee, duration, contract period)
+  - Lesson (with status, travel times)
+  - BlockedTime (for personal appointments)
+  - LessonPlan (for AI-generated plans)
+  - UserProfile (premium flag)
+- ✅ IncomeSelector implemented as service layer
+- ✅ Admin interfaces for all models
+- ✅ Migrations created and executed
+- ✅ 14 unit tests written and successful
+
+### Validation Results
+
+#### Model Validation
+- [x] All models have correct fields
+- [x] Relationships correctly defined (ForeignKeys, OneToOne)
+- [x] __str__ methods implemented
+- [x] Meta options (ordering, verbose_name) set
+- [x] Indexes for performant queries
+
+#### Migrations
+- [x] Migrations created for all apps
+- [x] Migrations executed successfully
+- [x] No errors with `python manage.py check`
 
 #### Tests
-- [x] 14 Tests implementiert
-- [x] Alle Tests laufen erfolgreich
-- [x] Tests decken CRUD, Beziehungen und Einnahmenberechnung ab
+- [x] 14 tests implemented
+- [x] All tests run successfully
+- [x] Tests cover CRUD, relationships and income calculation
 
-#### Dokumentation
-- [x] ARCHITECTURE.md mit Datenmodell-Details aktualisiert
-- [x] PHASES.md aktualisiert (Phase 2 als abgeschlossen markiert)
-- [x] CHECKPOINTS.md aktualisiert
+#### Documentation
+- [x] ARCHITECTURE.md updated with data model details
+- [x] PHASES.md updated (Phase 2 marked as completed)
+- [x] CHECKPOINTS.md updated
 
-### Nächste Schritte
-1. ✅ Git-Commits erstellt
-2. ✅ Phase 2 abgeschlossen
-3. ✅ Phase 3 abgeschlossen
+### Next Steps
+1. ✅ Git commits created
+2. ✅ Phase 2 completed
+3. ✅ Phase 3 completed
 
 ---
 
-## Checkpoint 3: Kernfunktionen implementiert
+## Checkpoint 3: Core Features Implemented
 
-**Datum**: 2025-12-04
+**Date**: 2025-12-04
 
-**Phase**: Phase 3 – Kernfunktionen (Planung & Einnahmen)
+**Phase**: Phase 3 – Core Features (Planning & Income)
 
-**Status**: ✅ Abgeschlossen
+**Status**: ✅ Completed
 
-### Abgeschlossen
-- ✅ CRUD-Funktionen für alle Kern-Entitäten:
+### Completed
+- ✅ CRUD functions for all core entities:
   - Student (List, Detail, Create, Update, Delete)
   - Contract (List, Detail, Create, Update, Delete)
-  - Lesson (List, Detail, Create, Update, Delete, Month-View)
+  - Lesson (List, Detail, Create, Update, Delete, Month View)
   - BlockedTime (List, Detail, Create, Update, Delete)
   - Location (List, Detail, Create, Update, Delete)
-- ✅ Konfliktprüfung implementiert:
-  - LessonConflictService für Zeitblock-Berechnung und Konfliktprüfung
-  - Berücksichtigung von Fahrtzeiten
-  - Einbindung von Blockzeiten
-  - Konfliktmarkierung in UI
-- ✅ Planungslogik:
-  - LessonQueryService für Abfragen (Monat, heute, kommend)
-  - Monatsansicht für Lessons
-- ✅ Einnahmenübersicht:
-  - Dashboard mit aktuellen Einnahmen
-  - IncomeOverview-View mit Monats-/Jahresansicht
-  - Verwendung von IncomeSelector
-- ✅ Basis-UI:
-  - Navigation zwischen allen Bereichen
-  - Dashboard mit Übersicht
-  - Einfache Templates für alle CRUD-Operationen
+- ✅ Conflict detection implemented:
+  - LessonConflictService for time block calculation and conflict detection
+  - Consideration of travel times
+  - Integration of blocked times
+  - Conflict marking in UI
+- ✅ Planning logic:
+  - LessonQueryService for queries (month, today, upcoming)
+  - Month view for lessons
+- ✅ Income overview:
+  - Dashboard with current income
+  - IncomeOverview view with monthly/yearly view
+  - Use of IncomeSelector
+- ✅ Basic UI:
+  - Navigation between all areas
+  - Dashboard with overview
+  - Simple templates for all CRUD operations
 - ✅ Tests:
-  - 7 neue Tests für Services und Konfliktprüfung
-  - Alle Tests laufen erfolgreich
+  - 7 new tests for services and conflict detection
+  - All tests run successfully
 
-### Validierungsergebnisse
+### Validation Results
 
-#### Code-Qualität
-- [x] Services modular aufgeteilt (services.py, selectors.py)
-- [x] Views in separate Dateien aufgeteilt
-- [x] Keine Datei über 300 Zeilen
-- [x] Django check erfolgreich (0 issues)
+#### Code Quality
+- [x] Services modularly separated (services.py, selectors.py)
+- [x] Views separated into separate files
+- [x] No file over 300 lines
+- [x] Django check successful (0 issues)
 
-#### Funktionalität
-- [x] CRUD für alle Entitäten funktioniert
-- [x] Konfliktprüfung erkennt Überlappungen korrekt
-- [x] Fahrtzeiten werden in Konfliktprüfung berücksichtigt
-- [x] Blockzeiten werden erkannt
-- [x] Einnahmenberechnung funktioniert korrekt
+#### Functionality
+- [x] CRUD for all entities works
+- [x] Conflict detection correctly recognizes overlaps
+- [x] Travel times are considered in conflict detection
+- [x] Blocked times are recognized
+- [x] Income calculation works correctly
 
 #### Tests
-- [x] 7 neue Tests implementiert
-- [x] Alle Tests laufen erfolgreich
-- [x] Tests decken Konfliktprüfung, Services und Abfragen ab
+- [x] 7 new tests implemented
+- [x] All tests run successfully
+- [x] Tests cover conflict detection, services and queries
 
-#### Dokumentation
-- [x] ARCHITECTURE.md aktualisiert (Konfliktlogik, Einnahmenberechnung)
-- [x] API.md aktualisiert (implementierte Views dokumentiert)
-- [x] PHASES.md aktualisiert (Phase 3 als abgeschlossen markiert)
-- [x] CHECKPOINTS.md aktualisiert
+#### Documentation
+- [x] ARCHITECTURE.md updated (conflict logic, income calculation)
+- [x] API.md updated (implemented views documented)
+- [x] PHASES.md updated (Phase 3 marked as completed)
+- [x] CHECKPOINTS.md updated
 
-### Nächste Schritte
-1. Git-Commits erstellen
-2. Phase 3 abschließen
-3. Phase 4 vorbereiten (Premium & KI-Funktionen)
-
----
-
-## Checkpoint 5: Polishing, Validierung & Hackathon-Feinschliff
-
-**Datum**: 2025-12-04
-
-**Phase**: Phase 5 – Polishing, Validierung & Hackathon-Feinschliff
-
-**Status**: ✅ Abgeschlossen
-
-### Abgeschlossen
-- ✅ UI/UX-Polishing: Templates verbessert, konsistente Navigation, klare Konfliktdarstellung, Premium-Badges
-- ✅ Demo/Seed-Daten: Management Command `seed_demo_data` erstellt
-  - 3 Demo-Schüler mit unterschiedlichen Profilen
-  - Zugehörige Verträge (privat und über Institut)
-  - Mehrere Unterrichtsstunden (inkl. einem Konflikt zur Demonstration)
-  - Blockzeiten
-  - 1 Premium-User mit generiertem Unterrichtsplan
-- ✅ Validierungsskript: `scripts/validate.sh` erstellt für automatische Checks
-- ✅ Dokumentation finalisiert:
-  - README.md überarbeitet (Demo-Daten, Validierung)
-  - ETHICS.md erweitert (Demo-Daten, Datenschutz)
-  - DEVPOST.md erstellt (Hackathon-Einreichung)
-  - PHASES.md aktualisiert (Phase 5 abgeschlossen)
-- ✅ Code-Cleanup: Keine TODOs, keine Debug-Ausgaben, saubere Struktur
-
-### Validierungsergebnisse
-
-#### Funktionalität
-- [x] UI ist einfach, aber klar und demo-tauglich
-- [x] Reproduzierbares Demo-Szenario vorhanden
-- [x] Validierungsskript existiert und läuft
-- [x] Alle Tests laufen fehlerfrei
-
-#### Dokumentation
-- [x] README, ARCHITECTURE, ETHICS, API, PHASES, CHECKPOINTS, DEVPOST sind aktuell und konsistent
-- [x] Demo-Daten dokumentiert
-- [x] Validierungsskript dokumentiert
-
-#### Code-Qualität
-- [x] Keine TODO-Kommentare in produktivem Code
-- [x] Keine Debug-Ausgaben (print, pdb)
-- [x] Codebasis wirkt aufgeräumt, strukturiert und nachvollziehbar
-
-### Nächste Schritte
-1. Phase 5 abgeschlossen
-2. Projekt bereit für Hackathon-Submission
+### Next Steps
+1. Create git commits
+2. Complete Phase 3
+3. Prepare Phase 4 (Premium & AI Features)
 
 ---
 
-## Hinweis zur Datumskorrektur
+## Checkpoint 5: Polishing, Validation & Hackathon Refinement
 
-**Datum der Korrektur**: 2025-12-04
+**Date**: 2025-12-04
 
-Alle ursprünglich mit `2025-01-27` dokumentierten Datumsangaben wurden auf das korrekte Datum `2025-12-04` (Europe/Berlin) korrigiert, da das ursprüngliche Datum nicht mit dem tatsächlichen Projektstand übereinstimmte.
+**Phase**: Phase 5 – Polishing, Validation & Hackathon Refinement
+
+**Status**: ✅ Completed
+
+### Completed
+- ✅ UI/UX polishing: Templates improved, consistent navigation, clear conflict display, premium badges
+- ✅ Demo/Seed data: Management command `seed_demo_data` created
+  - 3 demo students with different profiles
+  - Associated contracts (private and via institute)
+  - Multiple lessons (including one conflict for demonstration)
+  - Blocked times
+  - 1 premium user with generated lesson plan
+- ✅ Validation script: `scripts/validate.sh` created for automatic checks
+- ✅ Documentation finalized:
+  - README.md revised (demo data, validation)
+  - ETHICS.md extended (demo data, privacy)
+  - DEVPOST.md created (hackathon submission)
+  - PHASES.md updated (Phase 5 completed)
+- ✅ Code cleanup: No TODOs, no debug output, clean structure
+
+### Validation Results
+
+#### Functionality
+- [x] UI is simple but clear and demo-ready
+- [x] Reproducible demo scenario available
+- [x] Validation script exists and runs
+- [x] All tests run without errors
+
+#### Documentation
+- [x] README, ARCHITECTURE, ETHICS, API, PHASES, CHECKPOINTS, DEVPOST are current and consistent
+- [x] Demo data documented
+- [x] Validation script documented
+
+#### Code Quality
+- [x] No TODO comments in production code
+- [x] No debug output (print, pdb)
+- [x] Codebase appears clean, structured and comprehensible
+
+### Next Steps
+1. Phase 5 completed
+2. Project ready for hackathon submission
 
 ---
 
-## Checkpoint 4: Premium & KI-Funktionen implementiert
+## Date Correction Note
 
-**Datum**: 2025-12-04
+**Correction Date**: 2025-12-04
 
-**Phase**: Phase 4 – Premium & KI-Funktionen
+All originally documented dates with `2025-01-27` were corrected to the correct date `2025-12-04` (Europe/Berlin), as the original date did not match the actual project status.
 
-**Status**: ✅ Abgeschlossen
+---
 
-### Abgeschlossen
-- ✅ Premium-Logik vollständig integriert:
-  - `apps.core.utils.is_premium_user()` für Premium-Checks
-  - UserProfile mit Premium-Flag im Admin verwaltbar
-  - Premium-Gating in Views und Templates
-- ✅ AI-App-Struktur erstellt:
-  - `apps.ai.client.LLMClient` - Low-Level-API-Kommunikation
-  - `apps.ai.prompts` - Prompt-Bau für Unterrichtspläne
-  - `apps.ai.services.LessonPlanService` - High-Level-Generierung
-- ✅ LessonPlan-Generierung:
-  - Kontext-Sammlung (Schüler, Lesson, vorherige Lessons)
-  - Strukturierter Prompt-Bau
-  - LLM-API-Integration (OpenAI-kompatibel)
-  - Fehlerbehandlung (Timeouts, Netzwerk-Errors)
-  - Speicherung als LessonPlan-Model
-- ✅ Konfiguration:
-  - LLM-Settings über Umgebungsvariablen (LLM_API_KEY, LLM_API_BASE_URL, LLM_MODEL_NAME)
-  - Keine Secrets im Code
-- ✅ UI-Integration:
-  - Button "Unterrichtsplan mit KI generieren" in Lesson-Detail
-  - Anzeige generierter Pläne
-  - Premium-Hinweis für Nicht-Premium-User
+## Checkpoint 4: Premium & AI Features Implemented
+
+**Date**: 2025-12-04
+
+**Phase**: Phase 4 – Premium & AI Features
+
+**Status**: ✅ Completed
+
+### Completed
+- ✅ Premium logic fully integrated:
+  - `apps.core.utils.is_premium_user()` for premium checks
+  - UserProfile with premium flag manageable in admin
+  - Premium gating in views and templates
+- ✅ AI app structure created:
+  - `apps.ai.client.LLMClient` - Low-level API communication
+  - `apps.ai.prompts` - Prompt building for lesson plans
+  - `apps.ai.services.LessonPlanService` - High-level generation
+- ✅ LessonPlan generation:
+  - Context collection (student, lesson, previous lessons)
+  - Structured prompt building
+  - LLM API integration (OpenAI-compatible)
+  - Error handling (timeouts, network errors)
+  - Storage as LessonPlan model
+- ✅ Configuration:
+  - LLM settings via environment variables (LLM_API_KEY, LLM_API_BASE_URL, LLM_MODEL_NAME)
+  - No secrets in code
+- ✅ UI integration:
+  - Button "Generate lesson plan with AI" in lesson detail
+  - Display of generated plans
+  - Premium notice for non-premium users
 - ✅ Tests:
-  - 12 Tests für Premium-Gating, Prompt-Bau, Services und Client
-  - Mock-Tests für LLM-Aufrufe (keine echten API-Calls)
-  - Fehlerszenarien getestet
+  - 12 tests for premium gating, prompt building, services and client
+  - Mock tests for LLM calls (no real API calls)
+  - Error scenarios tested
 
-### Validierungsergebnisse
+### Validation Results
 
-#### Code-Qualität
-- [x] AI-App modular strukturiert (client, prompts, services)
-- [x] Keine Datei über 300 Zeilen
-- [x] Django check erfolgreich (0 issues)
-- [x] API-Keys über ENV-Variablen, keine Secrets im Code
+#### Code Quality
+- [x] AI app modularly structured (client, prompts, services)
+- [x] No file over 300 lines
+- [x] Django check successful (0 issues)
+- [x] API keys via ENV variables, no secrets in code
 
-#### Funktionalität
-- [x] Premium-Gating funktioniert korrekt
-- [x] LessonPlan-Generierung für Premium-User möglich
-- [x] Fehlerbehandlung für LLM-Aufrufe implementiert
-- [x] UI zeigt Premium-Hinweise für Nicht-Premium-User
+#### Functionality
+- [x] Premium gating works correctly
+- [x] LessonPlan generation possible for premium users
+- [x] Error handling for LLM calls implemented
+- [x] UI shows premium notices for non-premium users
 
 #### Tests
-- [x] 12 Tests implementiert
-- [x] Alle Tests laufen erfolgreich
-- [x] Mock-Tests für LLM (keine echten API-Calls)
+- [x] 12 tests implemented
+- [x] All tests run successfully
+- [x] Mock tests for LLM (no real API calls)
 
-#### Dokumentation
-- [x] ARCHITECTURE.md aktualisiert (AI-Architektur dokumentiert)
-- [x] ETHICS.md aktualisiert (KI-Einsatz, Datenschutz, Human-in-the-Loop)
-- [x] API.md aktualisiert (Premium-Endpoint dokumentiert)
-- [x] PHASES.md aktualisiert (Phase 4 als abgeschlossen markiert)
-- [x] CHECKPOINTS.md aktualisiert
+#### Documentation
+- [x] ARCHITECTURE.md updated (AI architecture documented)
+- [x] ETHICS.md updated (AI usage, privacy, Human-in-the-Loop)
+- [x] API.md updated (premium endpoint documented)
+- [x] PHASES.md updated (Phase 4 marked as completed)
+- [x] CHECKPOINTS.md updated
 
-### Nächste Schritte
-1. Git-Commits erstellen
-2. Phase 4 abschließen
-3. Phase 5 vorbereiten (Polishing & Hackathon-Feinschliff)
+### Next Steps
+1. Create git commits
+2. Complete Phase 4
+3. Prepare Phase 5 (Polishing & Hackathon Refinement)
 
 ---
 
-## Checkpoint 6: Monatliche Vertragsplanung implementiert
+## Checkpoint 6: Monthly Contract Planning Implemented
 
-**Datum**: 2025-12-04
+**Date**: 2025-12-04
 
-**Phase**: Phase 6 – Monatliche Vertragsplanung
+**Phase**: Phase 6 – Monthly Contract Planning
 
-**Status**: ✅ Abgeschlossen
+**Status**: ✅ Completed
 
-### Abgeschlossen
-- ✅ ContractMonthlyPlan Model erstellt:
-  - ForeignKey auf Contract
-  - Jahr, Monat, geplante Einheiten
-  - unique_together Constraint (contract, year, month)
-- ✅ Formset-Integration:
-  - ContractMonthlyPlanFormSet für Bearbeitung
-  - Automatische Generierung von Monatszeilen beim Erstellen/Bearbeiten
-  - Behandlung von Zeitraumänderungen (neue Monate ergänzen, alte entfernen)
-- ✅ IncomeSelector erweitert:
-  - Neue Methode `get_monthly_planned_vs_actual()`
-  - Berechnung von planned_units, planned_amount, actual_units, actual_amount
-  - Differenzberechnung
-- ✅ UI-Integration:
-  - contract_form.html erweitert um Formset-Anzeige
-  - income_overview.html erweitert um planned vs. actual Vergleich
+### Completed
+- ✅ ContractMonthlyPlan model created:
+  - ForeignKey to Contract
+  - Year, month, planned units
+  - unique_together constraint (contract, year, month)
+- ✅ Formset integration:
+  - ContractMonthlyPlanFormSet for editing
+  - Automatic generation of month rows when creating/editing
+  - Handling of period changes (add new months, remove old ones)
+- ✅ IncomeSelector extended:
+  - New method `get_monthly_planned_vs_actual()`
+  - Calculation of planned_units, planned_amount, actual_units, actual_amount
+  - Difference calculation
+- ✅ UI integration:
+  - contract_form.html extended with formset display
+  - income_overview.html extended with planned vs. actual comparison
 - ✅ Tests:
-  - 8 Tests für ContractMonthlyPlan, Generierung und IncomeSelector-Vergleich
-  - Alle Tests laufen erfolgreich
+  - 8 tests for ContractMonthlyPlan, generation and IncomeSelector comparison
+  - All tests run successfully
 
-### Validierungsergebnisse
+### Validation Results
 
-#### Funktionalität
-- [x] ContractMonthlyPlan Model funktioniert korrekt
-- [x] Automatische Generierung von Monatsplänen funktioniert
-- [x] Formset-Integration in Create/Update Views
-- [x] IncomeSelector-Vergleich funktioniert
-- [x] UI zeigt planned vs. actual korrekt an
+#### Functionality
+- [x] ContractMonthlyPlan model works correctly
+- [x] Automatic generation of monthly plans works
+- [x] Formset integration in Create/Update views
+- [x] IncomeSelector comparison works
+- [x] UI shows planned vs. actual correctly
 
 #### Tests
-- [x] 8 Tests implementiert
-- [x] Alle Tests laufen erfolgreich
-- [x] Tests decken verschiedene Szenarien ab (mit/ohne Plan, unterschiedliche Verteilungen)
+- [x] 8 tests implemented
+- [x] All tests run successfully
+- [x] Tests cover various scenarios (with/without plan, different distributions)
 
-#### Dokumentation
-- [x] ARCHITECTURE.md aktualisiert (ContractMonthlyPlan dokumentiert)
-- [x] CHANGELOG.md aktualisiert (Version 0.6.0)
-- [x] PHASES.md aktualisiert (Phase 6 dokumentiert)
-- [x] CHECKPOINTS.md aktualisiert
+#### Documentation
+- [x] ARCHITECTURE.md updated (ContractMonthlyPlan documented)
+- [x] CHANGELOG.md updated (Version 0.6.0)
+- [x] PHASES.md updated (Phase 6 documented)
+- [x] CHECKPOINTS.md updated
 
-### Nächste Schritte
-1. Phase 6 abgeschlossen
+### Next Steps
+1. Phase 6 completed
 
 ---
 
-## Checkpoint 7: Serientermine und Kalenderansicht implementiert
+## Checkpoint 7: Recurring Lessons and Calendar View Implemented
 
-**Datum**: 2025-12-04
+**Date**: 2025-12-04
 
-**Phase**: Phase 7 – Serientermine und Kalenderansicht
+**Phase**: Phase 7 – Recurring Lessons and Calendar View
 
-**Status**: ✅ Abgeschlossen
+**Status**: ✅ Completed
 
-### Abgeschlossen
-- ✅ RecurringLesson Model erstellt:
-  - Wochentage-Auswahl (monday-sunday als Boolean-Felder)
-  - Zeitraum (start_date, end_date)
-  - Optional location, Fahrtzeiten, Notizen
-  - is_active Flag
-- ✅ RecurringLessonService implementiert:
-  - Generiert Lessons für alle aktivierten Wochentage im Zeitraum
-  - Überspringt bereits vorhandene Lessons
-  - Optional Konfliktprüfung
-  - Vorschau-Funktion ohne Speicherung
-- ✅ UI für Serientermine:
-  - CRUD-Views (List, Detail, Create, Update, Delete)
-  - RecurringLessonForm mit Validierung (mindestens ein Wochentag)
-  - Button zum Generieren von Lessons
-  - Vorschau der zu erzeugenden Lessons
-- ✅ Kalenderansicht:
-  - CalendarService für Gruppierung nach Tagen
-  - CalendarView mit Monats-Grid (7 Spalten: Mo-So)
-  - Anzeige von Lessons mit Zeit und Schüler
-  - Markierung von Konflikten
-  - Anzeige von Blockzeiten
-  - Navigation zwischen Monaten
+### Completed
+- ✅ RecurringLesson model created:
+  - Weekday selection (monday-sunday as boolean fields)
+  - Period (start_date, end_date)
+  - Optional location, travel times, notes
+  - is_active flag
+- ✅ RecurringLessonService implemented:
+  - Generates lessons for all activated weekdays in the period
+  - Skips already existing lessons
+  - Optional conflict detection
+  - Preview function without saving
+- ✅ UI for recurring lessons:
+  - CRUD views (List, Detail, Create, Update, Delete)
+  - RecurringLessonForm with validation (at least one weekday)
+  - Button to generate lessons
+  - Preview of lessons to be created
+- ✅ Calendar view:
+  - CalendarService for grouping by days
+  - CalendarView with month grid (7 columns: Mon-Sun)
+  - Display of lessons with time and student
+  - Conflict marking
+  - Display of blocked times
+  - Navigation between months
 - ✅ Integration:
-  - Kalender-Link in Navigation
-  - Generierte Lessons integrieren sich nahtlos in bestehende Logik
-  - Einzelne Lessons können weiterhin unabhängig bearbeitet werden
+  - Calendar link in navigation
+  - Generated lessons integrate seamlessly into existing logic
+  - Individual lessons can still be edited independently
 - ✅ Tests:
-  - 8 Tests für RecurringLesson, Service und Kalender
-  - Alle Tests laufen erfolgreich
+  - 8 tests for RecurringLesson, service and calendar
+  - All tests run successfully
 
-### Validierungsergebnisse
+### Validation Results
 
-#### Funktionalität
-- [x] RecurringLesson Model funktioniert korrekt
-- [x] Service generiert Lessons korrekt für einzelne/multiple Wochentage
-- [x] Service überspringt vorhandene Lessons
-- [x] Service prüft Konflikte optional
-- [x] Kalenderansicht zeigt Lessons und Blockzeiten korrekt
-- [x] Navigation zwischen Monaten funktioniert
+#### Functionality
+- [x] RecurringLesson model works correctly
+- [x] Service generates lessons correctly for single/multiple weekdays
+- [x] Service skips existing lessons
+- [x] Service optionally checks conflicts
+- [x] Calendar view shows lessons and blocked times correctly
+- [x] Navigation between months works
 
 #### Tests
-- [x] 8 Tests implementiert
-- [x] Alle Tests laufen erfolgreich
-- [x] Tests decken verschiedene Szenarien ab (einzelne/multiple Wochentage, Vertragsgrenzen, Konflikte)
+- [x] 8 tests implemented
+- [x] All tests run successfully
+- [x] Tests cover various scenarios (single/multiple weekdays, contract boundaries, conflicts)
 
-#### Dokumentation
-- [x] ARCHITECTURE.md aktualisiert (RecurringLesson, CalendarService)
-- [x] API.md aktualisiert (Endpoints für Serientermine und Kalender)
-- [x] PHASES.md aktualisiert (Phase 7 dokumentiert)
-- [x] CHANGELOG.md aktualisiert (Version 0.7.0)
+#### Documentation
+- [x] ARCHITECTURE.md updated (RecurringLesson, CalendarService)
+- [x] API.md updated (endpoints for recurring lessons and calendar)
+- [x] PHASES.md updated (Phase 7 documented)
+- [x] CHANGELOG.md updated (Version 0.7.0)
 
-### Nächste Schritte
-1. Phase 7 abgeschlossen
+### Next Steps
+1. Phase 7 completed
 
 ---
 
-## Checkpoint 8: Kalender als zentrale UI und Recurring Lessons Integration
+## Checkpoint 8: Calendar as Central UI and Recurring Lessons Integration
 
-**Datum**: 2025-12-04
+**Date**: 2025-12-04
 
-**Phase**: Phase 7 – Serientermine und Kalenderansicht (Erweiterung)
+**Phase**: Phase 7 – Recurring Lessons and Calendar View (Extension)
 
-**Status**: ✅ Abgeschlossen
+**Status**: ✅ Completed
 
-### Abgeschlossen
-- ✅ **Kalender als zentrale UI**:
-  - Lessons-Listenansicht aus Navigation entfernt (Endpoints bleiben für API/Debugging)
-  - Kalender ist jetzt primäre Schnittstelle für Lesson-Verwaltung
-  - Klick auf Tag im Kalender öffnet Formular zum Anlegen mit voreingestelltem Datum
-  - Klick auf bestehende Lesson öffnet Bearbeitungsformular
-  - Nach Create/Update Weiterleitung zurück zum Kalender
-- ✅ **Kalender zeigt nur zukünftige Lessons**:
-  - Lessons in der Vergangenheit werden im Kalender nicht mehr angezeigt
-  - Blockzeiten in der Vergangenheit werden ebenfalls ausgeblendet
-  - Finanz-/Einnahmensichten zeigen weiterhin alle Lessons (inkl. vergangene)
-- ✅ **Recurring Lessons besser integriert**:
-  - Button "Serientermin anlegen" im Kalender-Header
-  - Link "Serientermin erstellen" auf Contract-Detailseite
-  - Automatische Generierung von Lessons nach Anlegen einer RecurringLesson
-  - Weiterleitung zum Kalender nach Generierung
-  - Hinweis im RecurringLesson-Formular erklärt Funktionalität
+### Completed
+- ✅ **Calendar as central UI**:
+  - Lesson list view removed from navigation (endpoints remain for API/debugging)
+  - Calendar is now primary interface for lesson management
+  - Click on day in calendar opens form to create with pre-filled date
+  - Click on existing lesson opens edit form
+  - Redirect back to calendar after Create/Update
+- ✅ **Calendar shows only future lessons**:
+  - Lessons in the past are no longer displayed in the calendar
+  - Blocked times in the past are also hidden
+  - Financial/income views continue to show all lessons (including past)
+- ✅ **Recurring lessons better integrated**:
+  - Button "Create recurring lesson" in calendar header
+  - Link "Create recurring lesson" on contract detail page
+  - Automatic generation of lessons after creating a RecurringLesson
+  - Redirect to calendar after generation
+  - Note in RecurringLesson form explains functionality
 - ✅ **Tests**:
-  - 3 neue Tests für Kalender-Filterung (vergangene Lessons werden ausgeblendet)
-  - Tests für Kalender-Integration (Create mit Datum-Parameter, Redirect)
-  - Alle Tests laufen erfolgreich
-- ✅ **Dokumentation**:
-  - ARCHITECTURE.md: Kalender als zentrale UI dokumentiert
-  - README.md: Kalenderansicht und Serientermine erwähnt
-  - DEVPOST.md: Kalender und Serientermine in Features aufgenommen
-  - CHANGELOG.md: Version 0.7.1 dokumentiert
+  - 3 new tests for calendar filtering (past lessons are hidden)
+  - Tests for calendar integration (Create with date parameter, redirect)
+  - All tests run successfully
+- ✅ **Documentation**:
+  - ARCHITECTURE.md: Calendar as central UI documented
+  - README.md: Calendar view and recurring lessons mentioned
+  - DEVPOST.md: Calendar and recurring lessons included in features
+  - CHANGELOG.md: Version 0.7.1 documented
 
-### Validierungsergebnisse
+### Validation Results
 
-#### Funktionalität
-- [x] Kalender ist zentrale UI für Lesson-Verwaltung
-- [x] Navigation zeigt keine Lessons-Listenansicht mehr
-- [x] Klick auf Tag öffnet Create-Formular mit Datum
-- [x] Klick auf Lesson öffnet Update-Formular
-- [x] Kalender zeigt nur zukünftige/aktuelle Lessons
-- [x] Recurring Lessons Button im Kalender sichtbar
-- [x] Recurring Lessons Link auf Contract-Detailseite
-- [x] Automatische Generierung nach Anlegen funktioniert
+#### Functionality
+- [x] Calendar is central UI for lesson management
+- [x] Navigation no longer shows lesson list view
+- [x] Click on day opens Create form with date
+- [x] Click on lesson opens Update form
+- [x] Calendar shows only future/current lessons
+- [x] Recurring lessons button visible in calendar
+- [x] Recurring lessons link on contract detail page
+- [x] Automatic generation after creation works
 
 #### Tests
-- [x] 3 neue Tests implementiert
-- [x] Alle Tests laufen erfolgreich
-- [x] Tests decken Filterung und Integration ab
+- [x] 3 new tests implemented
+- [x] All tests run successfully
+- [x] Tests cover filtering and integration
 
-#### Dokumentation
-- [x] ARCHITECTURE.md aktualisiert
-- [x] README.md aktualisiert
-- [x] DEVPOST.md aktualisiert
-- [x] CHANGELOG.md aktualisiert
+#### Documentation
+- [x] ARCHITECTURE.md updated
+- [x] README.md updated
+- [x] DEVPOST.md updated
+- [x] CHANGELOG.md updated
 
-### Nächste Schritte
-1. Phase 7 vollständig abgeschlossen
-
+### Next Steps
+1. Phase 7 fully completed
