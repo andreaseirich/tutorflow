@@ -575,10 +575,16 @@ This structure makes it easy to find related code: if you're working on scheduli
    - Blocked times can also be created via drag-to-create (🚫 symbol)
 3. **View Lesson Plan**: Click on lesson block in week view → Opens lesson plan view
    - Shows existing lesson plans (if any)
+   - **Displays conflicts**: All conflicts (time overlaps, blocked times, quota violations) are shown
    - Premium users can generate AI lesson plans
    - Non-premium users see premium notice
-4. **Edit Lesson**: Click on edit icon (✏️) in lesson block → Opens lesson edit form (date, time, contract, etc.)
-5. **Edit Blocked Time**: Click on blocked time block → Opens blocked time edit form
+4. **View Conflicts**: Click on conflict icon (⚠️) in lesson block → Opens conflict detail view
+   - Shows all conflict types: time overlaps with other lessons, blocked times, and quota conflicts
+   - Provides detailed information about each conflict
+5. **Edit Lesson**: Click on edit icon (✏️) in lesson block → Opens lesson edit form (date, time, contract, etc.)
+6. **Edit Blocked Time**: Click on blocked time block → Opens blocked time edit form
+
+**Note**: All times in the week view are displayed in the local timezone (Europe/Berlin). Blocked times are automatically converted from UTC to local time for correct positioning.
 4. **Recurring lessons**: Recurring lessons are created exclusively via the lesson creation form in week view
    - No separate "Create recurring lesson" button or page
    - After saving: Automatic generation of all lessons in the period

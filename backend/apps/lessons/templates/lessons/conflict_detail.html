@@ -65,7 +65,28 @@
 </div>
 {% endif %}
 
-{% if not conflict_lessons and not conflict_blocked_times %}
+{% if quota_conflicts %}
+<div style="background: #fff3cd; padding: 20px; border-radius: 5px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
+    <h2 style="color: #dc3545; margin-top: 0;">📊 {% blocktrans count counter=quota_conflicts|length %}Contract Quota Conflict{% plural %}Contract Quota Conflicts ({{ counter }}){% endblocktrans %}</h2>
+    <ul>
+        {% for conflict in quota_conflicts %}
+        <li style="margin-bottom: 10px;">
+            <strong>{% trans "Contract quota exceeded" %}</strong><br>
+            <small>{{ conflict.message }}</small>
+            {% if conflict.planned_total is not None and conflict.actual_total is not None %}
+            <br><small>
+                {% blocktrans with planned=conflict.planned_total actual=conflict.actual_total month=conflict.month year=conflict.year %}
+                Planned: {{ planned }} units | Actual: {{ actual }} units ({{ month }}/{{ year }})
+                {% endblocktrans %}
+            </small>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if not conflict_lessons and not conflict_blocked_times and not quota_conflicts %}
 <div style="background: #d4edda; padding: 20px; border-radius: 5px; border-left: 4px solid #28a745;">
     <p style="margin: 0;">{% trans "No conflicts found." %}</p>
 </div>

@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.views.generic import TemplateView
 from django.utils.translation import gettext_lazy as _
 from apps.lessons.models import Lesson
+from apps.lessons.services import LessonConflictService
 from apps.lesson_plans.models import LessonPlan
 from apps.core.utils import is_premium_user
 
@@ -23,12 +24,35 @@ class LessonPlanView(TemplateView):
         lesson_plans = LessonPlan.objects.filter(lesson=lesson).order_by('-created_at')
         latest_lesson_plan = lesson_plans.first() if lesson_plans.exists() else None
         
+        # Load conflicts for this lesson
+        conflicts = LessonConflictService.check_conflicts(lesson, exclude_self=True)
+        
+        # Extract conflict types for template
+        conflict_lessons = []
+        conflict_blocked_times = []
+        quota_conflicts = []
+        
+        for conflict in conflicts:
+            if conflict['type'] == 'lesson':
+                conflict_lessons.append(conflict['object'])
+            elif conflict['type'] == 'blocked_time':
+                conflict_blocked_times.append(conflict['object'])
+            elif conflict['type'] == 'quota':
+                quota_conflicts.append(conflict)
+        
         # Premium status
         context['lesson'] = lesson
         context['lesson_plans'] = lesson_plans
         context['has_lesson_plan'] = lesson_plans.exists()
         context['latest_lesson_plan'] = latest_lesson_plan
         context['is_premium'] = is_premium_user(self.request.user) if self.request.user.is_authenticated else False
+        
+        # Conflicts
+        context['conflicts'] = conflicts
+        context['conflict_lessons'] = conflict_lessons
+        context['conflict_blocked_times'] = conflict_blocked_times
+        context['quota_conflicts'] = quota_conflicts
+        context['has_conflicts'] = len(conflicts) > 0
         
         # Week view parameters for redirect
         context['year'] = self.request.GET.get('year', lesson.date.year)
