@@ -193,5 +193,7 @@ Entwickelt im Rahmen des Teca-Hacks-Hackathons.
 
 ## Lizenz
 
-Dieses Projekt wird im Rahmen des Teca-Hacks-Hackathons entwickelt.
+Dieses Projekt ist unter der Apache License 2.0 lizenziert – siehe [LICENSE](../LICENSE) für Details.
+
+Copyright (c) 2025 Andreas Eirich
 
