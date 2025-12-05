@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ recurring_blocked_time }} - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Serien-Blockzeit</h1>
+
+<div class="btn-group">
+    <a href="{% url 'blocked_times:recurring_update' recurring_blocked_time.pk %}" class="btn">Bearbeiten</a>
+    <a href="{% url 'blocked_times:recurring_delete' recurring_blocked_time.pk %}" class="btn btn-danger">Löschen</a>
+    <a href="{% url 'blocked_times:recurring_list' %}" class="btn btn-secondary">Zurück zur Liste</a>
+    <a href="{% url 'lessons:calendar' %}" class="btn btn-secondary">← Zum Kalender</a>
+</div>
+
+<h2>Details</h2>
+<table>
+    <tr><th>Titel</th><td>{{ recurring_blocked_time.title }}</td></tr>
+    {% if recurring_blocked_time.description %}
+    <tr><th>Beschreibung</th><td>{{ recurring_blocked_time.description }}</td></tr>
+    {% endif %}
+    <tr><th>Wochentage</th><td>{{ recurring_blocked_time.get_active_weekdays_display }}</td></tr>
+    <tr><th>Startdatum</th><td>{{ recurring_blocked_time.start_date }}</td></tr>
+    <tr><th>Enddatum</th><td>{{ recurring_blocked_time.end_date|default:"Nicht festgelegt" }}</td></tr>
+    <tr><th>Zeit</th><td>{{ recurring_blocked_time.start_time }} - {{ recurring_blocked_time.end_time }}</td></tr>
+    <tr><th>Wiederholungsart</th><td>{{ recurring_blocked_time.get_recurrence_type_display }}</td></tr>
+    <tr><th>Status</th><td>{% if recurring_blocked_time.is_active %}<span style="color: #28a745;">Aktiv</span>{% else %}<span style="color: #6c757d;">Inaktiv</span>{% endif %}</td></tr>
+    <tr><th>Erstellt</th><td>{{ recurring_blocked_time.created_at|date:"d.m.Y H:i" }}</td></tr>
+    <tr><th>Zuletzt aktualisiert</th><td>{{ recurring_blocked_time.updated_at|date:"d.m.Y H:i" }}</td></tr>
+</table>
+
+<h2>Vorschau</h2>
+<p>Diese Serie würde <strong>{{ preview|length }}</strong> Blockzeit(en) erzeugen.</p>
+{% if preview %}
+<p>Erste 10 Termine:</p>
+<ul>
+    {% for blocked_time in preview|slice:":10" %}
+    <li>{{ blocked_time.start_datetime|date:"d.m.Y" }} von {{ blocked_time.start_datetime|time:"H:i" }} bis {{ blocked_time.end_datetime|time:"H:i" }} - {{ blocked_time.title }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h2>Aktionen</h2>
+<form method="post" action="{% url 'blocked_times:recurring_generate' recurring_blocked_time.pk %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <label>
+            <input type="checkbox" name="check_conflicts" checked> Konflikte mit Lessons prüfen
+        </label>
+    </div>
+    <button type="submit" class="btn btn-success">Blockzeiten aus dieser Serie generieren</button>
+</form>
+<p><small>Hinweis: Bereits vorhandene Blockzeiten werden übersprungen.</small></p>
+{% endblock %}
+

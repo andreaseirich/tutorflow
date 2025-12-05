@@ -1,0 +1,41 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{% if object %}Serien-Blockzeit bearbeiten{% else %}Neue Serien-Blockzeit{% endif %} - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>{% if object %}Serien-Blockzeit bearbeiten{% else %}Neue Serien-Blockzeit{% endif %}</h1>
+
+<div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+    <strong>💡 Was sind Serien-Blockzeiten?</strong>
+    <p style="margin: 5px 0 0 0; font-size: 0.9em;">
+        Serien-Blockzeiten ermöglichen es, wiederholende Blockzeiten anzulegen (z. B. "jeden Dienstag 18–20 Uhr"). 
+        Nach dem Speichern können Sie die Blockzeiten für den angegebenen Zeitraum generieren.
+    </p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="error">{{ field.errors }}</div>
+            {% endif %}
+            {% if field.name == 'recurrence_type' %}
+                <small class="form-text text-muted">
+                    <strong>Wöchentlich:</strong> Jede Woche an den ausgewählten Wochentagen.<br>
+                    <strong>Alle 2 Wochen:</strong> Jede zweite Woche an den ausgewählten Wochentagen.<br>
+                    <strong>Monatlich:</strong> Jeden Monat am gleichen Kalendertag (z.B. jeden 15. des Monats), wenn dieser Tag ein ausgewählter Wochentag ist.
+                </small>
+            {% endif %}
+        </div>
+    {% endfor %}
+    
+    <div class="btn-group">
+        <button type="submit" class="btn btn-success">Speichern</button>
+        <a href="{% url 'blocked_times:recurring_list' %}" class="btn btn-secondary">Abbrechen</a>
+    </div>
+</form>
+{% endblock %}
+

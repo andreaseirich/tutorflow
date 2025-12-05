@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Blockzeiten generieren - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Blockzeiten aus Serie generieren</h1>
+
+<p>Möchten Sie Blockzeiten aus der Serie "{{ object.title }}" generieren?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label>
+            <input type="checkbox" name="check_conflicts" checked> Konflikte mit Lessons prüfen
+        </label>
+    </div>
+    
+    <div class="btn-group">
+        <button type="submit" class="btn btn-success">Blockzeiten generieren</button>
+        <a href="{% url 'blocked_times:recurring_detail' object.pk %}" class="btn btn-secondary">Abbrechen</a>
+    </div>
+</form>
+{% endblock %}
+
