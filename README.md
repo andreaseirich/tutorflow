@@ -272,16 +272,29 @@ This creates:
 - Blocked times
 - 1 premium user with generated lesson plan
 
-**Demo Login:**
-- Login URL: `http://127.0.0.1:8000/admin/`
-- Username: `demo_premium`
-- Password: `demo123`
+**Demo Logins:**
+- **Premium User:**
+  - Login URL: `http://127.0.0.1:8000/admin/`
+  - Username: `demo_premium`
+  - Password: `demo123`
+- **Standard User:**
+  - Login URL: `http://127.0.0.1:8000/admin/`
+  - Username: `demo_standard`
+  - Password: `demo123`
 
 **Note:** Login is done via the Django Admin interface. After successful login, you can access the various areas of the application via the navigation.
 
 **Demo Scenario:**
 The demo data shows a realistic scenario with:
-- Multiple students in different grade levels
+- 4 students in different grade levels with different contract types
+- Recurring lessons: Monday+Wednesday pattern for student4, Tuesday+Thursday for student2
+- Contract monthly plans: Contract1 has 3 planned units in November (quota conflict example)
+- Multiple conflicts:
+  - Time conflicts: Lesson1 and Lesson2 overlap, lesson_conflict overlaps with blocked_time3
+  - Quota conflicts: Lesson8 exceeds planned quota (4th lesson but only 3 planned)
+- Blocked times: University lecture, multi-day vacation, conflict example
+- Lesson plans: lesson1 has a generated lesson plan, lesson3 can be used to test AI generation
+- Premium vs. non-premium user comparison
 - Different contracts (private and via institute)
 - A conflict situation between two lessons (to demonstrate conflict detection)
 - A blocked time (university lecture)
