@@ -172,6 +172,56 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - Keine stummen Fehler
 - Fehler möglichst früh validieren (Form-/Serializer-Validierung)
 
+## Design Decisions & Architecture Rationale
+
+### Why Service Layer?
+
+TutorFlow uses a service layer (e.g., `LessonConflictService`, `IncomeSelector`, `InvoiceService`) to:
+
+- **Separation of Concerns**: Business logic is separated from views and models, making code more maintainable and testable
+- **Reusability**: Services can be used across multiple views, management commands, and API endpoints
+- **Testability**: Complex business logic (conflict detection, income calculations) can be tested independently
+- **Single Responsibility**: Each service has a clear, focused responsibility (e.g., `ContractQuotaService` only handles quota checks)
+
+### Why i18n + l10n?
+
+TutorFlow is designed for multilingual tutors, particularly in German-speaking regions:
+
+- **Target Audience**: Many tutors work with students from different language backgrounds or operate in multilingual environments
+- **Professionalism**: Proper localization (dates, numbers, currency) shows attention to detail and respect for user preferences
+- **Scalability**: The i18n/l10n infrastructure allows easy addition of more languages in the future
+- **User Experience**: Users can work in their preferred language with familiar formatting conventions
+
+### Why Current Module Structure?
+
+The app structure (`apps.core`, `apps.students`, `apps.contracts`, `apps.lessons`, `apps.billing`, etc.) follows Django best practices:
+
+- **Domain-Driven Design**: Each app represents a clear domain boundary (students, contracts, lessons, billing)
+- **Modularity**: Features can be developed, tested, and maintained independently
+- **Scalability**: New features can be added as new apps or extended within existing apps
+- **Clear Dependencies**: The structure makes dependencies between modules explicit (e.g., `lessons` depends on `contracts`, which depends on `students`)
+
+### Code Organization Patterns
+
+**Scheduling Flow:**
+- **Views**: `apps.lessons.views` (WeekView, CalendarView, LessonCreateView)
+- **Services**: `apps.lessons.services` (LessonConflictService, LessonQueryService)
+- **Templates**: `apps.lessons.templates.lessons` (week.html, calendar.html, lesson_form.html)
+- **Models**: `apps.lessons.models` (Lesson, RecurringLesson)
+
+**Billing Flow:**
+- **Views**: `apps.billing.views` (InvoiceCreateView, InvoiceDetailView)
+- **Services**: `apps.billing.services` (InvoiceService)
+- **Templates**: `apps.billing.templates.billing` (invoice_create.html, invoice_detail.html, invoice_document.html)
+- **Models**: `apps.billing.models` (Invoice, InvoiceItem)
+
+**Income Calculation:**
+- **Service**: `apps.core.selectors.IncomeSelector` (no model, pure calculation logic)
+- **Views**: `apps.core.views.IncomeOverviewView`
+- **Templates**: `apps.core.templates.core.income_overview.html`
+
+This structure makes it easy to find related code: if you're working on scheduling, you know to look in `apps.lessons`; if you're working on billing, you look in `apps.billing`.
+
 ## Datenfluss
 
 ### Planung einer Unterrichtsstunde

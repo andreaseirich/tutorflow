@@ -54,8 +54,8 @@
     </div>
     
     <div class="invoice-info">
-        <p><strong>{% trans "Invoice Date:" %}</strong> {{ invoice.created_at|date:"d.m.Y" }}</p>
-        <p><strong>{% trans "Period:" %}</strong> {{ invoice.period_start|date:"d.m.Y" }} - {{ invoice.period_end|date:"d.m.Y" }}</p>
+        <p><strong>{% trans "Invoice Date:" %}</strong> {{ invoice.created_at|date:"SHORT_DATE_FORMAT" }}</p>
+        <p><strong>{% trans "Period:" %}</strong> {{ invoice.period_start|date:"SHORT_DATE_FORMAT" }} - {{ invoice.period_end|date:"SHORT_DATE_FORMAT" }}</p>
     </div>
     
     <div class="payer-info">
@@ -79,7 +79,7 @@
         <tbody>
             {% for item in items %}
             <tr>
-                <td>{{ item.date|date:"d.m.Y" }}</td>
+                <td>{{ item.date|date:"SHORT_DATE_FORMAT" }}</td>
                 <td>{{ item.description }}</td>
                 <td>{% blocktrans with minutes=item.duration_minutes %}{{ minutes }} Min.{% endblocktrans %}</td>
                 <td>{{ item.amount }}€</td>

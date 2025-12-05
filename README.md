@@ -1,8 +1,85 @@
 # TutorFlow
 
-## Project Description
+## Project Overview
 
-TutorFlow is a web application for tutors that enables structured management of students, contracts, and tutoring lessons. The application supports planning with blocked times and travel times, evaluation of income by months and status, and optionally uploading order confirmations (PDF) for data extraction.
+TutorFlow is a comprehensive web application designed for tutors to manage their tutoring business efficiently. It solves the challenge of organizing students, contracts, and lessons while avoiding scheduling conflicts and maintaining clear financial oversight. The application is built for tutors who need a structured, reliable tool to manage their teaching activities, track income, and generate invoices—all with intelligent conflict detection and AI-powered lesson planning support.
+
+## Key Features
+
+- **📅 Intelligent Scheduling**: Interactive week view with drag-to-create appointments, automatic conflict detection (time overlaps & contract quotas), and recurring lesson support
+- **👥 Student & Contract Management**: Centralized management of students, contracts, and monthly planning with flexible contract structures
+- **💰 Billing & Income Tracking**: Automated invoice generation from lessons, monthly/yearly income overviews, and planned vs. actual comparisons
+- **🚫 Blocked Time Management**: Personal appointment blocking (vacations, university, etc.) with multi-day and recurring support, fully integrated in calendar
+- **🤖 AI-Powered Lesson Plans**: Premium feature for automatic generation of structured lesson plans using LLM APIs (OpenAI-compatible)
+- **🌍 Full Internationalization**: Complete i18n/l10n support with English (default) and German, including proper date, number, and currency formatting
+
+## Quick Start
+
+### Prerequisites
+- Python 3.11 or higher
+- pip
+
+### Installation
+
+1. **Clone repository:**
+```bash
+git clone <repository-url>
+cd tutorflow
+```
+
+2. **Create and activate virtual environment:**
+```bash
+python3 -m venv venv
+source venv/bin/activate  # Linux/Mac
+# or
+venv\Scripts\activate  # Windows
+```
+
+3. **Install dependencies:**
+```bash
+pip install -r requirements.txt
+```
+
+4. **Setup database:**
+```bash
+cd backend
+python manage.py migrate
+python manage.py compilemessages  # For i18n support
+```
+
+5. **Start development server:**
+```bash
+python manage.py runserver
+```
+
+The application is available at `http://127.0.0.1:8000/`.
+
+### Demo Login & Quick Tour
+
+**Load demo data:**
+```bash
+cd backend
+python manage.py seed_demo_data
+```
+
+**Login:**
+- URL: `http://127.0.0.1:8000/admin/`
+- Username: `demo_premium`
+- Password: `demo123`
+
+**See main features in 2 minutes:**
+1. **Dashboard** (`/`): Overview of today's lessons, upcoming appointments, and conflicts
+2. **Week View** (`/lessons/week/`): Interactive calendar - drag time ranges to create appointments, click to edit
+3. **Income Overview** (`/income/`): Monthly/yearly financial tracking with planned vs. actual comparisons
+4. **Billing** (`/billing/invoices/`): Create invoices from taught lessons with HTML document generation
+
+## Screenshots / Demo
+
+> **TODO**: Add screenshots of:
+> - Dashboard with today's lessons and conflicts
+> - Interactive week view with drag-to-create functionality
+> - Income overview showing planned vs. actual comparisons
+> - Invoice generation and preview
 
 ## Problem
 
