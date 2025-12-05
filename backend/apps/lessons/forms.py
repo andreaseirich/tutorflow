@@ -47,7 +47,7 @@ class LessonForm(forms.ModelForm):
         ],
         label=_("Weekdays"),
         help_text=_("Select weekdays for the recurring lesson"),
-        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input', 'style': 'display: none;'})
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'})
     )
     
     class Meta:

@@ -68,11 +68,11 @@
             </p>
             <p>
                 <label>{% trans "Weekdays:" %}</label>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;">
+                <div id="weekdays-container" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px;">
                     {% for choice in form.recurrence_weekdays %}
-                    <label style="display: flex; align-items: center; gap: 5px;">
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
                         {{ choice.tag }}
-                        {{ choice.choice_label }}
+                        <span>{{ choice.choice_label }}</span>
                     </label>
                     {% endfor %}
                 </div>
@@ -94,6 +94,7 @@
 function toggleRecurrenceFields() {
     const isRecurring = document.getElementById('{{ form.is_recurring.id_for_label }}');
     const recurrenceFields = document.getElementById('recurrence-fields');
+    const weekdaysContainer = document.getElementById('weekdays-container');
     if (isRecurring && recurrenceFields) {
         if (isRecurring.checked) {
             recurrenceFields.style.display = 'block';
@@ -102,6 +103,17 @@ function toggleRecurrenceFields() {
             const recurrenceEndDate = document.getElementById('{{ form.recurrence_end_date.id_for_label }}');
             if (recurrenceType) recurrenceType.style.display = 'block';
             if (recurrenceEndDate) recurrenceEndDate.style.display = 'block';
+            // Show weekdays checkboxes
+            if (weekdaysContainer) {
+                weekdaysContainer.style.display = 'flex';
+                // Make sure all checkboxes are visible and enabled
+                const checkboxes = weekdaysContainer.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.style.display = 'inline-block';
+                    checkbox.disabled = false;
+                    checkbox.style.pointerEvents = 'auto';
+                });
+            }
         } else {
             recurrenceFields.style.display = 'none';
         }
