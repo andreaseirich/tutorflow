@@ -73,7 +73,7 @@
 {% endif %}
 
 <h2>Einnahmen ({{ current_month }}/{{ current_year }})</h2>
-<p><strong>Ausgezahlt:</strong> {{ current_month_income.total_income }}€ ({{ current_month_income.lesson_count }} Stunden)</p>
+<p><strong>Ausgezahlt:</strong> {{ current_month_income.total_income|euro }} ({{ current_month_income.lesson_count }} Stunden)</p>
 
 {% if conflict_count > 0 %}
 <p class="conflict">⚠ {{ conflict_count }} Konflikt(e) in den nächsten Stunden!</p>
