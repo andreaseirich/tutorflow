@@ -2,6 +2,7 @@
 Low-Level-Client für LLM-API-Kommunikation.
 """
 import json
+import time
 import requests
 from typing import Optional, Dict, Any
 from django.conf import settings
@@ -33,7 +34,9 @@ class LLMClient:
         prompt: str,
         system_prompt: Optional[str] = None,
         max_tokens: int = 1000,
-        temperature: float = 0.7
+        temperature: float = 0.7,
+        max_retries: int = 2,
+        retry_delay: int = 5
     ) -> str:
         """
         Generiert Text mit der LLM-API.
@@ -43,6 +46,8 @@ class LLMClient:
             system_prompt: Optionaler System-Prompt
             max_tokens: Maximale Anzahl Tokens
             temperature: Temperature für die Generierung
+            max_retries: Maximale Anzahl Wiederholungsversuche bei Rate-Limit-Fehlern
+            retry_delay: Wartezeit in Sekunden zwischen Wiederholungsversuchen
         
         Returns:
             Generierter Text
@@ -55,6 +60,47 @@ class LLMClient:
                 _("LLM_API_KEY is not configured. Please set the LLM_API_KEY environment variable.")
             )
         
+        last_error = None
+        for attempt in range(max_retries + 1):
+            try:
+                return self._make_api_request(prompt, system_prompt, max_tokens, temperature)
+            except LLMClientError as e:
+                last_error = e
+                # Retry only for rate limit errors (429)
+                error_msg = str(e)
+                if "rate limit" in error_msg.lower() and attempt < max_retries:
+                    wait_time = retry_delay * (attempt + 1)  # Exponential backoff
+                    time.sleep(wait_time)
+                    continue
+                # For other errors or after max retries, raise immediately
+                raise
+        
+        # Should not reach here, but just in case
+        if last_error:
+            raise last_error
+    
+    def _make_api_request(
+        self,
+        prompt: str,
+        system_prompt: Optional[str] = None,
+        max_tokens: int = 1000,
+        temperature: float = 0.7
+    ) -> str:
+        """
+        Führt einen einzelnen API-Request durch.
+        
+        Args:
+            prompt: Der Haupt-Prompt
+            system_prompt: Optionaler System-Prompt
+            max_tokens: Maximale Anzahl Tokens
+            temperature: Temperature für die Generierung
+        
+        Returns:
+            Generierter Text
+        
+        Raises:
+            LLMClientError: Bei API-Fehlern
+        """
         try:
             # OpenAI-kompatibles Format
             messages = []
