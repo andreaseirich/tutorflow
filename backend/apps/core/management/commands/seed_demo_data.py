@@ -182,16 +182,37 @@ class Command(BaseCommand):
         )
         
         # Premium-User mit LessonPlan
-        premium_user = User.objects.create_user(
+        # Prüfe, ob User bereits existiert, sonst erstelle ihn
+        premium_user, created = User.objects.get_or_create(
             username='demo_premium',
-            email='premium@example.com',
-            password='demo123'
+            defaults={
+                'email': 'premium@example.com',
+                'is_staff': True,  # Erforderlich für Admin-Login
+                'is_active': True,
+            }
         )
-        profile = UserProfile.objects.create(
+        
+        # Setze Passwort (auch wenn User bereits existiert, um sicherzustellen, dass es korrekt ist)
+        premium_user.set_password('demo123')
+        premium_user.is_staff = True  # Erforderlich für Admin-Login
+        premium_user.is_active = True
+        premium_user.save()
+        
+        # Erstelle oder aktualisiere UserProfile
+        profile, profile_created = UserProfile.objects.get_or_create(
             user=premium_user,
-            is_premium=True,
-            premium_since=timezone.now()
+            defaults={
+                'is_premium': True,
+                'premium_since': timezone.now()
+            }
         )
+        
+        # Aktualisiere Profile, falls es bereits existiert
+        if not profile_created:
+            profile.is_premium = True
+            if not profile.premium_since:
+                profile.premium_since = timezone.now()
+            profile.save()
         
         # Demo LessonPlan (ohne echten LLM-Call)
         lesson_plan = LessonPlan.objects.create(
