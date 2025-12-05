@@ -7,7 +7,6 @@ from apps.lessons.models import Lesson
 from apps.lessons.quota_service import ContractQuotaService
 from apps.contracts.models import Contract, ContractMonthlyPlan
 from apps.students.models import Student
-from apps.locations.models import Location
 
 
 class ContractQuotaServiceTest(TestCase):
@@ -15,15 +14,9 @@ class ContractQuotaServiceTest(TestCase):
 
     def setUp(self):
         """Setzt Testdaten auf."""
-        self.location = Location.objects.create(
-            name="Test-Ort",
-            address="Test-Straße 1"
-        )
-        
         self.student = Student.objects.create(
             first_name="Max",
-            last_name="Mustermann",
-            default_location=self.location
+            last_name="Mustermann"
         )
         
         self.contract = Contract.objects.create(
@@ -63,7 +56,6 @@ class ContractQuotaServiceTest(TestCase):
                 start_time=time(14, 0),
                 duration_minutes=60,
                 status='planned',
-                location=self.location
             )
         
         # Erstelle 5 Lessons im September
@@ -74,7 +66,6 @@ class ContractQuotaServiceTest(TestCase):
                 start_time=time(14, 0),
                 duration_minutes=60,
                 status='planned',
-                location=self.location
             )
         
         # Versuche eine weitere Lesson im September zu erstellen
@@ -84,7 +75,6 @@ class ContractQuotaServiceTest(TestCase):
             start_time=time(14, 0),
             duration_minutes=60,
             status='planned',
-            location=self.location
         )
         
         # Prüfe Konflikt
@@ -109,7 +99,6 @@ class ContractQuotaServiceTest(TestCase):
             start_time=time(14, 0),
             duration_minutes=60,
             status='planned',
-            location=self.location
         )
         
         # Erstelle 5 Lessons im September
@@ -120,7 +109,6 @@ class ContractQuotaServiceTest(TestCase):
                 start_time=time(14, 0),
                 duration_minutes=60,
                 status='planned',
-                location=self.location
             )
         
         # Versuche eine weitere Lesson im September zu erstellen
@@ -130,7 +118,6 @@ class ContractQuotaServiceTest(TestCase):
             start_time=time(14, 0),
             duration_minutes=60,
             status='planned',
-            location=self.location
         )
         
         # Prüfe Konflikt
@@ -153,7 +140,6 @@ class ContractQuotaServiceTest(TestCase):
                 start_time=time(14, 0),
                 duration_minutes=60,
                 status='planned',
-                location=self.location
             )
         
         # Versuche eine 4. Lesson im August zu erstellen
@@ -163,7 +149,6 @@ class ContractQuotaServiceTest(TestCase):
             start_time=time(14, 0),
             duration_minutes=60,
             status='planned',
-            location=self.location
         )
         
         # Prüfe Konflikt
@@ -185,7 +170,6 @@ class ContractQuotaServiceTest(TestCase):
                 start_time=time(14, 0),
                 duration_minutes=60,
                 status='planned',
-                location=self.location
             )
         
         # Erstelle eine stornierte Lesson
@@ -195,7 +179,6 @@ class ContractQuotaServiceTest(TestCase):
             start_time=time(14, 0),
             duration_minutes=60,
             status='cancelled',  # Storniert
-            location=self.location
         )
         
         # Versuche eine weitere Lesson im August zu erstellen
@@ -205,7 +188,6 @@ class ContractQuotaServiceTest(TestCase):
             start_time=time(14, 0),
             duration_minutes=60,
             status='planned',
-            location=self.location
         )
         
         # Prüfe Konflikt
@@ -223,7 +205,6 @@ class ContractQuotaServiceTest(TestCase):
             start_time=time(14, 0),
             duration_minutes=60,
             status='taught',
-            location=self.location
         )
         Lesson.objects.create(
             contract=self.contract,
@@ -231,7 +212,6 @@ class ContractQuotaServiceTest(TestCase):
             start_time=time(14, 0),
             duration_minutes=60,
             status='paid',
-            location=self.location
         )
         
         # Versuche eine 3. Lesson im August zu erstellen
@@ -241,7 +221,6 @@ class ContractQuotaServiceTest(TestCase):
             start_time=time(14, 0),
             duration_minutes=60,
             status='planned',
-            location=self.location
         )
         
         # Prüfe Konflikt

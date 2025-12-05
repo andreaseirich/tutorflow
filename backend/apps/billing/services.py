@@ -34,7 +34,7 @@ class InvoiceService:
             date__lte=period_end
         ).exclude(
             invoice_items__isnull=False  # Keine Lessons, die bereits in einer Rechnung sind (1:1-Beziehung)
-        ).select_related('contract', 'contract__student', 'location')
+        ).select_related('contract', 'contract__student')
         
         if contract_id:
             queryset = queryset.filter(contract_id=contract_id)

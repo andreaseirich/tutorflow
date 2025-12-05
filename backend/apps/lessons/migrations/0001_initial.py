@@ -11,7 +11,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('contracts', '0001_initial'),
-        ('locations', '0001_initial'),
     ]
 
     operations = [
@@ -29,7 +28,6 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('contract', models.ForeignKey(help_text='Zugehöriger Vertrag', on_delete=django.db.models.deletion.CASCADE, related_name='lessons', to='contracts.contract')),
-                ('location', models.ForeignKey(blank=True, help_text='Ort der Unterrichtsstunde', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='lessons', to='locations.location')),
             ],
             options={
                 'verbose_name': 'Unterrichtsstunde',

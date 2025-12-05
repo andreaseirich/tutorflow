@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # TutorFlow apps
     'apps.core',
-    'apps.locations',
     'apps.students',
     'apps.contracts',
     'apps.lessons',

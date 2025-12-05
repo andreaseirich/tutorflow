@@ -4,7 +4,6 @@ Models für wiederholende Unterrichtsstunden (Serientermine).
 from django.db import models
 from django.core.validators import MinValueValidator
 from apps.contracts.models import Contract
-from apps.locations.models import Location
 
 
 class RecurringLesson(models.Model):
@@ -15,14 +14,6 @@ class RecurringLesson(models.Model):
         on_delete=models.CASCADE,
         related_name='recurring_lessons',
         help_text="Zugehöriger Vertrag"
-    )
-    location = models.ForeignKey(
-        Location,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='recurring_lessons',
-        help_text="Ort der Unterrichtsstunde (optional)"
     )
     start_date = models.DateField(help_text="Startdatum der Serie")
     end_date = models.DateField(

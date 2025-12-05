@@ -12,9 +12,9 @@ Nachhilfelehrer benötigen ein zuverlässiges Werkzeug zur Verwaltung ihrer Sch�
 
 TutorFlow bietet eine vollständige Lösung für die Verwaltung von Nachhilfetätigkeiten:
 
-- **Schülerverwaltung**: Zentrale Verwaltung von Schülern mit Kontaktdaten, Schule/Klasse, Fächern und Standard-Unterrichtsort
+- **Schülerverwaltung**: Zentrale Verwaltung von Schülern mit Kontaktdaten, Schule/Klasse, Fächern
 - **Vertragsverwaltung**: Verwaltung von Verträgen mit Honorar, Dauer, Vertragszeitraum
-- **Unterrichtsplanung**: Planung von Nachhilfestunden mit Datum, Zeit, Ort und Fahrtzeiten
+- **Unterrichtsplanung**: Planung von Nachhilfestunden mit Datum, Zeit und Fahrtzeiten
   - **Kalenderansicht**: Zentrale UI für die Stundenplanung - Lessons werden primär über die Kalenderansicht geplant und bearbeitet
   - **Serientermine**: Unterstützung für wiederholende Unterrichtsstunden (z. B. jeden Montag 14 Uhr)
 - **Blockzeiten**: Verwaltung eigener Termine und Blockzeiten (z. B. Uni, Job, Gemeinde)
@@ -28,12 +28,12 @@ TutorFlow bietet eine vollständige Lösung für die Verwaltung von Nachhilfetä
 ### Basis-Features
 - **Schülerverwaltung**: Zentrale Verwaltung mit Kontaktdaten, Schule, Fächern
 - **Vertragsverwaltung**: Honorar, Dauer, Vertragszeitraum, geplante Einheiten
-- **Unterrichtsplanung**: Planung mit Datum, Zeit, Ort, Fahrtzeiten
+- **Unterrichtsplanung**: Planung mit Datum, Zeit, Fahrtzeiten
   - **Kalenderansicht**: Monatskalender als zentrale UI für Lesson-Verwaltung
   - **Serientermine**: Wiederholende Stunden (z. B. jeden Montag/Donnerstag) mit automatischer Generierung
   - **Automatische Status-Verwaltung**: Lesson-Status (geplant/unterrichtet) wird automatisch anhand des Datums gesetzt
 - **Blockzeiten**: Verwaltung eigener Termine (Uni, Job, etc.)
-  - **Kalender-Integration**: Blockzeiten werden direkt im Kalender angezeigt, erstellt und bearbeitet
+  - **Kalender-Integration**: Blockzeiten werden ausschließlich über den Kalender verwaltet (Erstellen, Bearbeiten, Anzeigen)
   - **Mehrtägige Blockzeiten**: Unterstützung für mehrtägige Blöcke (z. B. Urlaub/Reise)
   - **Serien-Blockzeiten**: Wiederholende Blockzeiten (z. B. jeden Dienstag 18–20 Uhr) mit automatischer Generierung
 - **Konfliktprüfung**: Automatische Erkennung von Überschneidungen (inkl. Fahrtzeiten)

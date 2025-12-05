@@ -3,19 +3,11 @@ Views für RecurringBlockedTime-CRUD-Operationen.
 """
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from apps.blocked_times.recurring_models import RecurringBlockedTime
 from apps.blocked_times.recurring_forms import RecurringBlockedTimeForm
 from apps.blocked_times.recurring_service import RecurringBlockedTimeService
-
-
-class RecurringBlockedTimeListView(ListView):
-    """Liste aller wiederholenden Blockzeiten."""
-    model = RecurringBlockedTime
-    template_name = 'blocked_times/recurring_blockedtime_list.html'
-    context_object_name = 'recurring_blocked_times'
-    paginate_by = 30
 
 
 class RecurringBlockedTimeDetailView(DetailView):
@@ -37,7 +29,12 @@ class RecurringBlockedTimeCreateView(CreateView):
     model = RecurringBlockedTime
     form_class = RecurringBlockedTimeForm
     template_name = 'blocked_times/recurring_blockedtime_form.html'
-    success_url = reverse_lazy('blocked_times:recurring_list')
+
+    def get_success_url(self):
+        """Weiterleitung zurück zum Kalender."""
+        from django.utils import timezone
+        now = timezone.now()
+        return reverse_lazy('lessons:calendar') + f'?year={now.year}&month={now.month}'
 
     def form_valid(self, form):
         messages.success(self.request, 'Wiederholende Blockzeit erfolgreich erstellt.')
@@ -49,7 +46,12 @@ class RecurringBlockedTimeUpdateView(UpdateView):
     model = RecurringBlockedTime
     form_class = RecurringBlockedTimeForm
     template_name = 'blocked_times/recurring_blockedtime_form.html'
-    success_url = reverse_lazy('blocked_times:recurring_list')
+
+    def get_success_url(self):
+        """Weiterleitung zurück zum Kalender."""
+        from django.utils import timezone
+        now = timezone.now()
+        return reverse_lazy('lessons:calendar') + f'?year={now.year}&month={now.month}'
 
     def form_valid(self, form):
         messages.success(self.request, 'Wiederholende Blockzeit erfolgreich aktualisiert.')
@@ -60,7 +62,12 @@ class RecurringBlockedTimeDeleteView(DeleteView):
     """Wiederholende Blockzeit löschen."""
     model = RecurringBlockedTime
     template_name = 'blocked_times/recurring_blockedtime_confirm_delete.html'
-    success_url = reverse_lazy('blocked_times:recurring_list')
+
+    def get_success_url(self):
+        """Weiterleitung zurück zum Kalender."""
+        from django.utils import timezone
+        now = timezone.now()
+        return reverse_lazy('lessons:calendar') + f'?year={now.year}&month={now.month}'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Wiederholende Blockzeit erfolgreich gelöscht.')

@@ -29,10 +29,6 @@
             </td>
         </tr>
         <tr>
-            <td style="padding: 8px; font-weight: bold;">Ort:</td>
-            <td style="padding: 8px;">{{ lesson.location.name|default:"Nicht angegeben" }}</td>
-        </tr>
-        <tr>
             <td style="padding: 8px; font-weight: bold;">Status:</td>
             <td style="padding: 8px;">
                 {% if lesson.status == 'planned' %}Geplant
@@ -87,7 +83,7 @@
                 <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.date|date:"d.m.Y" }}</td>
                 <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.start_time|time:"H:i" }} Uhr</td>
                 <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.contract.student.full_name }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.location.name|default:"-" }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">-</td>
                 <td style="padding: 8px; border: 1px solid #ddd;">
                     <a href="{% url 'lessons:detail' conflict_lesson.pk %}" class="btn" style="font-size: 0.9em;">Anzeigen</a>
                     <a href="{% url 'lessons:update' conflict_lesson.pk %}" class="btn btn-primary" style="font-size: 0.9em;">Bearbeiten</a>

@@ -16,7 +16,6 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from decimal import Decimal
 from datetime import date, time, timedelta
-from apps.locations.models import Location
 from apps.students.models import Student
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
@@ -43,21 +42,10 @@ class Command(BaseCommand):
             BlockedTime.objects.all().delete()
             Contract.objects.all().delete()
             Student.objects.all().delete()
-            Location.objects.all().delete()
             UserProfile.objects.all().delete()
             User.objects.filter(is_superuser=False).delete()
         
         self.stdout.write(self.style.SUCCESS('Erstelle Demo-Daten...'))
-        
-        # Orte
-        location_home = Location.objects.create(
-            name="Zuhause",
-            address="Musterstraße 1, 12345 Musterstadt"
-        )
-        location_school = Location.objects.create(
-            name="Gymnasium XY",
-            address="Schulstraße 5, 12345 Musterstadt"
-        )
         
         # Schüler
         student1 = Student.objects.create(
@@ -68,7 +56,6 @@ class Command(BaseCommand):
             school="Gymnasium XY",
             grade="10. Klasse",
             subjects="Mathe, Physik",
-            default_location=location_home,
             notes="Sehr motiviert, braucht Unterstützung bei Algebra"
         )
         
@@ -80,7 +67,6 @@ class Command(BaseCommand):
             school="Realschule ABC",
             grade="9. Klasse",
             subjects="Deutsch, Englisch",
-            default_location=location_school,
             notes="Gute Schülerin, möchte sich auf Abitur vorbereiten"
         )
         
@@ -90,8 +76,7 @@ class Command(BaseCommand):
             email="tom.weber@example.com",
             school="Gymnasium XY",
             grade="11. Klasse",
-            subjects="Mathe, Chemie",
-            default_location=location_home
+            subjects="Mathe, Chemie"
         )
         
         # Verträge
@@ -130,7 +115,6 @@ class Command(BaseCommand):
             start_time=time(14, 0),
             duration_minutes=60,
             status='planned',
-            location=location_home,
             travel_time_before_minutes=15,
             travel_time_after_minutes=20,
             notes="Algebra: Lineare Gleichungen"
@@ -143,7 +127,6 @@ class Command(BaseCommand):
             start_time=time(14, 30),  # Überschneidung!
             duration_minutes=90,
             status='planned',
-            location=location_school,
             travel_time_before_minutes=20,
             notes="Deutsch: Textanalyse"
         )
@@ -154,7 +137,6 @@ class Command(BaseCommand):
             start_time=time(16, 0),
             duration_minutes=60,
             status='planned',
-            location=location_home,
             notes="Physik: Mechanik"
         )
         
@@ -164,7 +146,6 @@ class Command(BaseCommand):
             start_time=time(15, 0),
             duration_minutes=60,
             status='paid',
-            location=location_home,
             notes="Mathe: Analysis"
         )
         
@@ -240,7 +221,6 @@ class Command(BaseCommand):
         )
         
         self.stdout.write(self.style.SUCCESS(f'\n✅ Demo-Daten erfolgreich erstellt:'))
-        self.stdout.write(f'  - {Location.objects.count()} Orte')
         self.stdout.write(f'  - {Student.objects.count()} Schüler')
         self.stdout.write(f'  - {Contract.objects.count()} Verträge')
         self.stdout.write(f'  - {Lesson.objects.count()} Unterrichtsstunden')

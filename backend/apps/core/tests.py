@@ -4,7 +4,6 @@ from apps.core.models import UserProfile
 from apps.core.selectors import IncomeSelector
 from decimal import Decimal
 from datetime import date, time
-from apps.locations.models import Location
 from apps.students.models import Student
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
@@ -34,10 +33,6 @@ class IncomeSelectorTest(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.location = Location.objects.create(
-            name="Zuhause",
-            address="Musterstraße 1"
-        )
         self.student = Student.objects.create(
             first_name="Max",
             last_name="Mustermann"

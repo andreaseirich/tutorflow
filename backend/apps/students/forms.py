@@ -3,7 +3,6 @@ Forms für Student-Model.
 """
 from django import forms
 from apps.students.models import Student
-from apps.locations.models import Location
 
 
 class StudentForm(forms.ModelForm):
@@ -13,7 +12,7 @@ class StudentForm(forms.ModelForm):
         model = Student
         fields = [
             'first_name', 'last_name', 'email', 'phone',
-            'school', 'grade', 'subjects', 'default_location', 'notes'
+            'school', 'grade', 'subjects', 'notes'
         ]
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -23,7 +22,6 @@ class StudentForm(forms.ModelForm):
             'school': forms.TextInput(attrs={'class': 'form-control'}),
             'grade': forms.TextInput(attrs={'class': 'form-control'}),
             'subjects': forms.TextInput(attrs={'class': 'form-control'}),
-            'default_location': forms.Select(attrs={'class': 'form-control'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 

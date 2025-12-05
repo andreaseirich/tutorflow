@@ -1,7 +1,6 @@
 from django.test import TestCase
 from decimal import Decimal
 from datetime import date, time
-from apps.locations.models import Location
 from apps.students.models import Student
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
@@ -12,10 +11,6 @@ class LessonModelTest(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.location = Location.objects.create(
-            name="Zuhause",
-            address="Musterstraße 1"
-        )
         self.student = Student.objects.create(
             first_name="Max",
             last_name="Mustermann"
@@ -33,8 +28,7 @@ class LessonModelTest(TestCase):
             date=date.today(),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='planned',
-            location=self.location
+            status='planned'
         )
         self.assertEqual(lesson.contract, self.contract)
         self.assertEqual(lesson.status, 'planned')

@@ -1,7 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from apps.contracts.models import Contract
-from apps.locations.models import Location
 
 # Import RecurringLesson für Django-Erkennung
 from .recurring_models import RecurringLesson
@@ -34,14 +33,6 @@ class Lesson(models.Model):
         choices=STATUS_CHOICES,
         default='planned',
         help_text="Status der Unterrichtsstunde"
-    )
-    location = models.ForeignKey(
-        Location,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='lessons',
-        help_text="Ort der Unterrichtsstunde"
     )
     travel_time_before_minutes = models.PositiveIntegerField(
         default=0,

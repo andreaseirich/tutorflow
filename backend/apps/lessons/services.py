@@ -147,7 +147,7 @@ class LessonQueryService:
         return Lesson.objects.filter(
             date__gte=start_date,
             date__lt=end_date
-        ).select_related('contract', 'contract__student', 'location').order_by('date', 'start_time')
+        ).select_related('contract', 'contract__student').order_by('date', 'start_time')
 
     @staticmethod
     def get_today_lessons() -> list[Lesson]:
@@ -155,7 +155,7 @@ class LessonQueryService:
         today = timezone.now().date()
         return Lesson.objects.filter(
             date=today
-        ).select_related('contract', 'contract__student', 'location').order_by('start_time')
+        ).select_related('contract', 'contract__student').order_by('start_time')
 
     @staticmethod
     def get_upcoming_lessons(days: int = 7) -> list[Lesson]:
@@ -174,5 +174,5 @@ class LessonQueryService:
         return Lesson.objects.filter(
             date__gte=today,
             date__lte=end_date
-        ).select_related('contract', 'contract__student', 'location').order_by('date', 'start_time')[:10]
+        ).select_related('contract', 'contract__student').order_by('date', 'start_time')[:10]
 
