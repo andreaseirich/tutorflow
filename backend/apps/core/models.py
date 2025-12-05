@@ -1,31 +1,32 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
 
 
 class UserProfile(models.Model):
-    """Erweiterung des Django-User-Models mit Premium-Flag."""
+    """Extension of Django User model with Premium flag."""
     
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         related_name='profile',
-        help_text="Zugehöriger Django-User"
+        help_text=_("Associated Django user")
     )
     is_premium = models.BooleanField(
         default=False,
-        help_text="Hat der Benutzer Premium-Zugang?"
+        help_text=_("Does the user have premium access?")
     )
     premium_since = models.DateTimeField(
         null=True,
         blank=True,
-        help_text="Seit wann ist der Benutzer Premium-Mitglied?"
+        help_text=_("Since when is the user a premium member?")
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = 'Benutzerprofil'
-        verbose_name_plural = 'Benutzerprofile'
+        verbose_name = _('User Profile')
+        verbose_name_plural = _('User Profiles')
 
     def __str__(self):
         premium_str = " (Premium)" if self.is_premium else ""

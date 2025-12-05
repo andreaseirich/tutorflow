@@ -1,56 +1,57 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.utils.translation import gettext_lazy as _
 from decimal import Decimal
 from apps.students.models import Student
 
 
 class Contract(models.Model):
-    """Vertrag zwischen Nachhilfelehrer und Schüler/Institut."""
+    """Contract between tutor and student/institute."""
     
     student = models.ForeignKey(
         Student,
         on_delete=models.CASCADE,
         related_name='contracts',
-        help_text="Schüler, für den der Vertrag gilt"
+        help_text=_("Student for whom the contract applies")
     )
     institute = models.CharField(
         max_length=200,
         blank=True,
         null=True,
-        help_text="Name des Instituts (falls vorhanden)"
+        help_text=_("Institute name (if applicable)")
     )
     hourly_rate = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(Decimal('0.01'))],
-        help_text="Honorar pro Einheit in Euro"
+        help_text=_("Rate per unit in EUR")
     )
     unit_duration_minutes = models.PositiveIntegerField(
         default=60,
-        help_text="Dauer einer Einheit in Minuten"
+        help_text=_("Duration of one unit in minutes")
     )
-    start_date = models.DateField(help_text="Vertragsbeginn")
+    start_date = models.DateField(help_text=_("Contract start date"))
     end_date = models.DateField(
         null=True,
         blank=True,
-        help_text="Vertragsende (optional, leer = unbefristet)"
+        help_text=_("Contract end date (optional, empty = unlimited)")
     )
     is_active = models.BooleanField(
         default=True,
-        help_text="Ist der Vertrag aktiv?"
+        help_text=_("Is the contract active?")
     )
     notes = models.TextField(
         blank=True,
         null=True,
-        help_text="Zusätzliche Notizen zum Vertrag"
+        help_text=_("Additional notes about the contract")
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-start_date', 'student']
-        verbose_name = 'Vertrag'
-        verbose_name_plural = 'Verträge'
+        verbose_name = _('Contract')
+        verbose_name_plural = _('Contracts')
 
     def __str__(self):
         institute_str = f" ({self.institute})" if self.institute else ""
@@ -58,22 +59,22 @@ class Contract(models.Model):
 
 
 class ContractMonthlyPlan(models.Model):
-    """Monatliche Planung für einen Vertrag - explizite geplante Einheiten pro Monat."""
+    """Monthly planning for a contract - explicit planned units per month."""
     
     contract = models.ForeignKey(
         Contract,
         on_delete=models.CASCADE,
         related_name='monthly_plans',
-        help_text="Zugehöriger Vertrag"
+        help_text=_("Associated contract")
     )
-    year = models.PositiveIntegerField(help_text="Jahr")
+    year = models.PositiveIntegerField(help_text=_("Year"))
     month = models.PositiveIntegerField(
         validators=[MinValueValidator(1)],
-        help_text="Monat (1-12)"
+        help_text=_("Month (1-12)")
     )
     planned_units = models.PositiveIntegerField(
         default=0,
-        help_text="Geplante Einheiten für diesen Monat"
+        help_text=_("Planned units for this month")
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -81,8 +82,8 @@ class ContractMonthlyPlan(models.Model):
     class Meta:
         ordering = ['year', 'month']
         unique_together = [['contract', 'year', 'month']]
-        verbose_name = 'Monatlicher Vertragsplan'
-        verbose_name_plural = 'Monatliche Vertragspläne'
+        verbose_name = _('Contract Monthly Plan')
+        verbose_name_plural = _('Contract Monthly Plans')
 
     def __str__(self):
         return f"{self.contract} - {self.year}-{self.month:02d}: {self.planned_units} Einheiten"

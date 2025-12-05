@@ -1,66 +1,67 @@
 # TutorFlow
 
-## Projektbeschreibung
+## Project Description
 
-TutorFlow ist eine Web-Anwendung für Nachhilfelehrer, die eine strukturierte Verwaltung von Schülern, Verträgen und Nachhilfestunden ermöglicht. Die Anwendung unterstützt Planung mit Blockzeiten und Fahrtzeiten, Auswertung von Einnahmen nach Monaten und Status, sowie optional das Hochladen von Auftragsbestätigungen (PDF) zur Datenextraktion.
+TutorFlow is a web application for tutors that enables structured management of students, contracts, and tutoring lessons. The application supports planning with blocked times and travel times, evaluation of income by months and status, and optionally uploading order confirmations (PDF) for data extraction.
 
 ## Problem
 
-Nachhilfelehrer benötigen ein zuverlässiges Werkzeug zur Verwaltung ihrer Schüler, Verträge und Unterrichtsstunden. Die Planung muss Terminkonflikte vermeiden, Einnahmen müssen übersichtlich dargestellt werden, und die Verwaltung soll strukturiert und nachvollziehbar sein.
+Tutors need a reliable tool for managing their students, contracts, and lessons. Planning must avoid scheduling conflicts, income must be clearly presented, and management should be structured and traceable.
 
-## Lösung
+## Solution
 
-TutorFlow bietet eine vollständige Lösung für die Verwaltung von Nachhilfetätigkeiten:
+TutorFlow provides a complete solution for managing tutoring activities:
 
-- **Schülerverwaltung**: Zentrale Verwaltung von Schülern mit Kontaktdaten, Schule/Klasse, Fächern
-- **Vertragsverwaltung**: Verwaltung von Verträgen mit Honorar, Dauer, Vertragszeitraum
-- **Unterrichtsplanung**: Planung von Nachhilfestunden mit Datum, Zeit und Fahrtzeiten
-  - **Kalenderansicht**: Zentrale UI für die Stundenplanung - Lessons werden primär über die Kalenderansicht geplant und bearbeitet
-  - **Serientermine**: Unterstützung für wiederholende Unterrichtsstunden (z. B. jeden Montag 14 Uhr)
-- **Blockzeiten**: Verwaltung eigener Termine und Blockzeiten (z. B. Uni, Job, Gemeinde)
-- **Einnahmenauswertung**: Monats- und Jahresauswertungen der Einnahmen nach Status
-- **Automatische Status-Verwaltung**: Vergangene Lessons werden automatisch als unterrichtet markiert
-- **Abrechnungssystem**: Rechnungen erstellen aus ausgewählten Unterrichtsstunden mit HTML-Dokument-Generierung
-- **Premium-Funktion**: KI-gestützte Generierung von Unterrichtsplänen mithilfe einer LLM-API
+- **Student Management**: Centralized management of students with contact information, school/grade, subjects
+- **Contract Management**: Management of contracts with rates, duration, contract period
+- **Lesson Planning**: Planning of tutoring lessons with date, time, and travel times
+  - **Calendar View**: Central UI for lesson planning - Lessons are primarily planned and edited via the calendar view
+  - **Recurring Lessons**: Support for recurring lessons (e.g., every Monday at 2 PM)
+- **Blocked Times**: Management of personal appointments and blocked times (e.g., university, job, community)
+- **Income Evaluation**: Monthly and yearly evaluations of income by status
+- **Automatic Status Management**: Past lessons are automatically marked as taught
+- **Billing System**: Create invoices from selected lessons with HTML document generation
+- **Premium Feature**: AI-powered generation of lesson plans using an LLM API
 
 ## Features
 
-### Basis-Features
-- **Schülerverwaltung**: Zentrale Verwaltung mit Kontaktdaten, Schule, Fächern
-- **Vertragsverwaltung**: Honorar, Dauer, Vertragszeitraum, geplante Einheiten
-- **Unterrichtsplanung**: Planung mit Datum, Zeit, Fahrtzeiten
-  - **Wochenansicht**: Interaktive Wochenansicht (Mo-So, 08:00-22:00) als zentrale UI für Terminplanung
-    - **Drag-to-Create**: Zeitbereich ziehen, um neuen Termin anzulegen (Nachhilfe oder Blockzeit)
-    - **Termin-Anzeige**: Lessons (blau), Blockzeiten (orange), Konflikte (roter Rahmen)
-    - **Klick auf Termin**: Öffnet Bearbeitungsformular
-  - **Monatskalender**: Alternative Ansicht für Monatsübersicht
-  - **Serientermine**: Wiederholende Stunden (z. B. jeden Montag/Donnerstag) mit automatischer Generierung
-  - **Automatische Status-Verwaltung**: Lesson-Status (geplant/unterrichtet) wird automatisch anhand des Datums gesetzt
-- **Blockzeiten**: Verwaltung eigener Termine (Uni, Job, etc.)
-  - **Kalender-Integration**: Blockzeiten werden ausschließlich über den Kalender verwaltet (Erstellen, Bearbeiten, Anzeigen)
-  - **Mehrtägige Blockzeiten**: Unterstützung für mehrtägige Blöcke (z. B. Urlaub/Reise)
-  - **Serien-Blockzeiten**: Wiederholende Blockzeiten (z. B. jeden Dienstag 18–20 Uhr) mit automatischer Generierung
-- **Konfliktprüfung**: Automatische Erkennung von Überschneidungen (inkl. Fahrtzeiten)
-  - **Zeitplanung**: Überschneidungen mit anderen Lessons und Blockzeiten
-  - **Vertragskontingent**: Erkennung von Verstößen gegen das vereinbarte Stundenkontingent (basierend auf ContractMonthlyPlan)
-- **Einnahmenübersicht**: Monats- und Jahresauswertungen nach Status (geplant, unterrichtet, ausgezahlt)
-- **Dashboard**: Übersicht über heutige/nächste Stunden, Konflikte, Einnahmen
+### Basic Features
+- **Student Management**: Centralized management with contact information, school, subjects
+- **Contract Management**: Rates, duration, contract period, planned units
+- **Lesson Planning**: Planning with date, time, travel times
+  - **Week View**: Interactive week view (Mon-Sun, 08:00-22:00) as central UI for appointment planning
+    - **Drag-to-Create**: Drag a time range to create a new appointment (tutoring or blocked time)
+    - **Appointment Display**: Lessons (blue), blocked times (orange), conflicts (red border)
+    - **Click on Appointment**: Opens edit form
+  - **Month Calendar**: Alternative view for monthly overview
+  - **Recurring Lessons**: Recurring lessons (e.g., every Monday/Thursday) with automatic generation
+  - **Automatic Status Management**: Lesson status (planned/taught) is automatically set based on date
+- **Blocked Times**: Management of personal appointments (university, job, etc.)
+  - **Calendar Integration**: Blocked times are managed exclusively via the calendar (create, edit, display)
+  - **Multi-day Blocked Times**: Support for multi-day blocks (e.g., vacation/travel)
+  - **Recurring Blocked Times**: Recurring blocked times (e.g., every Tuesday 6-8 PM) with automatic generation
+- **Conflict Detection**: Automatic detection of overlaps (including travel times)
+  - **Scheduling**: Overlaps with other lessons and blocked times
+  - **Contract Quota**: Detection of violations against agreed lesson quota (based on ContractMonthlyPlan)
+- **Income Overview**: Monthly and yearly evaluations by status (planned, taught, paid)
+- **Dashboard**: Overview of today's/upcoming lessons, conflicts, income
 
-### Premium-Features
-- **KI-gestützte Unterrichtspläne**: Automatische Generierung von detaillierten Unterrichtsplänen via LLM-API
-- **Human-in-the-Loop**: Generierte Pläne können angepasst und verantwortet werden
+### Premium Features
+- **AI-powered Lesson Plans**: Automatic generation of detailed lesson plans via LLM API
+- **Human-in-the-Loop**: Generated plans can be adjusted and are accountable
 
 ## Tech Stack
 
 ### Backend
 - **Framework**: Django 5.2.9
-- **Datenbank**: SQLite (Entwicklung), PostgreSQL (optional für Produktion)
+- **Database**: SQLite (development), PostgreSQL (optional for production)
 - **Python**: 3.11+
-- **Abhängigkeiten**: Django, requests (siehe `requirements.txt`)
+- **Dependencies**: Django, requests (see `requirements.txt`)
+- **Internationalization**: Full i18n support with English as default language and German translations
 
-### Premium-Funktionen (KI)
-- **LLM-Integration**: OpenAI-kompatible API für KI-generierte Unterrichtspläne
-- **Konfiguration**: API-Keys über Umgebungsvariablen:
+### Premium Features (AI)
+- **LLM Integration**: OpenAI-compatible API for AI-generated lesson plans
+- **Configuration**: API keys via environment variables:
   ```bash
   export LLM_API_KEY="your-api-key"
   export LLM_API_BASE_URL="https://api.openai.com/v1"  # Optional
@@ -68,78 +69,100 @@ TutorFlow bietet eine vollständige Lösung für die Verwaltung von Nachhilfetä
   ```
 
 ### Frontend
-- Wird in späteren Phasen definiert (z. B. Django-Templates, HTMX, Tailwind)
+- To be defined in later phases (e.g., Django Templates, HTMX, Tailwind)
 
 ## Setup
 
-### Voraussetzungen
-- Python 3.11 oder höher
+### Prerequisites
+- Python 3.11 or higher
 - pip
 
 ### Installation
 
-1. Repository klonen:
+1. Clone repository:
 ```bash
 git clone <repository-url>
 cd tutorflow
 ```
 
-2. Virtuelles Environment erstellen und aktivieren:
+2. Create and activate virtual environment:
 ```bash
 python3 -m venv venv
 source venv/bin/activate  # Linux/Mac
-# oder
+# or
 venv\Scripts\activate  # Windows
 ```
 
-3. Abhängigkeiten installieren:
+3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Datenbank migrieren:
+4. Migrate database:
 ```bash
 cd backend
 python manage.py migrate
 ```
 
-5. Entwicklungsserver starten:
+5. Compile translations (for i18n support):
+```bash
+python manage.py compilemessages
+```
+
+6. Start development server:
 ```bash
 python manage.py runserver
 ```
 
-Die Anwendung ist dann unter `http://127.0.0.1:8000/` erreichbar.
+The application is then available at `http://127.0.0.1:8000/`.
 
-### Demo-Daten laden
+### Load Demo Data
 
-Um die Anwendung mit Demo-Daten zu testen, können Sie das Seed-Command ausführen:
+To test the application with demo data, you can run the seed command:
 
 ```bash
 cd backend
 python manage.py seed_demo_data
 ```
 
-Dies erstellt:
-- 3 Demo-Schüler mit unterschiedlichen Profilen
-- Zugehörige Verträge
-- Mehrere Unterrichtsstunden (inkl. einem Konflikt zur Demonstration)
-- Blockzeiten
-- 1 Premium-User mit generiertem Unterrichtsplan
+This creates:
+- 3 demo students with different profiles
+- Associated contracts
+- Several lessons (including a conflict for demonstration)
+- Blocked times
+- 1 premium user with generated lesson plan
 
-**Demo-Login:**
-- Login-URL: `http://127.0.0.1:8000/admin/`
+**Demo Login:**
+- Login URL: `http://127.0.0.1:8000/admin/`
 - Username: `demo_premium`
 - Password: `demo123`
 
-**Hinweis:** Die Anmeldung erfolgt über das Django Admin-Interface. Nach erfolgreichem Login können Sie über die Navigation auf die verschiedenen Bereiche der Anwendung zugreifen.
+**Note:** Login is done via the Django Admin interface. After successful login, you can access the various areas of the application via the navigation.
 
-**Demo-Szenario:**
-Die Demo-Daten zeigen ein realistisches Szenario mit:
-- Mehreren Schülern in verschiedenen Klassenstufen
-- Unterschiedlichen Verträgen (privat und über Institut)
-- Einer Konfliktsituation zwischen zwei Lessons (zur Demonstration der Konfliktprüfung)
-- Einer Blockzeit (Uni-Vorlesung)
-- Einem Premium-User mit KI-generiertem Unterrichtsplan
+**Demo Scenario:**
+The demo data shows a realistic scenario with:
+- Multiple students in different grade levels
+- Different contracts (private and via institute)
+- A conflict situation between two lessons (to demonstrate conflict detection)
+- A blocked time (university lecture)
+- A premium user with AI-generated lesson plan
+
+## Internationalization
+
+TutorFlow supports multiple languages with English as the default language. German translations are available as a secondary language.
+
+- **Default Language**: English (`en`)
+- **Supported Languages**: English (`en`), German (`de`)
+- **Language Switching**: Available via dropdown in the navigation bar
+- **Translation Files**: Located in `backend/locale/`
+
+To update translations:
+```bash
+cd backend
+python manage.py makemessages -l de
+# Edit locale/de/LC_MESSAGES/django.po
+python manage.py compilemessages
+```
 
 ## Projektstruktur
 
@@ -164,39 +187,39 @@ tutorflow/
 └── cursor_master_prompt.txt
 ```
 
-## Entwicklung
+## Development
 
-Das Projekt wird in Phasen entwickelt. Siehe `docs/PHASES.md` für Details.
+The project is developed in phases. See `docs/PHASES.md` for details.
 
-## Validierung
+## Validation
 
-Ein Validierungsskript ist verfügbar, um das Projekt zu prüfen:
+A validation script is available to check the project:
 
 ```bash
 ./scripts/validate.sh
 ```
 
-Das Skript führt folgende Checks durch:
+The script performs the following checks:
 - Django System Check
-- Testsuite
-- Prüfung auf TODO-Kommentare
-- Prüfung auf Debug-Ausgaben
-- Dokumentationsprüfung
+- Test Suite
+- Check for TODO comments
+- Check for debug output
+- Documentation check
 
-## Dokumentation
+## Documentation
 
-- **ARCHITECTURE.md**: Architekturübersicht und technische Details
-- **ETHICS.md**: Ethisch-christliche Leitlinien und Datenschutzprinzipien
-- **PHASES.md**: Übersicht über Entwicklungsphasen
-- **CHECKPOINTS.md**: Fortschrittsprotokoll und Checkpoints
-- **API.md**: API-Dokumentation
-- **DEVPOST.md**: Inhalte für Devpost-Einreichung
+- **ARCHITECTURE.md**: Architecture overview and technical details
+- **ETHICS.md**: Ethical-Christian guidelines and data protection principles
+- **PHASES.md**: Overview of development phases
+- **CHECKPOINTS.md**: Progress log and checkpoints
+- **API.md**: API documentation
+- **DEVPOST.md**: Content for Devpost submission
 
-## Lizenz
+## License
 
-Dieses Projekt wird im Rahmen des Teca-Hacks-Hackathons entwickelt.
+This project is developed as part of the Teca-Hacks Hackathon.
 
-## Kontakt
+## Contact
 
-Für Fragen oder Anregungen bitte ein Issue im Repository erstellen.
+For questions or suggestions, please create an issue in the repository.
 

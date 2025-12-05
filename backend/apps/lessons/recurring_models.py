@@ -1,82 +1,83 @@
 """
-Models für wiederholende Unterrichtsstunden (Serientermine).
+Models for recurring lessons (series appointments).
 """
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.utils.translation import gettext_lazy as _
 from apps.contracts.models import Contract
 
 
 class RecurringLesson(models.Model):
-    """Wiederholende Unterrichtsstunde - Vorlage für Serientermine."""
+    """Recurring lesson - template for series appointments."""
     
     contract = models.ForeignKey(
         Contract,
         on_delete=models.CASCADE,
         related_name='recurring_lessons',
-        help_text="Zugehöriger Vertrag"
+        help_text=_("Associated contract")
     )
-    start_date = models.DateField(help_text="Startdatum der Serie")
+    start_date = models.DateField(help_text=_("Series start date"))
     end_date = models.DateField(
         null=True,
         blank=True,
-        help_text="Enddatum der Serie (optional, leer = bis Vertragsende)"
+        help_text=_("Series end date (optional, empty = until contract end)")
     )
-    start_time = models.TimeField(help_text="Startzeit")
+    start_time = models.TimeField(help_text=_("Start time"))
     duration_minutes = models.PositiveIntegerField(
         validators=[MinValueValidator(1)],
-        help_text="Dauer in Minuten"
+        help_text=_("Duration in minutes")
     )
     travel_time_before_minutes = models.PositiveIntegerField(
         default=0,
-        help_text="Fahrtzeit vorher in Minuten"
+        help_text=_("Travel time before in minutes")
     )
     travel_time_after_minutes = models.PositiveIntegerField(
         default=0,
-        help_text="Fahrtzeit nachher in Minuten"
+        help_text=_("Travel time after in minutes")
     )
-    # Wiederholungsart
+    # Recurrence type
     RECURRENCE_TYPE_CHOICES = [
-        ('weekly', 'Wöchentlich'),
-        ('biweekly', 'Alle 2 Wochen'),
-        ('monthly', 'Monatlich'),
+        ('weekly', _('Weekly')),
+        ('biweekly', _('Bi-weekly')),
+        ('monthly', _('Monthly')),
     ]
     recurrence_type = models.CharField(
         max_length=20,
         choices=RECURRENCE_TYPE_CHOICES,
         default='weekly',
-        help_text="Wiederholungsart: Wöchentlich, alle 2 Wochen oder monatlich"
+        help_text=_("Recurrence type: Weekly, bi-weekly, or monthly")
     )
-    # Wochentage als Boolean-Felder
-    monday = models.BooleanField(default=False, help_text="Montag")
-    tuesday = models.BooleanField(default=False, help_text="Dienstag")
-    wednesday = models.BooleanField(default=False, help_text="Mittwoch")
-    thursday = models.BooleanField(default=False, help_text="Donnerstag")
-    friday = models.BooleanField(default=False, help_text="Freitag")
-    saturday = models.BooleanField(default=False, help_text="Samstag")
-    sunday = models.BooleanField(default=False, help_text="Sonntag")
+    # Weekdays as Boolean fields
+    monday = models.BooleanField(default=False, help_text=_("Monday"))
+    tuesday = models.BooleanField(default=False, help_text=_("Tuesday"))
+    wednesday = models.BooleanField(default=False, help_text=_("Wednesday"))
+    thursday = models.BooleanField(default=False, help_text=_("Thursday"))
+    friday = models.BooleanField(default=False, help_text=_("Friday"))
+    saturday = models.BooleanField(default=False, help_text=_("Saturday"))
+    sunday = models.BooleanField(default=False, help_text=_("Sunday"))
     is_active = models.BooleanField(
         default=True,
-        help_text="Ist die Serie aktiv?"
+        help_text=_("Is the series active?")
     )
     notes = models.TextField(
         blank=True,
         null=True,
-        help_text="Notizen zur Serie"
+        help_text=_("Notes for the series")
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-start_date', 'contract']
-        verbose_name = 'Wiederholende Unterrichtsstunde'
-        verbose_name_plural = 'Wiederholende Unterrichtsstunden'
+        verbose_name = _('Recurring Lesson')
+        verbose_name_plural = _('Recurring Lessons')
 
     def __str__(self):
         weekdays = self.get_active_weekdays_display()
-        return f"{self.contract.student} - {weekdays} {self.start_time} (ab {self.start_date})"
+        return f"{self.contract.student} - {weekdays} {self.start_time} (from {self.start_date})"
 
     def get_active_weekdays(self):
-        """Gibt eine Liste der aktiven Wochentage zurück (0=Montag, 6=Sonntag)."""
+        """Returns a list of active weekdays (0=Monday, 6=Sunday)."""
         weekdays = []
         if self.monday:
             weekdays.append(0)
@@ -95,8 +96,9 @@ class RecurringLesson(models.Model):
         return weekdays
 
     def get_active_weekdays_display(self):
-        """Gibt eine lesbare Darstellung der aktiven Wochentage zurück."""
-        weekday_names = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+        """Returns a human-readable representation of active weekdays."""
+        from django.utils.translation import gettext_lazy as _
+        weekday_names = [_('Mo'), _('Tu'), _('We'), _('Th'), _('Fr'), _('Sa'), _('Su')]
         active = [weekday_names[i] for i in self.get_active_weekdays()]
-        return ', '.join(active) if active else 'Keine'
+        return ', '.join(active) if active else _('None')
 

@@ -1,20 +1,21 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 {% load currency %}
 
-{% block title %}Dashboard - TutorFlow{% endblock %}
+{% block title %}{% trans "Dashboard" %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Dashboard</h1>
+<h1>{% trans "Dashboard" %}</h1>
 
-<h2>Heutige Stunden</h2>
+<h2>{% trans "Today's Lessons" %}</h2>
 {% if today_lessons %}
 <table>
     <thead>
         <tr>
-            <th>Zeit</th>
-            <th>Schüler</th>
-            <th>Status</th>
-            <th>Konflikte</th>
+            <th>{% trans "Time" %}</th>
+            <th>{% trans "Student" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Conflicts" %}</th>
         </tr>
     </thead>
     <tbody>
@@ -25,9 +26,9 @@
             <td>{{ lesson.get_status_display }}</td>
             <td>
                 {% if lesson.conflicts %}
-                <span class="conflict-icon">⚠</span> <span class="conflict">{{ lesson.conflicts|length }} Konflikt(e)</span>
+                <span class="conflict-icon">⚠</span> <span class="conflict">{% blocktrans count counter=lesson.conflicts|length %}{{ counter }} conflict{% plural %}{{ counter }} conflicts{% endblocktrans %}</span>
                 {% else %}
-                <span style="color: #28a745;">✓ OK</span>
+                <span style="color: #28a745;">✓ {% trans "OK" %}</span>
                 {% endif %}
             </td>
         </tr>
@@ -35,19 +36,19 @@
     </tbody>
 </table>
 {% else %}
-<p>Keine Stunden für heute geplant.</p>
+<p>{% trans "No lessons scheduled for today." %}</p>
 {% endif %}
 
-<h2>Nächste Stunden (7 Tage)</h2>
+<h2>{% trans "Upcoming Lessons (7 days)" %}</h2>
 {% if upcoming_lessons %}
 <table>
     <thead>
         <tr>
-            <th>Datum</th>
-            <th>Zeit</th>
-            <th>Schüler</th>
-            <th>Status</th>
-            <th>Konflikte</th>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Time" %}</th>
+            <th>{% trans "Student" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Conflicts" %}</th>
         </tr>
     </thead>
     <tbody>
@@ -59,9 +60,9 @@
             <td>{{ lesson.get_status_display }}</td>
             <td>
                 {% if lesson.conflicts %}
-                <span class="conflict-icon">⚠</span> <span class="conflict">{{ lesson.conflicts|length }} Konflikt(e)</span>
+                <span class="conflict-icon">⚠</span> <span class="conflict">{% blocktrans count counter=lesson.conflicts|length %}{{ counter }} conflict{% plural %}{{ counter }} conflicts{% endblocktrans %}</span>
                 {% else %}
-                <span style="color: #28a745;">✓ OK</span>
+                <span style="color: #28a745;">✓ {% trans "OK" %}</span>
                 {% endif %}
             </td>
         </tr>
@@ -69,14 +70,14 @@
     </tbody>
 </table>
 {% else %}
-<p>Keine kommenden Stunden.</p>
+<p>{% trans "No upcoming lessons." %}</p>
 {% endif %}
 
-<h2>Einnahmen ({{ current_month }}/{{ current_year }})</h2>
-<p><strong>Ausgezahlt:</strong> {{ current_month_income.total_income|euro }} ({{ current_month_income.lesson_count }} Stunden)</p>
+<h2>{% trans "Income" %} ({{ current_month }}/{{ current_year }})</h2>
+<p><strong>{% trans "Paid:" %}</strong> {{ current_month_income.total_income|euro }} {% blocktrans count counter=current_month_income.lesson_count %}({{ counter }} lesson){% plural %}({{ counter }} lessons){% endblocktrans %}</p>
 
 {% if conflict_count > 0 %}
-<p class="conflict">⚠ {{ conflict_count }} Konflikt(e) in den nächsten Stunden!</p>
+<p class="conflict">⚠ {% blocktrans count counter=conflict_count %}{{ counter }} conflict in upcoming lessons!{% plural %}{{ counter }} conflicts in upcoming lessons!{% endblocktrans %}</p>
 {% endif %}
 {% endblock %}
 

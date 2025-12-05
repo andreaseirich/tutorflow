@@ -1,27 +1,27 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Wochenansicht - TutorFlow{% endblock %}
+{% block title %}{% trans "Week View" %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Wochenansicht</h1>
+<h1>{% trans "Week View" %}</h1>
 
 <div class="btn-group">
-    <a href="{% url 'lessons:week' %}?year={{ prev_week.year }}&month={{ prev_week.month }}&day={{ prev_week.day }}" class="btn">← Vorige Woche</a>
-    <a href="{% url 'lessons:week' %}?year={{ next_week.year }}&month={{ next_week.month }}&day={{ next_week.day }}" class="btn">Nächste Woche →</a>
-    <a href="{% url 'lessons:recurring_create' %}" class="btn btn-success">➕ Serientermin anlegen</a>
-    <a href="{% url 'blocked_times:recurring_create' %}" class="btn btn-warning">🚫 Serien-Blockzeit erstellen</a>
+    <a href="{% url 'lessons:week' %}?year={{ prev_week.year }}&month={{ prev_week.month }}&day={{ prev_week.day }}" class="btn">← {% trans "Previous Week" %}</a>
+    <a href="{% url 'lessons:week' %}?year={{ next_week.year }}&month={{ next_week.month }}&day={{ next_week.day }}" class="btn">{% trans "Next Week" %} →</a>
+    <a href="{% url 'lessons:recurring_create' %}" class="btn btn-success">➕ {% trans "Create Recurring Lesson" %}</a>
+    <a href="{% url 'blocked_times:recurring_create' %}" class="btn btn-warning">🚫 {% trans "Create Recurring Blocked Time" %}</a>
 </div>
 
 <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
-    <strong>Hinweis:</strong> Ziehen Sie einen Zeitbereich im Kalender, um einen neuen Termin anzulegen.
-    Klicken Sie auf einen bestehenden Termin, um ihn zu bearbeiten.
+    <strong>{% trans "Note:" %}</strong> {% trans "Drag a time range in the calendar to create a new appointment. Click on an existing appointment to edit it." %}
 </p>
 
 <div id="week-calendar" style="margin-top: 20px; position: relative; overflow-x: auto;">
     <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
         <thead>
             <tr>
-                <th style="width: 80px; border: 1px solid #ddd; padding: 8px; background: #f5f5f5; text-align: center;">Zeit</th>
+                <th style="width: 80px; border: 1px solid #ddd; padding: 8px; background: #f5f5f5; text-align: center;">{% trans "Time" %}</th>
                 {% for weekday in weekdays %}
                 <th style="border: 1px solid #ddd; padding: 8px; background: #f5f5f5; text-align: center; {% if weekday.date == today %}background: #e3f2fd;{% endif %}">
                     {{ weekday.name_short }}<br>
@@ -114,21 +114,21 @@
     </table>
 </div>
 
-<!-- Dialog für Termin-Erstellung -->
+<!-- Dialog for appointment creation -->
 <div id="create-dialog" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000; min-width: 400px;">
-    <h3 style="margin-top: 0;">Neuen Termin erstellen</h3>
+    <h3 style="margin-top: 0;">{% trans "Create New Appointment" %}</h3>
     <p id="dialog-time-info" style="margin-bottom: 15px; color: #666;"></p>
     <div style="margin-bottom: 15px;">
         <label>
-            <input type="radio" name="event-type" value="lesson" checked> Nachhilfeunterricht
+            <input type="radio" name="event-type" value="lesson" checked> {% trans "Tutoring Lesson" %}
         </label><br>
         <label>
-            <input type="radio" name="event-type" value="blocked_time"> Blockzeit/anderer Termin
+            <input type="radio" name="event-type" value="blocked_time"> {% trans "Blocked Time/Other Appointment" %}
         </label>
     </div>
     <div class="btn-group">
-        <button onclick="confirmCreate()" class="btn btn-success">Erstellen</button>
-        <button onclick="cancelCreate()" class="btn btn-secondary">Abbrechen</button>
+        <button onclick="confirmCreate()" class="btn btn-success">{% trans "Create" %}</button>
+        <button onclick="cancelCreate()" class="btn btn-secondary">{% trans "Cancel" %}</button>
     </div>
 </div>
 

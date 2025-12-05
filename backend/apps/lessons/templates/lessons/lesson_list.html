@@ -1,21 +1,22 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Unterrichtsstunden - TutorFlow{% endblock %}
+{% block title %}{% trans "Lessons" %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Unterrichtsstunden</h1>
-<a href="{% url 'lessons:create' %}" class="btn">Neue Stunde</a>
-<a href="{% url 'lessons:month' 2025 12 %}" class="btn">Monatsansicht</a>
+<h1>{% trans "Lessons" %}</h1>
+<a href="{% url 'lessons:create' %}" class="btn">{% trans "New Lesson" %}</a>
+<a href="{% url 'lessons:month' 2025 12 %}" class="btn">{% trans "Month View" %}</a>
 
 <table>
     <thead>
         <tr>
-            <th>Datum</th>
-            <th>Zeit</th>
-            <th>Schüler</th>
-            <th>Status</th>
-            <th>Konflikte</th>
-            <th>Aktionen</th>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Time" %}</th>
+            <th>{% trans "Student" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Conflicts" %}</th>
+            <th>{% trans "Actions" %}</th>
         </tr>
     </thead>
     <tbody>
@@ -33,12 +34,12 @@
                 {% endif %}
             </td>
             <td>
-                <a href="{% url 'lessons:detail' lesson.pk %}">Details</a> |
-                <a href="{% url 'lessons:update' lesson.pk %}">Bearbeiten</a>
+                <a href="{% url 'lessons:detail' lesson.pk %}">{% trans "Details" %}</a> |
+                <a href="{% url 'lessons:update' lesson.pk %}">{% trans "Edit" %}</a>
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="6">Keine Stunden vorhanden.</td></tr>
+        <tr><td colspan="6">{% trans "No lessons available." %}</td></tr>
         {% endfor %}
     </tbody>
 </table>

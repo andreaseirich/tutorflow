@@ -1,5 +1,6 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,13 +44,23 @@
 <body>
     <nav>
         <div class="nav-container">
-            <a href="{% url 'core:dashboard' %}">📊 Dashboard</a>
-            <a href="{% url 'students:list' %}">👥 Schüler</a>
-            <a href="{% url 'contracts:list' %}">📄 Verträge</a>
-            <a href="{% url 'lessons:week' %}">📅 Kalender</a>
-            <a href="{% url 'billing:invoice_list' %}">🧾 Rechnungen</a>
-            <a href="{% url 'core:income' %}">💰 Einnahmen</a>
-            <a href="{% url 'admin:index' %}">⚙️ Admin</a>
+            <a href="{% url 'core:dashboard' %}">📊 {% trans "Dashboard" %}</a>
+            <a href="{% url 'students:list' %}">👥 {% trans "Students" %}</a>
+            <a href="{% url 'contracts:list' %}">📄 {% trans "Contracts" %}</a>
+            <a href="{% url 'lessons:week' %}">📅 {% trans "Calendar" %}</a>
+            <a href="{% url 'billing:invoice_list' %}">🧾 {% trans "Invoices" %}</a>
+            <a href="{% url 'core:income' %}">💰 {% trans "Income" %}</a>
+            <a href="{% url 'admin:index' %}">⚙️ {% trans "Admin" %}</a>
+            <form action="{% url 'set_language' %}" method="post" style="display: inline-block; margin-left: 20px;">
+                {% csrf_token %}
+                <select name="language" onchange="this.form.submit()" style="background: #34495e; color: white; border: none; padding: 8px 15px; border-radius: 3px; cursor: pointer;">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% for lang_code, lang_name in LANGUAGES %}
+                    <option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %}selected{% endif %}>{{ lang_name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
         </div>
     </nav>
     
