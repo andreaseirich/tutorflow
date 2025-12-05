@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, DeleteView
 from django.urls import reverse_lazy
+from django.utils.translation import gettext as _, ngettext
 from datetime import date
 from apps.billing.models import Invoice, InvoiceItem
 from apps.billing.forms import InvoiceCreateForm, InvoiceForm
@@ -111,7 +112,11 @@ class InvoiceCreateView(CreateView):
             lesson_count = invoice.items.count()
             messages.success(
                 self.request,
-                f'Rechnung {invoice.id} erfolgreich erstellt mit {lesson_count} Unterrichtsstunde(n).'
+                ngettext(
+                    'Invoice {id} successfully created with {count} lesson.',
+                    'Invoice {id} successfully created with {count} lessons.',
+                    lesson_count
+                ).format(id=invoice.id, count=lesson_count)
             )
             return redirect('billing:invoice_detail', pk=invoice.pk)
         except ValueError as e:
@@ -133,10 +138,14 @@ class InvoiceDeleteView(DeleteView):
         if reset_count > 0:
             messages.success(
                 request,
-                f'Rechnung gelöscht. {reset_count} Unterrichtsstunde(n) wurden auf "unterrichtet" zurückgesetzt.'
+                ngettext(
+                    'Invoice deleted. {count} lesson was reset to "taught".',
+                    'Invoice deleted. {count} lessons were reset to "taught".',
+                    reset_count
+                ).format(count=reset_count)
             )
         else:
-            messages.success(request, 'Rechnung erfolgreich gelöscht.')
+            messages.success(request, _('Invoice successfully deleted.'))
         
         return redirect(self.success_url)
 
@@ -147,9 +156,9 @@ def generate_invoice_document(request, pk):
     
     try:
         InvoiceDocumentService.save_document(invoice)
-        messages.success(request, 'Rechnungsdokument erfolgreich generiert.')
+        messages.success(request, _('Invoice document successfully generated.'))
     except Exception as e:
-        messages.error(request, f'Fehler beim Generieren des Dokuments: {str(e)}')
+        messages.error(request, _('Error generating document: {error}').format(error=str(e)))
     
     return redirect('billing:invoice_detail', pk=pk)
 
@@ -163,12 +172,12 @@ def serve_invoice_document(request, pk):
     invoice = get_object_or_404(Invoice, pk=pk)
     
     if not invoice.document:
-        raise Http404("Rechnungsdokument nicht gefunden.")
+        raise Http404(_("Invoice document not found."))
     
     # Prüfe, ob Datei existiert
     file_path = invoice.document.path
     if not os.path.exists(file_path):
-        raise Http404("Rechnungsdokument-Datei nicht gefunden.")
+        raise Http404(_("Invoice document file not found."))
     
     # Serviere die Datei
     return FileResponse(
