@@ -36,6 +36,43 @@
     </table>
 </div>
 
+{% if has_conflicts %}
+<div style="background: #fff3cd; padding: 20px; border-radius: 5px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
+    <h2 style="color: #dc3545; margin-top: 0;">⚠ {% trans "Conflicts" %}</h2>
+    <p style="margin-bottom: 15px;">
+        <a href="{% url 'lessons:conflicts' lesson.pk %}?year={{ year }}&month={{ month }}&day={{ day }}" class="btn" style="background: #dc3545; color: white;">
+            {% trans "Show Conflict Details" %}
+        </a>
+    </p>
+    
+    <div style="margin-top: 15px;">
+        <h4>{% trans "Conflict Reasons:" %}</h4>
+        <ul>
+            {% for conflict in conflicts %}
+            <li style="margin-bottom: 8px;">
+                <strong>
+                    {% if conflict.type == 'lesson' %}
+                        ⚠️ {% trans "Time overlap with another lesson" %}
+                    {% elif conflict.type == 'blocked_time' %}
+                        🚫 {% trans "Time overlap with blocked time" %}
+                    {% elif conflict.type == 'quota' %}
+                        📊 {% trans "Contract quota exceeded" %}
+                    {% endif %}
+                </strong>
+                {% if conflict.type == 'lesson' and conflict.object %}
+                    <br><small>{% trans "Conflicting lesson:" %} <a href="{% url 'lessons:detail' conflict.object.pk %}">{{ conflict.object.contract.student.full_name }} - {{ conflict.object.date|date:"SHORT_DATE_FORMAT" }} {{ conflict.object.start_time|time:"H:i" }}</a></small>
+                {% elif conflict.type == 'blocked_time' and conflict.object %}
+                    <br><small>{% trans "Blocked time:" %} {{ conflict.object.title }} ({{ conflict.object.start_datetime|date:"SHORT_DATETIME_FORMAT" }} - {{ conflict.object.end_datetime|time:"H:i" }})</small>
+                {% elif conflict.type == 'quota' %}
+                    <br><small>{{ conflict.message }}</small>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
 {% if has_lesson_plan %}
 <div style="background: #e7f3ff; padding: 20px; border-radius: 5px; border-left: 4px solid #007bff; margin-bottom: 20px;">
     <h2 style="color: #007bff; margin-top: 0;">📚 {% trans "Lesson Plan" %}</h2>
