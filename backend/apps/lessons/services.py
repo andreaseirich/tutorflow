@@ -62,6 +62,25 @@ def recalculate_conflicts_for_blocked_time(blocked_time: BlockedTime):
 
 class LessonConflictService:
     """Service für Konfliktprüfung bei Lessons."""
+    
+    @staticmethod
+    def intervals_overlap(start1: datetime, end1: datetime, start2: datetime, end2: datetime) -> bool:
+        """
+        Prüft, ob zwei Zeitintervalle sich überschneiden.
+        
+        Zwei Intervalle überlappen sich, wenn:
+        - end1 > start2 UND start1 < end2
+        
+        Args:
+            start1: Start des ersten Intervalls
+            end1: Ende des ersten Intervalls
+            start2: Start des zweiten Intervalls
+            end2: Ende des zweiten Intervalls
+        
+        Returns:
+            True wenn Overlap, sonst False
+        """
+        return end1 > start2 and start1 < end2
 
     @staticmethod
     def calculate_time_block(lesson: Lesson) -> tuple[datetime, datetime]:
@@ -118,8 +137,13 @@ class LessonConflictService:
         for other_lesson in other_lessons:
             other_start, other_end = LessonConflictService.calculate_time_block(other_lesson)
             
-            # Prüfe Überlappung
-            if not (end_datetime <= other_start or start_datetime >= other_end):
+            # Prüfe Überlappung mit expliziter Hilfsfunktion
+            if LessonConflictService.intervals_overlap(
+                start1=start_datetime,
+                end1=end_datetime,
+                start2=other_start,
+                end2=other_end
+            ):
                 conflicts.append({
                     'type': 'lesson',
                     'object': other_lesson,
@@ -132,19 +156,29 @@ class LessonConflictService:
                 })
         
         # Prüfe Konflikte mit Blockzeiten
+        # Verwende eine breitere Query, aber prüfe dann explizit auf Overlap
+        # Filter nach Datum, um Performance zu verbessern
+        lesson_date = lesson.date
         blocked_times = BlockedTime.objects.filter(
-            start_datetime__lt=end_datetime,
-            end_datetime__gt=start_datetime
+            start_datetime__date__lte=lesson_date,
+            end_datetime__date__gte=lesson_date
         )
         
         for blocked_time in blocked_times:
-            conflicts.append({
-                'type': 'blocked_time',
-                'object': blocked_time,
-                'message': _("Overlap with blocked time: {title}").format(title=blocked_time.title),
-                'start': blocked_time.start_datetime,
-                'end': blocked_time.end_datetime,
-            })
+            # Explizite Overlap-Prüfung mit der Hilfsfunktion
+            if LessonConflictService.intervals_overlap(
+                start1=start_datetime,
+                end1=end_datetime,
+                start2=blocked_time.start_datetime,
+                end2=blocked_time.end_datetime
+            ):
+                conflicts.append({
+                    'type': 'blocked_time',
+                    'object': blocked_time,
+                    'message': _("Overlap with blocked time: {title}").format(title=blocked_time.title),
+                    'start': blocked_time.start_datetime,
+                    'end': blocked_time.end_datetime,
+                })
         
         # Prüfe Kontingent-Konflikt (Quota)
         quota_conflict = ContractQuotaService.check_quota_conflict(lesson, exclude_self)
