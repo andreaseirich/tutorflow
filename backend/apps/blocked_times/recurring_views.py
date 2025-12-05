@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.utils.translation import gettext as _, ngettext
 from apps.blocked_times.recurring_models import RecurringBlockedTime
 from apps.blocked_times.recurring_forms import RecurringBlockedTimeForm
 from apps.blocked_times.recurring_service import RecurringBlockedTimeService
@@ -37,7 +38,7 @@ class RecurringBlockedTimeCreateView(CreateView):
         return reverse_lazy('lessons:calendar') + f'?year={now.year}&month={now.month}'
 
     def form_valid(self, form):
-        messages.success(self.request, 'Wiederholende Blockzeit erfolgreich erstellt.')
+        messages.success(self.request, _('Recurring blocked time successfully created.'))
         return super().form_valid(form)
 
 
@@ -54,7 +55,7 @@ class RecurringBlockedTimeUpdateView(UpdateView):
         return reverse_lazy('lessons:calendar') + f'?year={now.year}&month={now.month}'
 
     def form_valid(self, form):
-        messages.success(self.request, 'Wiederholende Blockzeit erfolgreich aktualisiert.')
+        messages.success(self.request, _('Recurring blocked time successfully updated.'))
         return super().form_valid(form)
 
 
@@ -70,7 +71,7 @@ class RecurringBlockedTimeDeleteView(DeleteView):
         return reverse_lazy('lessons:calendar') + f'?year={now.year}&month={now.month}'
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Wiederholende Blockzeit erfolgreich gelöscht.')
+        messages.success(self.request, _('Recurring blocked time successfully deleted.'))
         return super().delete(request, *args, **kwargs)
 
 
@@ -92,15 +93,27 @@ class RecurringBlockedTimeGenerateView(DetailView):
         if result['conflicts']:
             messages.warning(
                 request,
-                f"{result['created']} Blockzeiten erstellt, "
-                f"{result['skipped']} übersprungen, "
-                f"{len(result['conflicts'])} Konflikt(e) erkannt!"
+                ngettext(
+                    '{created} blocked time created, {skipped} skipped, {conflicts} conflict detected!',
+                    '{created} blocked times created, {skipped} skipped, {conflicts} conflicts detected!',
+                    result['created']
+                ).format(
+                    created=result['created'],
+                    skipped=result['skipped'],
+                    conflicts=len(result['conflicts'])
+                )
             )
         else:
             messages.success(
                 request,
-                f"{result['created']} Blockzeiten erfolgreich erstellt, "
-                f"{result['skipped']} übersprungen."
+                ngettext(
+                    '{created} blocked time successfully created, {skipped} skipped.',
+                    '{created} blocked times successfully created, {skipped} skipped.',
+                    result['created']
+                ).format(
+                    created=result['created'],
+                    skipped=result['skipped']
+                )
             )
         
         return redirect('blocked_times:recurring_detail', pk=recurring_blocked_time.pk)

@@ -2,6 +2,7 @@
 Forms für RecurringLesson-Model.
 """
 from django import forms
+from django.utils.translation import gettext_lazy as _
 from apps.lessons.recurring_models import RecurringLesson
 from apps.contracts.models import Contract
 
@@ -51,6 +52,6 @@ class RecurringLessonForm(forms.ModelForm):
             cleaned_data.get('sunday'),
         ]
         if not any(weekdays):
-            raise forms.ValidationError("Mindestens ein Wochentag muss ausgewählt werden.")
+            raise forms.ValidationError(_("At least one weekday must be selected."))
         return cleaned_data
 

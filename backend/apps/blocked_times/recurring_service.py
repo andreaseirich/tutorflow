@@ -4,6 +4,7 @@ Service für wiederholende Blockzeiten (Recurring Blocked Times).
 from datetime import date, datetime, timedelta
 from typing import List, Optional
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from apps.blocked_times.models import BlockedTime
 from apps.blocked_times.recurring_models import RecurringBlockedTime
 
@@ -294,8 +295,10 @@ class RecurringBlockedTimeService:
                         result['conflicts'].append({
                             'lesson': lesson,
                             'date': blocked_date,
-                            'message': f"Überschneidung mit Stunde für {lesson.contract.student} "
-                                      f"({lesson.start_time.strftime('%H:%M')})"
+                            'message': _("Overlap with lesson for {student} ({time})").format(
+                                student=lesson.contract.student,
+                                time=lesson.start_time.strftime('%H:%M')
+                            )
                         })
         
         return result
