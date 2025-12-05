@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.db.models import Q
 from apps.lessons.models import Lesson
 from apps.blocked_times.models import BlockedTime
+from apps.lessons.quota_service import ContractQuotaService
 
 
 class LessonConflictService:
@@ -90,6 +91,19 @@ class LessonConflictService:
                 'message': f"Überschneidung mit Blockzeit: {blocked_time.title}",
                 'start': blocked_time.start_datetime,
                 'end': blocked_time.end_datetime,
+            })
+        
+        # Prüfe Kontingent-Konflikt (Quota)
+        quota_conflict = ContractQuotaService.check_quota_conflict(lesson, exclude_self)
+        if quota_conflict:
+            conflicts.append({
+                'type': 'quota',
+                'object': lesson.contract,
+                'message': quota_conflict['message'],
+                'planned_total': quota_conflict['planned_total'],
+                'actual_total': quota_conflict['actual_total'],
+                'month': quota_conflict['month'],
+                'year': quota_conflict['year'],
             })
         
         return conflicts

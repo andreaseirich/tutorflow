@@ -166,17 +166,21 @@ class LessonDetailView(DetailView):
         # Konflikt-Lessons extrahieren
         conflict_lessons = []
         conflict_blocked_times = []
+        quota_conflicts = []
         
         for conflict in conflicts:
             if conflict['type'] == 'lesson':
                 conflict_lessons.append(conflict['object'])
             elif conflict['type'] == 'blocked_time':
                 conflict_blocked_times.append(conflict['object'])
+            elif conflict['type'] == 'quota':
+                quota_conflicts.append(conflict)
         
         context.update({
             'conflicts': conflicts,
             'conflict_lessons': conflict_lessons,
             'conflict_blocked_times': conflict_blocked_times,
+            'quota_conflicts': quota_conflicts,
             'has_conflicts': len(conflicts) > 0,
         })
         

@@ -33,7 +33,12 @@ TutorFlow bietet eine vollständige Lösung für die Verwaltung von Nachhilfetä
   - **Serientermine**: Wiederholende Stunden (z. B. jeden Montag/Donnerstag) mit automatischer Generierung
   - **Automatische Status-Verwaltung**: Lesson-Status (geplant/unterrichtet) wird automatisch anhand des Datums gesetzt
 - **Blockzeiten**: Verwaltung eigener Termine (Uni, Job, etc.)
+  - **Kalender-Integration**: Blockzeiten werden direkt im Kalender angezeigt, erstellt und bearbeitet
+  - **Mehrtägige Blockzeiten**: Unterstützung für mehrtägige Blöcke (z. B. Urlaub/Reise)
+  - **Serien-Blockzeiten**: Wiederholende Blockzeiten (z. B. jeden Dienstag 18–20 Uhr) mit automatischer Generierung
 - **Konfliktprüfung**: Automatische Erkennung von Überschneidungen (inkl. Fahrtzeiten)
+  - **Zeitplanung**: Überschneidungen mit anderen Lessons und Blockzeiten
+  - **Vertragskontingent**: Erkennung von Verstößen gegen das vereinbarte Stundenkontingent (basierend auf ContractMonthlyPlan)
 - **Einnahmenübersicht**: Monats- und Jahresauswertungen nach Status (geplant, unterrichtet, ausgezahlt)
 - **Dashboard**: Übersicht über heutige/nächste Stunden, Konflikte, Einnahmen
 
