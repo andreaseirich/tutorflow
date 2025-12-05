@@ -1,29 +1,30 @@
 """
-Models für Abrechnung und Rechnungen.
+Models for billing and invoices.
 """
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.utils.translation import gettext_lazy as _
 from decimal import Decimal
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
 
 
 class Invoice(models.Model):
-    """Rechnung für abgerechnete Unterrichtsstunden."""
+    """Invoice for billed lessons."""
     
     STATUS_CHOICES = [
-        ('draft', 'Entwurf'),
-        ('sent', 'Versendet'),
-        ('paid', 'Bezahlt'),
+        ('draft', _('Draft')),
+        ('sent', _('Sent')),
+        ('paid', _('Paid')),
     ]
     
     payer_name = models.CharField(
         max_length=200,
-        help_text="Name des Zahlungspflichtigen"
+        help_text=_("Name of the payer")
     )
     payer_address = models.TextField(
         blank=True,
-        help_text="Adresse des Zahlungspflichtigen"
+        help_text=_("Address of the payer")
     )
     contract = models.ForeignKey(
         Contract,
@@ -31,46 +32,46 @@ class Invoice(models.Model):
         null=True,
         blank=True,
         related_name='invoices',
-        help_text="Zugehöriger Vertrag (optional)"
+        help_text=_("Associated contract (optional)")
     )
-    period_start = models.DateField(help_text="Beginn des Abrechnungszeitraums")
-    period_end = models.DateField(help_text="Ende des Abrechnungszeitraums")
+    period_start = models.DateField(help_text=_("Billing period start"))
+    period_end = models.DateField(help_text=_("Billing period end"))
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='draft',
-        help_text="Status der Rechnung"
+        help_text=_("Invoice status")
     )
     total_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         default=Decimal('0.00'),
         validators=[MinValueValidator(Decimal('0.00'))],
-        help_text="Gesamtbetrag der Rechnung"
+        help_text=_("Total invoice amount")
     )
     document = models.FileField(
         upload_to='invoices/',
         null=True,
         blank=True,
-        help_text="Generiertes Rechnungsdokument (HTML/PDF)"
+        help_text=_("Generated invoice document (HTML/PDF)")
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
         ordering = ['-created_at']
-        verbose_name = 'Rechnung'
-        verbose_name_plural = 'Rechnungen'
+        verbose_name = _('Invoice')
+        verbose_name_plural = _('Invoices')
         indexes = [
             models.Index(fields=['status']),
             models.Index(fields=['period_start', 'period_end']),
         ]
     
     def __str__(self):
-        return f"Rechnung {self.id} - {self.payer_name} ({self.period_start} - {self.period_end})"
+        return f"Invoice {self.id} - {self.payer_name} ({self.period_start} - {self.period_end})"
     
     def calculate_total(self):
-        """Berechnet den Gesamtbetrag aus allen InvoiceItems."""
+        """Calculates the total amount from all InvoiceItems."""
         total = sum(item.amount for item in self.items.all())
         self.total_amount = total
         self.save(update_fields=['total_amount', 'updated_at'])
@@ -78,11 +79,11 @@ class Invoice(models.Model):
     
     def delete(self, *args, **kwargs):
         """
-        Überschreibt delete(), um Lessons auf TAUGHT zurückzusetzen.
+        Overrides delete() to reset Lessons to TAUGHT.
         
-        Beim Löschen einer Rechnung werden alle zugehörigen Lessons,
-        die den Status PAID haben, auf TAUGHT zurückgesetzt.
-        Eine Lesson wird nur zurückgesetzt, wenn sie nicht in anderen Rechnungen ist.
+        When deleting an invoice, all associated lessons
+        with status PAID are reset to TAUGHT.
+        A lesson is only reset if it is not in other invoices.
         """
         # Sammle alle Lessons dieser Rechnung (vor dem Löschen!)
         invoice_items = list(self.items.all())
@@ -120,13 +121,13 @@ class Invoice(models.Model):
 
 
 class InvoiceItem(models.Model):
-    """Einzelposten einer Rechnung (entspricht einer Lesson)."""
+    """Single invoice item (corresponds to a lesson)."""
     
     invoice = models.ForeignKey(
         Invoice,
         on_delete=models.CASCADE,
         related_name='items',
-        help_text="Zugehörige Rechnung"
+        help_text=_("Associated invoice")
     )
     lesson = models.ForeignKey(
         Lesson,
@@ -134,28 +135,28 @@ class InvoiceItem(models.Model):
         null=True,
         blank=True,
         related_name='invoice_items',
-        help_text="Zugehörige Lesson (kann später gelöscht werden)"
+        help_text=_("Associated lesson (may be deleted later)")
     )
     description = models.CharField(
         max_length=500,
-        help_text="Beschreibung des Postens"
+        help_text=_("Item description")
     )
-    date = models.DateField(help_text="Datum der Unterrichtsstunde (Kopie)")
+    date = models.DateField(help_text=_("Lesson date (copy)"))
     duration_minutes = models.PositiveIntegerField(
-        help_text="Dauer in Minuten (Kopie)"
+        help_text=_("Duration in minutes (copy)")
     )
     amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(Decimal('0.00'))],
-        help_text="Betrag für diesen Posten"
+        help_text=_("Amount for this item")
     )
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         ordering = ['date', 'description']
-        verbose_name = 'Rechnungsposten'
-        verbose_name_plural = 'Rechnungsposten'
+        verbose_name = _('Invoice Item')
+        verbose_name_plural = _('Invoice Items')
     
     def __str__(self):
         return f"{self.description} - {self.amount}€"

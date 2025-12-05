@@ -1,8 +1,9 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Student(models.Model):
-    """Schüler mit Kontaktdaten, Schule/Klasse und Fächern."""
+    """Student with contact information, school/grade and subjects."""
     
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -12,37 +13,37 @@ class Student(models.Model):
         max_length=200,
         blank=True,
         null=True,
-        help_text="Name der Schule"
+        help_text=_("School name")
     )
     grade = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        help_text="Klasse/Stufe (z. B. '10. Klasse', 'Q1')"
+        help_text=_("Grade/Level (e.g., '10th grade', 'Q1')")
     )
     subjects = models.CharField(
         max_length=500,
         blank=True,
         null=True,
-        help_text="Fächer (kommagetrennt, z. B. 'Mathe, Deutsch, Englisch')"
+        help_text=_("Subjects (comma-separated, e.g., 'Math, German, English')")
     )
     notes = models.TextField(
         blank=True,
         null=True,
-        help_text="Zusätzliche Notizen zum Schüler"
+        help_text=_("Additional notes about the student")
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['last_name', 'first_name']
-        verbose_name = 'Schüler'
-        verbose_name_plural = 'Schüler'
+        verbose_name = _('Student')
+        verbose_name_plural = _('Students')
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
     @property
     def full_name(self):
-        """Vollständiger Name des Schülers."""
+        """Full name of the student."""
         return f"{self.first_name} {self.last_name}"
