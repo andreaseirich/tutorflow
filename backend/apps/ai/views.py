@@ -43,14 +43,22 @@ def generate_lesson_plan(request, lesson_id):
             )
         )
     except LessonPlanGenerationError as e:
-            messages.error(
-                request,
-                _("The lesson plan could not be generated: {error}").format(error=str(e))
-            )
-    except Exception as e:
         messages.error(
             request,
-            _("An unexpected error occurred. Please try again later.")
+            _("The lesson plan could not be generated: {error}").format(error=str(e))
+        )
+        # Log the error for debugging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Lesson plan generation failed: {str(e)}", exc_info=True)
+    except Exception as e:
+        # Log unexpected errors with full traceback
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Unexpected error during lesson plan generation: {str(e)}", exc_info=True)
+        messages.error(
+            request,
+            _("An unexpected error occurred: {error}. Please check the logs or try again later.").format(error=str(e))
         )
     
     # Redirect to lesson plan view if 'next' parameter is provided, otherwise to lesson detail

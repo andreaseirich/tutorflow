@@ -158,3 +158,45 @@ LLM_API_BASE_URL = os.environ.get('LLM_API_BASE_URL', 'https://api.openai.com/v1
 LLM_API_KEY = os.environ.get('LLM_API_KEY', '')
 LLM_MODEL_NAME = os.environ.get('LLM_MODEL_NAME', 'gpt-3.5-turbo')
 LLM_TIMEOUT_SECONDS = int(os.environ.get('LLM_TIMEOUT_SECONDS', '30'))
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'tutorflow.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'apps.ai': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
+
+# Create logs directory if it doesn't exist
+logs_dir = BASE_DIR / 'logs'
+logs_dir.mkdir(exist_ok=True)
