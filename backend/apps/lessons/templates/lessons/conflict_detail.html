@@ -53,11 +53,11 @@
     <h2 style="color: #dc3545; margin-top: 0;">{% blocktrans count counter=conflict_blocked_times|length %}Conflicting Blocked Time{% plural %}Conflicting Blocked Times ({{ counter }}){% endblocktrans %}</h2>
     <ul>
         {% for blocked_time in conflict_blocked_times %}
-        <li>
+        <li style="margin-bottom: 10px;">
             <strong>{{ blocked_time.title }}</strong><br>
-            {{ blocked_time.start_datetime|date:"d.m.Y H:i" }} - {{ blocked_time.end_datetime|date:"H:i" }}
-            {% if blocked_time.notes %}
-            <br><em>{{ blocked_time.notes }}</em>
+            <small>{{ blocked_time.start_datetime|date:"SHORT_DATETIME_FORMAT" }} - {{ blocked_time.end_datetime|date:"SHORT_DATETIME_FORMAT" }}</small>
+            {% if blocked_time.description %}
+            <br><small><em>{{ blocked_time.description }}</em></small>
             {% endif %}
         </li>
         {% endfor %}

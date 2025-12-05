@@ -85,8 +85,8 @@
         </ul>
     </div>
     
-    <h3>{% blocktrans count counter=conflict_lessons|length %}Conflicting Lesson{% plural %}Conflicting Lessons ({{ counter }}){% endblocktrans %}</h3>
     {% if conflict_lessons %}
+    <h3>{% blocktrans count counter=conflict_lessons|length %}Conflicting Lesson{% plural %}Conflicting Lessons ({{ counter }}){% endblocktrans %}</h3>
     <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
         <thead>
             <tr style="background: #f5f5f5;">
@@ -110,15 +110,19 @@
             {% endfor %}
         </tbody>
     </table>
-    {% else %}
-    <p>{% trans "No conflicting lessons." %}</p>
     {% endif %}
     
     {% if conflict_blocked_times %}
     <h3 style="margin-top: 20px;">{% blocktrans count counter=conflict_blocked_times|length %}Conflicting Blocked Time{% plural %}Conflicting Blocked Times ({{ counter }}){% endblocktrans %}</h3>
     <ul>
         {% for blocked_time in conflict_blocked_times %}
-        <li>{{ blocked_time.title }} ({{ blocked_time.start_datetime|date:"d.m.Y H:i" }} - {{ blocked_time.end_datetime|date:"H:i" }})</li>
+        <li style="margin-bottom: 8px;">
+            <strong>{{ blocked_time.title }}</strong><br>
+            <small>{{ blocked_time.start_datetime|date:"SHORT_DATETIME_FORMAT" }} - {{ blocked_time.end_datetime|date:"SHORT_DATETIME_FORMAT" }}</small>
+            {% if blocked_time.description %}
+            <br><small><em>{{ blocked_time.description }}</em></small>
+            {% endif %}
+        </li>
         {% endfor %}
     </ul>
     {% endif %}
