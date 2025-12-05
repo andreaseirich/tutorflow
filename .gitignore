@@ -62,3 +62,5 @@ coverage.xml
 # pyenv
 .python-version
 
+logs/
+*.log

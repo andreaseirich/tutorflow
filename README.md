@@ -205,7 +205,7 @@ TutorFlow provides a complete solution for managing tutoring activities:
   ```bash
   export LLM_API_KEY="your-api-key"
   export LLM_API_BASE_URL="https://api.openai.com/v1"  # Optional
-  export LLM_MODEL_NAME="gpt-3.5-turbo"  # Optional
+  export LLM_MODEL_NAME="gpt-5-turbo"  # Optional
   ```
 
 ### Frontend
