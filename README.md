@@ -279,23 +279,23 @@ python manage.py makemessages -l de
 python manage.py compilemessages
 ```
 
-## Projektstruktur
+## Project Structure
 
 ```
 tutorflow/
-├── backend/              # Django-Projekt
-│   ├── apps/            # Feature-spezifische Apps
-│   ├── config/          # Projektkonfiguration
-│   ├── tutorflow/       # Django-Projektkonfiguration
+├── backend/              # Django project
+│   ├── apps/            # Feature-specific apps
+│   ├── config/          # Project configuration
+│   ├── tutorflow/       # Django project configuration
 │   └── manage.py
-├── docs/                # Dokumentation
+├── docs/                # Documentation
 │   ├── ARCHITECTURE.md
 │   ├── ETHICS.md
 │   ├── PHASES.md
 │   ├── CHECKPOINTS.md
 │   └── API.md
-├── scripts/             # Validierungsskripte
-├── venv/                # Virtuelles Environment
+├── scripts/             # Validation scripts
+├── venv/                # Virtual environment
 ├── requirements.txt
 ├── README.md
 ├── CHANGELOG.md
