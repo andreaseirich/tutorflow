@@ -454,6 +454,25 @@ class Command(BaseCommand):
                 llm_model="gpt-3.5-turbo"
             )
         
+        # Erstelle eine Demo-Rechnung für lesson4 (damit sie "paid" wird)
+        # Nur wenn lesson4 existiert und als "taught" markiert ist
+        if lesson4 and lesson4.status == 'taught':
+            invoice_period_start = lesson4.date
+            invoice_period_end = lesson4.date
+            
+            # Erstelle Invoice mit lesson4
+            demo_invoice = InvoiceService.create_invoice_from_lessons(
+                period_start=invoice_period_start,
+                period_end=invoice_period_end,
+                contract=contract3
+            )
+            
+            # Setze Invoice-Status auf "sent" (als Beispiel)
+            demo_invoice.status = 'sent'
+            demo_invoice.save(update_fields=['status', 'updated_at'])
+            
+            # lesson4 sollte jetzt automatisch auf "paid" gesetzt worden sein
+        
         self.stdout.write(self.style.SUCCESS(f'\n✅ Demo-Daten erfolgreich erstellt:'))
         self.stdout.write(f'  - {Student.objects.count()} Schüler')
         self.stdout.write(f'  - {Contract.objects.count()} Verträge')
@@ -464,6 +483,7 @@ class Command(BaseCommand):
         self.stdout.write(f'  - {UserProfile.objects.filter(is_premium=True).count()} Premium-User')
         self.stdout.write(f'  - {UserProfile.objects.filter(is_premium=False).count()} Non-Premium-User')
         self.stdout.write(f'  - {LessonPlan.objects.count()} Unterrichtspläne')
+        self.stdout.write(f'  - {Invoice.objects.count()} Rechnungen')
         self.stdout.write(self.style.SUCCESS(f'\n📝 Demo-Logins:'))
         self.stdout.write(f'  Premium User:')
         self.stdout.write(f'    Username: demo_premium')
