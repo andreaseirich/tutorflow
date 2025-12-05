@@ -38,6 +38,35 @@ class InvoiceCreateView(CreateView):
         kwargs = super().get_form_kwargs()
         # Entferne 'instance', falls vorhanden (wird von CreateView hinzugefügt)
         kwargs.pop('instance', None)
+        
+        # Wenn GET-Parameter vorhanden sind (z.B. nach Vorschau), setze initial values
+        if self.request.method == 'GET':
+            initial = kwargs.get('initial', {})
+            period_start = self.request.GET.get('period_start')
+            period_end = self.request.GET.get('period_end')
+            contract_id = self.request.GET.get('contract')
+            
+            if period_start:
+                try:
+                    initial['period_start'] = date.fromisoformat(period_start)
+                except ValueError:
+                    pass
+            
+            if period_end:
+                try:
+                    initial['period_end'] = date.fromisoformat(period_end)
+                except ValueError:
+                    pass
+            
+            if contract_id:
+                try:
+                    initial['contract'] = int(contract_id)
+                except (ValueError, TypeError):
+                    pass
+            
+            if initial:
+                kwargs['initial'] = initial
+        
         return kwargs
     
     def get_context_data(self, **kwargs):
