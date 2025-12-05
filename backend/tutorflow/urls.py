@@ -20,6 +20,7 @@ urlpatterns = [
     path('blocked-times/', include('apps.blocked_times.urls')),
     path('billing/', include('apps.billing.urls')),
     path('ai/', include('apps.ai.urls')),
+    path('lesson-plans/', include('apps.lesson_plans.urls')),
 ]
 
 # Serve media files in development

@@ -490,7 +490,9 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
   - **Drag-to-Create**: Users can drag time ranges in the weekly grid to create new appointments (lessons or blocked times).
   - **Time axis**: 08:00-22:00 with hourly rows.
   - **Appointment display**: Lessons (blue), blocked times (orange), conflicts (red border/icon).
-  - **Click on appointment**: Opens edit form.
+  - **Click on lesson**: Opens lesson plan view (for viewing/creating AI lesson plans)
+  - **Click on edit icon** (✏️) in lesson block: Opens lesson edit form
+  - **Click on blocked time**: Opens blocked time edit form (no lesson plan)
   - **Click on conflict icon**: Opens conflict detail view with reasons.
 
 ### Architecture Principles
@@ -571,7 +573,12 @@ This structure makes it easy to find related code: if you're working on scheduli
    - If recurring: Creates RecurringLesson and generates all lessons automatically
    - If not recurring: Creates single lesson
    - Blocked times can also be created via drag-to-create (🚫 symbol)
-3. **Edit**: Click on existing lesson or blocked time → Edit form
+3. **View Lesson Plan**: Click on lesson block in week view → Opens lesson plan view
+   - Shows existing lesson plans (if any)
+   - Premium users can generate AI lesson plans
+   - Non-premium users see premium notice
+4. **Edit Lesson**: Click on edit icon (✏️) in lesson block → Opens lesson edit form (date, time, contract, etc.)
+5. **Edit Blocked Time**: Click on blocked time block → Opens blocked time edit form
 4. **Recurring lessons**: Recurring lessons are created exclusively via the lesson creation form in week view
    - No separate "Create recurring lesson" button or page
    - After saving: Automatic generation of all lessons in the period

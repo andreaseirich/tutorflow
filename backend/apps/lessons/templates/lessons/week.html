@@ -9,7 +9,6 @@
 <div class="btn-group">
     <a href="{% url 'lessons:week' %}?year={{ prev_week.year }}&month={{ prev_week.month }}&day={{ prev_week.day }}" class="btn">← {% trans "Previous Week" %}</a>
     <a href="{% url 'lessons:week' %}?year={{ next_week.year }}&month={{ next_week.month }}&day={{ next_week.day }}" class="btn">{% trans "Next Week" %} →</a>
-    <a href="{% url 'blocked_times:recurring_create' %}" class="btn btn-warning">🚫 {% trans "Create Recurring Blocked Time" %}</a>
 </div>
 
 <p style="margin-top: 10px; color: #495057; font-size: 0.9em;">
@@ -70,14 +69,24 @@
                                         {% if lesson.id in conflicts_by_lesson %}border: 2px solid #dc3545;{% endif %}"
                                  onmouseover="showLessonPreview(this, event); this.style.background='#1976d2'; this.style.transform='scale(1.02)'; this.style.zIndex='20';"
                                  onmouseout="hideLessonPreview(); this.style.background='#2196f3'; this.style.transform='scale(1)'; this.style.zIndex='10';"
-                                 onclick="event.stopPropagation(); window.location.href='{% url 'lessons:update' lesson.pk %}?year={{ weekday.date.year }}&month={{ weekday.date.month }}&day={{ weekday.date.day }}'"
-                                 title="{{ lesson.contract.student.full_name }} - {{ lesson.start_time|time:'H:i' }} ({{ lesson.duration_minutes }} Min.)">
-                                <span style="font-size: 1.1em; margin-right: 4px;">📚</span> <strong>{{ lesson.contract.student.first_name }}</strong>
-                                {% if lesson.id in conflicts_by_lesson %}
-                                <a href="{% url 'lessons:conflicts' lesson.pk %}" style="color: #ffeb3b; font-size: 1.1em; margin-left: 4px; text-decoration: none;" title="{% trans 'Conflict detected - Click for details' %}" onclick="event.stopPropagation();">⚠️</a>
-                                {% endif %}<br>
-                                <small style="opacity: 0.9;">{{ lesson.start_time|time:'H:i' }} - {{ lesson.duration_minutes }} {% trans "Min." %}</small>
-                                {% if lesson.status == 'paid' %}<small style="display: block; opacity: 0.8;">✓ {% trans "Paid" %}</small>{% endif %}
+                                 onclick="event.stopPropagation(); window.location.href='{% url 'lesson_plans:lesson_plan' lesson.pk %}?year={{ weekday.date.year }}&month={{ weekday.date.month }}&day={{ weekday.date.day }}'"
+                                 title="{{ lesson.contract.student.full_name }} - {{ lesson.start_time|time:'H:i' }} ({{ lesson.duration_minutes }} Min.) - {% trans 'Click to view lesson plan' %}">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div style="flex: 1;">
+                                        <span style="font-size: 1.1em; margin-right: 4px;">📚</span> <strong>{{ lesson.contract.student.first_name }}</strong>
+                                        {% if lesson.id in conflicts_by_lesson %}
+                                        <a href="{% url 'lessons:conflicts' lesson.pk %}" style="color: #ffeb3b; font-size: 1.1em; margin-left: 4px; text-decoration: none;" title="{% trans 'Conflict detected - Click for details' %}" onclick="event.stopPropagation();">⚠️</a>
+                                        {% endif %}<br>
+                                        <small style="opacity: 0.9;">{{ lesson.start_time|time:'H:i' }} - {{ lesson.duration_minutes }} {% trans "Min." %}</small>
+                                        {% if lesson.status == 'paid' %}<small style="display: block; opacity: 0.8;">✓ {% trans "Paid" %}</small>{% endif %}
+                                    </div>
+                                    <a href="{% url 'lessons:update' lesson.pk %}?year={{ weekday.date.year }}&month={{ weekday.date.month }}&day={{ weekday.date.day }}" 
+                                       style="color: white; text-decoration: none; font-size: 1.1em; padding: 2px 4px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-left: 4px; flex-shrink: 0;"
+                                       title="{% trans 'Edit lesson' %}"
+                                       onclick="event.stopPropagation();">
+                                        ✏️
+                                    </a>
+                                </div>
                             </div>
                             {% endif %}
                         {% endfor %}

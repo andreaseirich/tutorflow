@@ -138,7 +138,9 @@ TutorFlow provides a complete solution for managing tutoring activities:
     - **Drag-to-Create**: Drag a time range to create a new appointment (tutoring or blocked time)
     - **Recurring option**: When creating a lesson, users can select "Repeat this lesson" with pattern (Weekly/Bi-weekly/Monthly) and weekday selection
     - **Appointment Display**: Lessons (blue), blocked times (orange), conflicts (red border/icon)
-    - **Click on Appointment**: Opens edit form
+    - **Click on Lesson**: Opens lesson plan view (for viewing/creating AI lesson plans)
+    - **Click on Edit Icon** (✏️) in lesson block: Opens lesson edit form
+    - **Click on Blocked Time**: Opens blocked time edit form
     - **Click on Conflict Icon**: Opens conflict detail view with reasons
   - **Month Calendar**: Alternative view for monthly overview (legacy, redirects to week view)
   - **Recurring Lessons**: Recurring lessons are created exclusively via the lesson creation form in week view (no separate button/page)
