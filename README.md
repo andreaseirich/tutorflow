@@ -157,6 +157,17 @@ TutorFlow supports multiple languages with English as the default language. Germ
 - **Translation Files**: Located in `backend/locale/`
 
 To update translations:
+
+**Prerequisites for compiling translations:**
+- **Linux/macOS**: GNU gettext tools are usually pre-installed. If not:
+  - Debian/Ubuntu: `sudo apt-get install gettext`
+  - macOS: `brew install gettext`
+- **Windows**: Install GNU gettext for Windows:
+  1. Download from: https://mlocati.github.io/articles/gettext-iconv-windows.html
+  2. Or use Chocolatey: `choco install gettext`
+  3. Or use WSL (Windows Subsystem for Linux) for a Linux-like environment
+  4. Add the `bin` directory of gettext to your Windows PATH environment variable
+
 ```bash
 cd backend
 python manage.py makemessages -l de
