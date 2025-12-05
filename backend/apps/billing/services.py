@@ -4,6 +4,7 @@ Services für Billing-Funktionalität.
 from datetime import datetime
 from decimal import Decimal
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from apps.billing.models import Invoice, InvoiceItem
 from apps.lessons.models import Lesson
 
@@ -62,7 +63,7 @@ class InvoiceService:
         lessons = InvoiceService.get_billable_lessons(period_start, period_end, contract_id)
         
         if not lessons.exists():
-            raise ValueError("Keine abrechenbaren Unterrichtsstunden im angegebenen Zeitraum gefunden.")
+            raise ValueError(_("No billable lessons found in the specified period."))
         
         # Bestimme payer_name und payer_address
         if contract:

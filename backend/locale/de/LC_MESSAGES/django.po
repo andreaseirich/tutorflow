@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 16:25+0100\n"
+"POT-Creation-Date: 2025-12-05 16:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -107,7 +107,12 @@ msgstr "Rechnungsposten"
 msgid "Invoice Items"
 msgstr "Rechnungsposten"
 
-#: apps/billing/services.py:103
+#: apps/billing/services.py:66
+#: apps/billing/templates/billing/invoice_create.html:76
+msgid "No billable lessons found in the specified period."
+msgstr ""
+
+#: apps/billing/services.py:104
 #, python-brace-format
 msgid "Lesson {date} {time} - {student}"
 msgstr ""
@@ -296,10 +301,6 @@ msgstr ""
 #: apps/students/templates/students/student_detail.html:45
 #, python-format
 msgid "%(minutes)s Min."
-msgstr ""
-
-#: apps/billing/templates/billing/invoice_create.html:76
-msgid "No billable lessons found in the specified period."
 msgstr ""
 
 #: apps/billing/templates/billing/invoice_create.html:78
