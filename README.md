@@ -62,10 +62,36 @@ cd backend
 python manage.py seed_demo_data
 ```
 
-**Login:**
-- URL: `http://127.0.0.1:8000/admin/`
-- Username: `demo_premium`
-- Password: `demo123`
+Or clear existing data and create fresh demo data:
+
+```bash
+python manage.py seed_demo_data --clear
+```
+
+**Demo Data Includes:**
+- 4 students with different profiles
+- Contracts with monthly plans (for quota conflict examples)
+- Multiple lessons (including time conflicts, quota conflicts, and recurring lessons)
+- Recurring lessons (weekly patterns with weekday selection: Mo+We for student4, Tu+Th for student2)
+- Blocked times (including multi-day vacation and conflict examples)
+- Premium user with generated lesson plans
+- Non-premium user for comparison
+
+**Logins:**
+- **Premium User:**
+  - URL: `http://127.0.0.1:8000/admin/`
+  - Username: `demo_premium`
+  - Password: `demo123`
+- **Standard User:**
+  - URL: `http://127.0.0.1:8000/admin/`
+  - Username: `demo_standard`
+  - Password: `demo123`
+
+**Demo Features to Explore:**
+- Recurring lessons: Check student4's lessons (Monday and Wednesday pattern)
+- Quota conflicts: Contract1 has 3 planned units in November, but 4 lessons created (lesson8 shows quota conflict)
+- Time conflicts: Lesson1 and Lesson2 overlap, lesson_conflict overlaps with blocked_time3
+- Lesson plans: lesson1 has a lesson plan (click on lesson in week view), lesson3 can be used to test AI generation
 
 **See main features in 2 minutes:**
 1. **Dashboard** (`/`): Overview of today's lessons, upcoming appointments, and conflicts
