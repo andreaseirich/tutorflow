@@ -75,6 +75,37 @@ class Invoice(models.Model):
         self.total_amount = total
         self.save(update_fields=['total_amount', 'updated_at'])
         return total
+    
+    def delete(self, *args, **kwargs):
+        """
+        Überschreibt delete(), um Lessons auf TAUGHT zurückzusetzen.
+        
+        Beim Löschen einer Rechnung werden alle zugehörigen Lessons,
+        die den Status PAID haben, auf TAUGHT zurückgesetzt.
+        Da eine Lesson nur in einer Rechnung vorkommen kann, ist keine
+        Prüfung auf andere Rechnungen nötig.
+        """
+        # Sammle alle Lessons dieser Rechnung (vor dem Löschen!)
+        invoice_items = list(self.items.all())
+        lesson_ids = [item.lesson_id for item in invoice_items if item.lesson_id]
+        
+        # Lösche die Invoice (CASCADE löscht automatisch alle InvoiceItems)
+        super().delete(*args, **kwargs)
+        
+        # Setze Lessons zurück auf TAUGHT
+        from apps.lessons.models import Lesson
+        reset_count = 0
+        for lesson_id in lesson_ids:
+            if not lesson_id:
+                continue
+                
+            lesson = Lesson.objects.filter(pk=lesson_id).first()
+            if lesson and lesson.status == 'paid':
+                lesson.status = 'taught'
+                lesson.save(update_fields=['status', 'updated_at'])
+                reset_count += 1
+        
+        return reset_count
 
 
 class InvoiceItem(models.Model):
