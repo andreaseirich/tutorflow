@@ -1,546 +1,525 @@
 # Changelog – TutorFlow
 
-Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert.
+All notable changes to this project will be documented in this file.
 
-Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
-und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.8.9] - 2025-12-04
 
-### Behoben
-- **Einnahmenberechnung konsistent mit Rechnungssystem**:
-  - IncomeSelector verwendet jetzt die gleiche Berechnungslogik wie InvoiceService
-  - Formel: `units = lesson_duration_minutes / contract_unit_duration_minutes`, `amount = units * hourly_rate`
-  - Für Lessons in Rechnungen: Beträge werden aus InvoiceItems genommen (Single Source of Truth)
-  - Alle Berechnungsmethoden aktualisiert: `get_monthly_income`, `get_income_by_status`, `get_billing_status`, `get_monthly_planned_vs_actual`
-- **Korrekte Euro-Formatierung**:
-  - Neuer Template-Filter `|euro` für Währungsformatierung
-  - Format: 2 Nachkommastellen, deutsche Schreibweise (Komma, Tausenderpunkte)
-  - Beispiel: `Decimal('90')` → "90,00 €", `Decimal('1234.56')` → "1.234,56 €"
-  - Alle Beträge in Einnahmenübersicht und Dashboard verwenden jetzt `|euro` Filter
-- **Abrechnungsstatus-Logik korrigiert**:
-  - `get_billing_status()`: Abgerechnete Lessons unabhängig vom Status (aus InvoiceItems)
-  - Nicht abgerechnet: Lessons mit Status TAUGHT ohne InvoiceItem
+### Fixed
+- **Income calculation consistent with billing system**:
+  - IncomeSelector now uses the same calculation logic as InvoiceService
+  - Formula: `units = lesson_duration_minutes / contract_unit_duration_minutes`, `amount = units * hourly_rate`
+  - For lessons in invoices: amounts are taken from InvoiceItems (Single Source of Truth)
+  - All calculation methods updated: `get_monthly_income`, `get_income_by_status`, `get_billing_status`, `get_monthly_planned_vs_actual`
+- **Correct Euro formatting**:
+  - New template filter `|euro` for currency formatting
+  - Format: 2 decimal places, German notation (comma, thousand separators)
+  - Example: `Decimal('90')` → "90,00 €", `Decimal('1234.56')` → "1.234,56 €"
+  - All amounts in income overview and dashboard now use `|euro` filter
+- **Billing status logic corrected**:
+  - `get_billing_status()`: Billed lessons regardless of status (from InvoiceItems)
+  - Not billed: Lessons with status TAUGHT without InvoiceItem
 
 ### Tests
-- 8 neue Tests für Einnahmenberechnung und Formatierung
-- Tests verifizieren: Berechnung stimmt mit InvoiceService überein, Beträge aus InvoiceItems werden verwendet, Formatierung korrekt
+- 8 new tests for income calculation and formatting
+- Tests verify: calculation matches InvoiceService, amounts from InvoiceItems are used, formatting correct
 
 ---
 
 ## [0.8.8] - 2025-12-04
 
-### Behoben
-- **Status-Rückstellung beim Löschen von Rechnungen**:
-  - `Invoice.delete()` Methode überschrieben, um automatisch alle Lessons mit Status PAID auf TAUGHT zurückzusetzen
-  - Funktioniert sowohl bei direktem `invoice.delete()` als auch über `InvoiceService.delete_invoice()`
-  - Vereinfachte Logik: Da eine Lesson nur in einer Rechnung vorkommen kann, ist keine Prüfung auf andere Rechnungen nötig
-  - `InvoiceService.delete_invoice()` vereinfacht, da Logik jetzt im Model ist
+### Fixed
+- **Status reset when deleting invoices**:
+  - `Invoice.delete()` method overridden to automatically reset all lessons with status PAID to TAUGHT
+  - Works both with direct `invoice.delete()` and via `InvoiceService.delete_invoice()`
+  - Simplified logic: Since a lesson can only appear in one invoice, no check for other invoices is needed
+  - `InvoiceService.delete_invoice()` simplified, as logic is now in the model
 
 ### Tests
-- 5 neue Tests für Status-Rückstellung beim Löschen
-- Tests für: einzelne Lesson, mehrere Lessons, direkter delete()-Aufruf, nur PAID Lessons werden zurückgesetzt
+- 5 new tests for status reset when deleting
+- Tests for: single lesson, multiple lessons, direct delete() call, only PAID lessons are reset
 
 ---
 
 ## [0.8.7] - 2025-12-04
 
-### Hinzugefügt
-- **Management Command `reset_paid_lessons`**:
-  - Setzt alle Lessons mit Status PAID auf TAUGHT zurück
-  - Option `--delete-invoices`: Löscht auch die zugehörigen Rechnungen und InvoiceItems
-  - Option `--dry-run`: Zeigt nur an, was geändert würde, ohne Änderungen vorzunehmen
-  - Verwendung: `python manage.py reset_paid_lessons [--delete-invoices] [--dry-run]`
-  - Nützlich für Bulk-Operationen oder Korrekturen
+### Added
+- **Management command `reset_paid_lessons`**:
+  - Resets all lessons with status PAID to TAUGHT
+  - Option `--delete-invoices`: Also deletes associated invoices and InvoiceItems
+  - Option `--dry-run`: Only shows what would be changed without making changes
+  - Usage: `python manage.py reset_paid_lessons [--delete-invoices] [--dry-run]`
+  - Useful for bulk operations or corrections
 
 ### Tests
-- 4 Tests für `reset_paid_lessons` Command
-- Tests für: Status-Reset, Löschen von Rechnungen, Dry-Run, keine PAID Lessons
+- 4 tests for `reset_paid_lessons` command
+- Tests for: status reset, deleting invoices, dry-run, no PAID lessons
 
 ---
 
 ## [0.8.6] - 2025-12-04
 
-### Geändert
-- **Automatische Rechnungserstellung**:
-  - Keine manuelle Einzel-Auswahl von Lessons mehr (keine Checkbox-Auswahl)
-  - Alle TAUGHT Lessons im Zeitraum werden automatisch in die Rechnung aufgenommen
-  - Formular zeigt nur noch Zeitraum und optionalen Vertrag-Filter
-  - Vorschau zeigt alle verfügbaren Lessons, die automatisch aufgenommen werden
-- **Einschränkung: Eine Lesson nur in einer Rechnung**:
-  - `get_billable_lessons()` schließt Lessons aus, die bereits in einem InvoiceItem sind
-  - Technisch über `exclude(invoice_items__isnull=False)`
-  - Eine Lesson kann nicht in zwei Rechnungen landen
+### Changed
+- **Automatic invoice creation**:
+  - No more manual individual selection of lessons (no checkbox selection)
+  - All TAUGHT lessons in the period are automatically included in the invoice
+  - Form only shows period and optional contract filter
+  - Preview shows all available lessons that are automatically included
+- **Restriction: One lesson only in one invoice**:
+  - `get_billable_lessons()` excludes lessons that are already in an InvoiceItem
+  - Technically via `exclude(invoice_items__isnull=False)`
+  - A lesson cannot appear in two invoices
 
-### Behoben
-- **Nur TAUGHT Lessons abrechenbar**:
-  - `get_billable_lessons()` filtert nur Lessons mit Status TAUGHT
-  - Lessons mit Status PLANNED oder PAID werden ausgeschlossen
-  - `create_invoice_from_lessons()` verwendet automatisch `get_billable_lessons()`
-
-### Tests
-- 6 neue Tests für automatische Rechnungserstellung
-- Tests für: nur TAUGHT Lessons, automatische Auswahl aller Lessons, keine doppelte Zuordnung, Status-Übergänge
-
----
-
-## [0.8.6] - 2025-12-04
-
-### Geändert
-- **Automatische Rechnungserstellung**:
-  - Keine manuelle Auswahl einzelner Lessons mehr (keine Checkbox-Auswahl)
-  - Alle TAUGHT Lessons im Zeitraum werden automatisch aufgenommen
-  - Zeitraum und optional Vertrag als Filter
-- **Nur unterrichtete Stunden abrechnen**:
-  - Nur Lessons mit Status TAUGHT werden in Rechnungserstellung angezeigt
-  - Lessons mit Status PLANNED oder PAID werden ausgeschlossen
-- **Lesson-Eindeutigkeit**:
-  - Eine Lesson kann nur in einer Rechnung vorkommen
-  - `get_billable_lessons()` schließt Lessons aus, die bereits in einem InvoiceItem sind
-  - Technisch über `exclude(invoice_items__isnull=False)`
+### Fixed
+- **Only TAUGHT lessons billable**:
+  - `get_billable_lessons()` only filters lessons with status TAUGHT
+  - Lessons with status PLANNED or PAID are excluded
+  - `create_invoice_from_lessons()` automatically uses `get_billable_lessons()`
 
 ### Tests
-- 6 neue Tests für automatische Rechnungserstellung
-- Tests für: nur TAUGHT Lessons, Lesson-Eindeutigkeit, automatische Auswahl, Status-Übergänge
+- 6 new tests for automatic invoice creation
+- Tests for: only TAUGHT lessons, automatic selection of all lessons, no double assignment, status transitions
 
 ---
 
 ## [0.8.5] - 2025-12-04
 
-### Behoben
-- **Rechnungsberechnung korrigiert**:
-  - Berechnung basiert jetzt auf Einheiten statt Stunden
-  - Formel: `units = lesson_duration_minutes / contract_unit_duration_minutes`, `amount = units * hourly_rate`
-  - Beispiel: 90 Min bei 45 Min/Einheit und 12€/Einheit → 24€ (statt vorherige Stundenberechnung)
-  - Gesamtsumme ist die Summe aller InvoiceItems
+### Fixed
+- **Invoice calculation corrected**:
+  - Calculation now based on units instead of hours
+  - Formula: `units = lesson_duration_minutes / contract_unit_duration_minutes`, `amount = units * hourly_rate`
+  - Example: 90 min at 45 min/unit and 12€/unit → 24€ (instead of previous hour calculation)
+  - Total amount is the sum of all InvoiceItems
 
-### Hinzugefügt
-- **Status-Übergänge bei Rechnungen**:
-  - Lessons werden automatisch auf PAID gesetzt beim Erstellen einer Rechnung
-  - Lessons werden auf TAUGHT zurückgesetzt beim Löschen einer Rechnung (nur wenn nicht in anderen Rechnungen)
-- **Rechnungen löschbar**:
-  - InvoiceDeleteView mit Bestätigungsseite
-  - Löschen-Button in Rechnungsdetailansicht
-  - Sichere Delete-View (POST only, CSRF)
+### Added
+- **Status transitions for invoices**:
+  - Lessons are automatically set to PAID when creating an invoice
+  - Lessons are reset to TAUGHT when deleting an invoice (only if not in other invoices)
+- **Invoices deletable**:
+  - InvoiceDeleteView with confirmation page
+  - Delete button in invoice detail view
+  - Safe delete view (POST only, CSRF)
 
 ### Tests
-- 5 neue Tests für Rechnungsberechnung und Status-Übergänge
-- Tests für korrekte Einheitenberechnung (90 Min / 45 Min = 2 Einheiten)
-- Tests für Status-Übergänge TAUGHT → PAID und PAID → TAUGHT
-- Tests für korrekte Behandlung von Lessons in mehreren Rechnungen
+- 5 new tests for invoice calculation and status transitions
+- Tests for correct unit calculation (90 min / 45 min = 2 units)
+- Tests for status transitions TAUGHT → PAID and PAID → TAUGHT
+- Tests for correct handling of lessons in multiple invoices
 
 ---
 
 ## [0.8.4] - 2025-12-04
 
-### Hinzugefügt
-- **Erweiterte Wiederholungsmuster für Serientermine**:
-  - `recurrence_type` Feld in RecurringLesson (weekly/biweekly/monthly)
-  - Wöchentlich: wie bisher, jede Woche an den markierten Wochentagen
-  - Alle 2 Wochen: jede zweite Woche an den markierten Wochentagen
-  - Monatlich: jeden Monat am gleichen Kalendertag, wenn dieser Tag ein ausgewählter Wochentag ist
-  - RecurringLessonService unterstützt alle drei Wiederholungsarten
-  - Formular erweitert um Wiederholungsart-Auswahl mit Erklärungen
+### Added
+- **Extended recurrence patterns for recurring lessons**:
+  - `recurrence_type` field in RecurringLesson (weekly/biweekly/monthly)
+  - Weekly: as before, every week on marked weekdays
+  - Every 2 weeks: every second week on marked weekdays
+  - Monthly: every month on the same calendar day, if that day is a selected weekday
+  - RecurringLessonService supports all three recurrence types
+  - Form extended with recurrence type selection with explanations
 
 ### Tests
-- 6 Tests für verschiedene Wiederholungsmuster (weekly, biweekly, monthly)
-- Tests für automatische Status-Setzung bei allen Wiederholungsarten
+- 6 tests for various recurrence patterns (weekly, biweekly, monthly)
+- Tests for automatic status setting for all recurrence types
 
 ---
 
 ## [0.8.3] - 2025-12-04
 
-### Hinzugefügt
-- **Konflikt-Detailansicht**: 
-  - ConflictDetailView zeigt alle kollidierenden Lessons und Blockzeiten
-  - Anklickbarer "Details"-Link im Kalender bei Konflikten
-  - Übersichtliche Liste mit Datum, Uhrzeit, Schüler, Ort und Bearbeiten-Links
-- **Lesson-Detailansicht**:
-  - LessonDetailView mit vollständigen Lesson-Informationen
-  - Abschnitt "Konflikte" zeigt alle kollidierenden Lessons
-  - Links zum Bearbeiten der kollidierenden Lessons
+### Added
+- **Conflict detail view**: 
+  - ConflictDetailView shows all colliding lessons and blocked times
+  - Clickable "Details" link in calendar for conflicts
+  - Clear list with date, time, student, location and edit links
+- **Lesson detail view**:
+  - LessonDetailView with complete lesson information
+  - "Conflicts" section shows all colliding lessons
+  - Links to edit colliding lessons
 
-### Geändert
-- **Kalender zeigt alle Lessons**: 
-  - Filterung für vergangene Lessons entfernt
-  - Vergangene und zukünftige Lessons werden angezeigt
-  - Vergangene Lessons optisch ausgegraut (opacity: 0.7), aber anklickbar
-  - Alle Lessons sind bearbeitbar
+### Changed
+- **Calendar shows all lessons**: 
+  - Filtering for past lessons removed
+  - Past and future lessons are displayed
+  - Past lessons visually grayed out (opacity: 0.7), but clickable
+  - All lessons are editable
 
 ### Tests
-- 4 Tests für Konflikt-Details und Kalender mit vergangenen Lessons
+- 4 tests for conflict details and calendar with past lessons
 
 ---
 
 ## [0.8.2] - 2025-12-04
 
-### Behoben
-- **Kalender-Monatsanzeige**: CalendarView verwendet jetzt ausschließlich year/month aus URL-Parametern
-  - Zentrale Variable `current_month_date = date(year, month, 1)` für alle Berechnungen
-  - Monatsname (month_label) wird korrekt aus angezeigtem Monat abgeleitet
-  - Keine Verwendung von 'heute' für Monatsberechnung mehr
-  - Template verwendet month_label statt month_names slice
-  - CreateView verwendet year/month aus Request als Fallback für initiales Datum
+### Fixed
+- **Calendar month display**: CalendarView now uses exclusively year/month from URL parameters
+  - Central variable `current_month_date = date(year, month, 1)` for all calculations
+  - Month name (month_label) is correctly derived from displayed month
+  - No more use of 'today' for month calculation
+  - Template uses month_label instead of month_names slice
+  - CreateView uses year/month from request as fallback for initial date
 
 ### Tests
-- 3 neue Tests für Kalender-Monatsanzeige (inkl. Dezember-Test)
+- 3 new tests for calendar month display (including December test)
 
 ---
 
 ## [0.8.1] - 2025-12-04
 
-### Geändert
-- **Status-Automatik für alle Lesson-Erzeugungen**:
-  - RecurringLessonService nutzt jetzt LessonStatusService für automatische Status-Setzung
-  - Lessons aus Serienterminen bekommen automatisch korrekten Status (Vergangenheit → TAUGHT, Zukunft → PLANNED)
-  - Entfernt: Hart gesetzter Status 'planned' bei Recurring Lessons
-- **Status nicht mehr manuell auswählbar**:
-  - Status-Feld aus LessonForm entfernt (nur noch automatisch gesetzt)
-  - Status wird nicht mehr im normalen Lesson-Formular angezeigt
-  - Nur automatischer Mechanismus entscheidet Status beim Speichern
-- **Kalender-Datum-Synchronisation**:
-  - Monatsname im Kalender entspricht dem angezeigten Monat (year/month Parameter)
-  - Default-Datum im Create-Formular entspricht dem angeklickten Tag (date Parameter)
-  - Redirect nach Create/Update führt zurück zum korrekten Monat (year/month aus Request)
+### Changed
+- **Status automation for all lesson creations**:
+  - RecurringLessonService now uses LessonStatusService for automatic status setting
+  - Lessons from recurring lessons automatically get correct status (past → TAUGHT, future → PLANNED)
+  - Removed: Hard-set status 'planned' for recurring lessons
+- **Status no longer manually selectable**:
+  - Status field removed from LessonForm (only automatically set)
+  - Status is no longer displayed in normal lesson form
+  - Only automatic mechanism decides status when saving
+- **Calendar date synchronization**:
+  - Month name in calendar corresponds to displayed month (year/month parameter)
+  - Default date in create form corresponds to clicked day (date parameter)
+  - Redirect after create/update leads back to correct month (year/month from request)
 
 ### Tests
-- 6 neue Tests für Status-Automatik bei Recurring Lessons und manueller Erstellung
-- 3 Tests für Kalender-Datum-Synchronisation
+- 6 new tests for status automation for recurring lessons and manual creation
+- 3 tests for calendar date synchronization
 
-### Dokumentation
-- ARCHITECTURE.md: Status-Automatik für alle Lesson-Erzeugungen dokumentiert
-- ARCHITECTURE.md: Hinweis, dass Status im Formular nicht manuell wählbar ist
-- README.md: Automatische Status-Verwaltung erwähnt
+### Documentation
+- ARCHITECTURE.md: Status automation for all lesson creations documented
+- ARCHITECTURE.md: Note that status is not manually selectable in form
+- README.md: Automatic status management mentioned
 
 ---
 
 ## [0.8.0] - 2025-12-04
 
-### Hinzugefügt
-- **LessonStatusService**: Automatische Status-Setzung für Lessons
-  - Vergangene Lessons (end_datetime < jetzt) mit Status PLANNED → TAUGHT
-  - Zukünftige Lessons ohne Status → PLANNED
-  - PAID/CANCELLED werden nicht überschrieben
-  - Integration in LessonCreateView und LessonUpdateView
-  - bulk_update_past_lessons() für Batch-Updates
-- **Billing-System**: Abrechnungssystem mit Rechnungen
-  - Invoice und InvoiceItem Models
-  - InvoiceService für Abrechnungs-Workflow
-  - UI zum Auswählen von Lessons und Erstellen von Rechnungen
-  - InvoiceDocumentService für HTML-Dokument-Generierung
-  - Lessons werden nach Rechnungszuordnung auf Status PAID gesetzt
-- **Erweiterte Finanzansicht**:
-  - Unterscheidung zwischen abgerechneten und nicht abgerechneten Lessons
-  - get_billing_status() im IncomeSelector
-  - Anzeige in IncomeOverviewView
+### Added
+- **LessonStatusService**: Automatic status setting for lessons
+  - Past lessons (end_datetime < now) with status PLANNED → TAUGHT
+  - Future lessons without status → PLANNED
+  - PAID/CANCELLED are not overwritten
+  - Integration in LessonCreateView and LessonUpdateView
+  - bulk_update_past_lessons() for batch updates
+- **Billing system**: Billing system with invoices
+  - Invoice and InvoiceItem models
+  - InvoiceService for billing workflow
+  - UI for selecting lessons and creating invoices
+  - InvoiceDocumentService for HTML document generation
+  - Lessons are set to status PAID after invoice assignment
+- **Extended financial view**:
+  - Distinction between billed and unbilled lessons
+  - get_billing_status() in IncomeSelector
+  - Display in IncomeOverviewView
 
 ### Tests
-- 5 Tests für LessonStatusService (vergangene/zukünftige Lessons, PAID/CANCELLED Schutz, bulk_update)
-- 5 Tests für Billing (Invoice Model, InvoiceService, InvoiceItems Persistenz)
+- 5 tests for LessonStatusService (past/future lessons, PAID/CANCELLED protection, bulk_update)
+- 5 tests for billing (Invoice model, InvoiceService, InvoiceItems persistence)
 
-### Dokumentation
-- ARCHITECTURE.md: LessonStatusService, Invoice/InvoiceItem, InvoiceService, InvoiceDocumentService dokumentiert
-- ARCHITECTURE.md: Abrechnungs-Workflow beschrieben
-- README.md: Automatische Status-Verwaltung und Abrechnungssystem erwähnt
+### Documentation
+- ARCHITECTURE.md: LessonStatusService, Invoice/InvoiceItem, InvoiceService, InvoiceDocumentService documented
+- ARCHITECTURE.md: Billing workflow described
+- README.md: Automatic status management and billing system mentioned
 
 ---
 
 ## [0.7.1] - 2025-12-04
 
-### Geändert
-- **Kalender als zentrale UI**: Kalender ist jetzt die primäre Schnittstelle für Lesson-Verwaltung
-  - Lessons-Listenansicht aus Navigation entfernt (Endpoints bleiben für API/Debugging)
-  - Klick auf Tag im Kalender öffnet Formular zum Anlegen mit voreingestelltem Datum
-  - Klick auf bestehende Lesson öffnet Bearbeitungsformular
-  - Nach Create/Update Weiterleitung zurück zum Kalender
-- **Kalender zeigt nur zukünftige Lessons**: 
-  - Lessons in der Vergangenheit werden im Kalender nicht mehr angezeigt
-  - Blockzeiten in der Vergangenheit werden ebenfalls ausgeblendet
-  - Finanz-/Einnahmensichten zeigen weiterhin alle Lessons (inkl. vergangene)
-- **Recurring Lessons besser integriert**:
-  - Button "Serientermin anlegen" im Kalender-Header
-  - Link "Serientermin erstellen" auf Contract-Detailseite
-  - Automatische Generierung von Lessons nach Anlegen einer RecurringLesson
-  - Weiterleitung zum Kalender nach Generierung
-  - Hinweis im RecurringLesson-Formular erklärt Funktionalität
+### Changed
+- **Calendar as central UI**: Calendar is now the primary interface for lesson management
+  - Lesson list view removed from navigation (endpoints remain for API/debugging)
+  - Click on day in calendar opens form to create with pre-filled date
+  - Click on existing lesson opens edit form
+  - Redirect back to calendar after create/update
+- **Calendar shows only future lessons**: 
+  - Lessons in the past are no longer displayed in the calendar
+  - Blocked times in the past are also hidden
+  - Financial/income views continue to show all lessons (including past)
+- **Recurring lessons better integrated**:
+  - Button "Create recurring lesson" in calendar header
+  - Link "Create recurring lesson" on contract detail page
+  - Automatic generation of lessons after creating a RecurringLesson
+  - Redirect to calendar after generation
+  - Note in RecurringLesson form explains functionality
 
 ### Tests
-- 3 neue Tests für Kalender-Filterung (vergangene Lessons werden ausgeblendet)
-- Tests für Kalender-Integration (Create mit Datum-Parameter, Redirect)
+- 3 new tests for calendar filtering (past lessons are hidden)
+- Tests for calendar integration (create with date parameter, redirect)
 
-### Dokumentation
-- ARCHITECTURE.md: Kalender als zentrale UI dokumentiert
-- README.md: Kalenderansicht und Serientermine erwähnt
-- API.md: Kalender-Endpoints dokumentiert
+### Documentation
+- ARCHITECTURE.md: Calendar as central UI documented
+- README.md: Calendar view and recurring lessons mentioned
+- API.md: Calendar endpoints documented
 
 ---
 
 ## [0.7.0] - 2025-12-04
 
-### Hinzugefügt
-- **RecurringLesson Model**: Neue Entität für wiederholende Unterrichtsstunden (Serientermine)
-  - Wochentage-Auswahl (Mo-So als Boolean-Felder)
-  - Zeitraum (start_date, end_date)
-  - Automatische Generierung von Lessons über einen Zeitraum
-- **RecurringLessonService**: Service für Generierung von Lessons aus Serienterminen
-  - Generiert Lessons für alle aktivierten Wochentage im Zeitraum
-  - Überspringt bereits vorhandene Lessons
-  - Prüft Konflikte optional
-  - Vorschau-Funktion ohne Speicherung
-- **Kalenderansicht**: Monatskalender für Lessons und Blockzeiten
-  - CalendarView mit Monats-Grid (7 Spalten: Mo-So)
-  - Anzeige von Lessons mit Zeit und Schüler
-  - Markierung von Konflikten
-  - Anzeige von Blockzeiten
-  - Navigation zwischen Monaten
-- **UI für Serientermine**: CRUD-Views und Templates
-  - Liste, Detail, Form, Löschen
-  - Button zum Generieren von Lessons aus Serie
-  - Vorschau der zu erzeugenden Lessons
+### Added
+- **RecurringLesson model**: New entity for repeating lessons (recurring lessons)
+  - Weekday selection (Mon-Sun as boolean fields)
+  - Period (start_date, end_date)
+  - Automatic generation of lessons over a period
+- **RecurringLessonService**: Service for generating lessons from recurring lessons
+  - Generates lessons for all activated weekdays in the period
+  - Skips already existing lessons
+  - Optionally checks conflicts
+  - Preview function without saving
+- **Calendar view**: Monthly calendar for lessons and blocked times
+  - CalendarView with month grid (7 columns: Mon-Sun)
+  - Display of lessons with time and student
+  - Conflict marking
+  - Display of blocked times
+  - Navigation between months
+- **UI for recurring lessons**: CRUD views and templates
+  - List, detail, form, delete
+  - Button to generate lessons from series
+  - Preview of lessons to be created
 
 ### Tests
-- 8 neue Tests für RecurringLesson, RecurringLessonService und CalendarService
-- Tests für einzelne/multiple Wochentage, Vertragsgrenzen, Konflikte, Kalender-Gruppierung
+- 8 new tests for RecurringLesson, RecurringLessonService and CalendarService
+- Tests for single/multiple weekdays, contract boundaries, conflicts, calendar grouping
 
-### Dokumentation
-- ARCHITECTURE.md: RecurringLesson und CalendarService dokumentiert
-- API.md: Endpoints für Serientermine und Kalender hinzugefügt
+### Documentation
+- ARCHITECTURE.md: RecurringLesson and CalendarService documented
+- API.md: Endpoints for recurring lessons and calendar added
 
 ---
 
 ## [0.6.2] - 2025-12-04
 
-### Entfernt
-- **Contract.planned_units_per_month**: Feld vollständig entfernt
-  - Migration erstellt, um Feld aus der Datenbank zu entfernen
-  - Aus ContractForm, Templates und seed_demo_data entfernt
-  - Geplante Einheiten werden ausschließlich über ContractMonthlyPlan verwaltet
+### Removed
+- **Contract.planned_units_per_month**: Field completely removed
+  - Migration created to remove field from database
+  - Removed from ContractForm, templates and seed_demo_data
+  - Planned units are managed exclusively via ContractMonthlyPlan
 
 ---
 
 ## [0.6.1] - 2025-12-04
 
-### Behoben
-- **Monatliche Vertragsplanung**: Entfernung der Begrenzung auf das aktuelle Datum
-  - Geplante Einheiten können nun für alle Monate zwischen start_date und end_date erfasst werden
-  - Unabhängig davon, ob der Monat in der Vergangenheit oder Zukunft liegt
-  - Neue Hilfsfunktion `iter_contract_months()` für konsistente Monatsgenerierung
-  - Korrektur der Logik zum Löschen von Plänen außerhalb des Vertragszeitraums
+### Fixed
+- **Monthly contract planning**: Removal of limitation to current date
+  - Planned units can now be recorded for all months between start_date and end_date
+  - Regardless of whether the month is in the past or future
+  - New helper function `iter_contract_months()` for consistent month generation
+  - Correction of logic for deleting plans outside contract period
 
 ### Tests
-- 5 neue Tests für zukünftige, vergangene und übergreifende Verträge
-- Tests prüfen explizit, dass keine Begrenzung auf das aktuelle Datum existiert
+- 5 new tests for future, past and overlapping contracts
+- Tests explicitly check that no limitation to current date exists
 
-### Dokumentation
-- ARCHITECTURE.md: Klarstellung, dass Monthly Plans für den gesamten Vertragszeitraum erzeugt werden
+### Documentation
+- ARCHITECTURE.md: Clarification that monthly plans are generated for the entire contract period
 
 ---
 
 ## [0.6.0] - 2025-12-04
 
-### Hinzugefügt
-- **ContractMonthlyPlan Model**: Neue Entität für explizite monatliche Planung von geplanten Einheiten pro Vertrag
-  - Erlaubt ungleichmäßige Verteilung über das Jahr (z. B. mehr Einheiten in Prüfungsphasen)
-  - Unique Constraint auf (contract, year, month)
-- **Monatliche Planung in Contract-Views**: 
-  - Formset-Integration für Bearbeitung von geplanten Einheiten pro Monat
-  - Automatische Generierung von Monatszeilen beim Erstellen/Bearbeiten von Verträgen
-  - Behandlung von Zeitraumänderungen (neue Monate werden ergänzt, alte entfernt)
-- **IncomeSelector-Erweiterung**:
-  - Neue Methode `get_monthly_planned_vs_actual()` für Vergleich geplant vs. tatsächlich
-  - Berechnung von planned_units, planned_amount, actual_units, actual_amount pro Monat
-- **Einnahmenübersicht erweitert**: 
-  - Anzeige von geplanten vs. tatsächlichen Einheiten und Einnahmen in der Monatsansicht
-  - Differenzberechnung (Differenz_units, Differenz_amount)
+### Added
+- **ContractMonthlyPlan model**: New entity for explicit monthly planning of planned units per contract
+  - Allows uneven distribution over the year (e.g., more units during exam periods)
+  - Unique constraint on (contract, year, month)
+- **Monthly planning in contract views**: 
+  - Formset integration for editing planned units per month
+  - Automatic generation of month rows when creating/editing contracts
+  - Handling of period changes (new months are added, old ones removed)
+- **IncomeSelector extension**:
+  - New method `get_monthly_planned_vs_actual()` for comparison of planned vs. actual
+  - Calculation of planned_units, planned_amount, actual_units, actual_amount per month
+- **Income overview extended**: 
+  - Display of planned vs. actual units and income in monthly view
+  - Difference calculation (difference_units, difference_amount)
 
-### Geändert
-- `Contract.planned_units_per_month`: Als deprecated markiert (verwende ContractMonthlyPlan)
-- `IncomeOverviewView`: Erweitert um planned_vs_actual Daten
-- `contract_form.html`: Template erweitert um Formset für monatliche Planung
+### Changed
+- `Contract.planned_units_per_month`: Marked as deprecated (use ContractMonthlyPlan)
+- `IncomeOverviewView`: Extended with planned_vs_actual data
+- `contract_form.html`: Template extended with formset for monthly planning
 
 ### Tests
-- 8 neue Tests für ContractMonthlyPlan, Generierung von Monatsplänen und IncomeSelector-Vergleich
+- 8 new tests for ContractMonthlyPlan, generation of monthly plans and IncomeSelector comparison
 
-### Dokumentation
-- `docs/ARCHITECTURE.md`: ContractMonthlyPlan dokumentiert, IncomeSelector erweitert
-- Geplante Einheiten werden nicht mehr gleichmäßig verteilt, sondern explizit pro Monat erfasst
+### Documentation
+- `docs/ARCHITECTURE.md`: ContractMonthlyPlan documented, IncomeSelector extended
+- Planned units are no longer evenly distributed, but explicitly recorded per month
 
 ### Phase
-- Neue Funktionalität: Monatliche Vertragsplanung
+- New functionality: Monthly contract planning
 
 ---
 
 ## [0.5.0] - 2025-12-04
 
-### Hinzugefügt
-- UI/UX-Polishing: Verbesserte Templates mit konsistenter Navigation, klarer Konfliktdarstellung, Premium-Badges
-- Demo/Seed-Daten: Management Command `seed_demo_data` für Demo-Szenario
-  - 3 Demo-Schüler mit unterschiedlichen Profilen
-  - Zugehörige Verträge (privat und über Institut)
-  - Mehrere Unterrichtsstunden (inkl. Konflikt zur Demonstration)
-  - Blockzeiten
-  - 1 Premium-User mit generiertem Unterrichtsplan
-- Validierungsskript: `scripts/validate.sh` für automatische Checks (Django Check, Tests, TODO-Kommentare, Debug-Ausgaben)
-- Dokumentation: DEVPOST.md für Hackathon-Einreichung erstellt
+### Added
+- UI/UX polishing: Improved templates with consistent navigation, clear conflict display, premium badges
+- Demo/Seed data: Management command `seed_demo_data` for demo scenario
+  - 3 demo students with different profiles
+  - Associated contracts (private and via institute)
+  - Multiple lessons (including conflict for demonstration)
+  - Blocked times
+  - 1 premium user with generated lesson plan
+- Validation script: `scripts/validate.sh` for automatic checks (Django Check, Tests, TODO comments, Debug output)
+- Documentation: DEVPOST.md created for hackathon submission
 
-### Geändert
-- README.md: Überarbeitet mit Demo-Daten-Anleitung, Validierungsskript, verbesserte Feature-Beschreibung
-- docs/ETHICS.md: Erweitert um Abschnitt zu Demo-Daten und Datenschutz
-- docs/PHASES.md: Phase 5 als abgeschlossen markiert
-- docs/CHECKPOINTS.md: Checkpoint 5 hinzugefügt
-- Templates: Verbesserte Darstellung von Konflikten, Premium-Badges, konsistente Buttons
+### Changed
+- README.md: Revised with demo data instructions, validation script, improved feature description
+- docs/ETHICS.md: Extended with section on demo data and privacy
+- docs/PHASES.md: Phase 5 marked as completed
+- docs/CHECKPOINTS.md: Checkpoint 5 added
+- Templates: Improved display of conflicts, premium badges, consistent buttons
 
 ### Phase
-- Phase 5 – Polishing, Validierung & Hackathon-Feinschliff abgeschlossen
+- Phase 5 – Polishing, Validation & Hackathon Refinement completed
 
 ---
 
 ## [0.4.0] - 2025-12-04
 
-### Hinzugefügt
-- **Premium-Funktionen**:
-  - `apps.core.utils.is_premium_user()` - Utility-Funktion für Premium-Checks
-  - Premium-Gating in Views und Templates
-  - UI-Hinweise für Nicht-Premium-User
-- **AI-App** (`apps.ai`):
-  - `apps.ai.client.LLMClient` - Low-Level-Client für LLM-API-Kommunikation (OpenAI-kompatibel)
-  - `apps.ai.prompts` - Prompt-Bau für strukturierte Unterrichtspläne
-  - `apps.ai.services.LessonPlanService` - High-Level-Service für LessonPlan-Generierung
-- **LessonPlan-Generierung**:
-  - Kontext-Sammlung (Schüler, Lesson, vorherige Lessons)
-  - Strukturierter Prompt-Bau mit System- und User-Prompts
-  - LLM-API-Integration mit Fehlerbehandlung
-  - Speicherung als LessonPlan-Model mit Metadaten (Modell-Name, Erstellungszeitpunkt)
-- **UI-Integration**:
-  - Button "Unterrichtsplan mit KI generieren" in Lesson-Detail-Ansicht (nur Premium)
-  - Anzeige generierter Pläne
-  - Premium-Hinweis für Nicht-Premium-User
-- **Konfiguration**:
-  - LLM-Settings über Umgebungsvariablen (LLM_API_KEY, LLM_API_BASE_URL, LLM_MODEL_NAME, LLM_TIMEOUT_SECONDS)
-  - Keine Secrets im Code
+### Added
+- **Premium features**:
+  - `apps.core.utils.is_premium_user()` - Utility function for premium checks
+  - Premium gating in views and templates
+  - UI notices for non-premium users
+- **AI app** (`apps.ai`):
+  - `apps.ai.client.LLMClient` - Low-level client for LLM API communication (OpenAI-compatible)
+  - `apps.ai.prompts` - Prompt building for structured lesson plans
+  - `apps.ai.services.LessonPlanService` - High-level service for lesson plan generation
+- **LessonPlan generation**:
+  - Context collection (student, lesson, previous lessons)
+  - Structured prompt building with system and user prompts
+  - LLM API integration with error handling
+  - Storage as LessonPlan model with metadata (model name, creation timestamp)
+- **UI integration**:
+  - Button "Generate lesson plan with AI" in lesson detail view (premium only)
+  - Display of generated plans
+  - Premium notice for non-premium users
+- **Configuration**:
+  - LLM settings via environment variables (LLM_API_KEY, LLM_API_BASE_URL, LLM_MODEL_NAME, LLM_TIMEOUT_SECONDS)
+  - No secrets in code
 - **Tests**:
-  - 12 Tests für Premium-Gating, Prompt-Bau, Services und Client
-  - Mock-Tests für LLM-Aufrufe (keine echten API-Calls in Tests)
-  - Fehlerszenarien getestet
-- **Abhängigkeiten**:
-  - `requests` für HTTP-API-Kommunikation
+  - 12 tests for premium gating, prompt building, services and client
+  - Mock tests for LLM calls (no real API calls in tests)
+  - Error scenarios tested
+- **Dependencies**:
+  - `requests` for HTTP API communication
 
-### Geändert
-- `backend/tutorflow/settings.py` - LLM-Konfiguration hinzugefügt
-- `apps/lessons/views.py` - LessonDetailView erweitert um LessonPlan-Anzeige
-- `apps/lessons/templates/lessons/lesson_detail.html` - Template für LessonPlan-Generierung
-- `docs/ARCHITECTURE.md` - AI-Architektur dokumentiert
-- `docs/ETHICS.md` - KI-Einsatz, Datenschutz und Human-in-the-Loop dokumentiert
-- `docs/API.md` - Premium-Endpoint dokumentiert
-- `docs/PHASES.md` - Phase 4 als abgeschlossen markiert
-- `docs/CHECKPOINTS.md` - Checkpoint 4 dokumentiert
-- `requirements.txt` - requests hinzugefügt
+### Changed
+- `backend/tutorflow/settings.py` - LLM configuration added
+- `apps/lessons/views.py` - LessonDetailView extended with lesson plan display
+- `apps/lessons/templates/lessons/lesson_detail.html` - Template for lesson plan generation
+- `docs/ARCHITECTURE.md` - AI architecture documented
+- `docs/ETHICS.md` - AI usage, privacy and Human-in-the-Loop documented
+- `docs/API.md` - Premium endpoint documented
+- `docs/PHASES.md` - Phase 4 marked as completed
+- `docs/CHECKPOINTS.md` - Checkpoint 4 documented
+- `requirements.txt` - requests added
 
 ### Phase
-- Phase 4 – Premium & KI-Funktionen abgeschlossen
+- Phase 4 – Premium & AI Features completed
 
 ---
 
 ## [0.3.0] - 2025-12-04
 
-### Hinzugefügt
-- **CRUD-Funktionen** für alle Kern-Entitäten:
+### Added
+- **CRUD functions** for all core entities:
   - Student (List, Detail, Create, Update, Delete Views)
   - Contract (List, Detail, Create, Update, Delete Views)
-  - Lesson (List, Detail, Create, Update, Delete, Month-View)
+  - Lesson (List, Detail, Create, Update, Delete, Month View)
   - BlockedTime (List, Detail, Create, Update, Delete Views)
   - Location (List, Detail, Create, Update, Delete Views)
-- **Konfliktprüfung**:
-  - `apps.lessons.services.LessonConflictService` - Zentrale Service-Klasse für Konfliktprüfung
-  - Zeitblock-Berechnung inkl. Fahrtzeiten
-  - Prüfung auf Überlappung mit anderen Lessons und Blockzeiten
-  - Konfliktmarkierung in Lesson-Model (`has_conflicts` Property, `get_conflicts()` Methode)
-- **Planungslogik**:
-  - `apps.lessons.services.LessonQueryService` - Service für Lesson-Abfragen
-  - Monatsansicht für Lessons
-  - Abfragen für heutige und kommende Lessons
-- **Einnahmenübersicht**:
-  - Dashboard-View mit Übersicht über heutige/kommende Stunden und Konflikte
-  - IncomeOverview-View mit Monats-/Jahresansicht
-  - Integration von IncomeSelector in Views
-- **Basis-UI**:
-  - Navigation zwischen allen Bereichen
-  - Basis-Templates für alle CRUD-Operationen
-  - Dashboard-Template mit Konfliktanzeige
+- **Conflict detection**:
+  - `apps.lessons.services.LessonConflictService` - Central service class for conflict detection
+  - Time block calculation including travel times
+  - Check for overlap with other lessons and blocked times
+  - Conflict marking in Lesson model (`has_conflicts` property, `get_conflicts()` method)
+- **Planning logic**:
+  - `apps.lessons.services.LessonQueryService` - Service for lesson queries
+  - Month view for lessons
+  - Queries for today's and upcoming lessons
+- **Income overview**:
+  - Dashboard view with overview of today's/upcoming lessons and conflicts
+  - IncomeOverview view with monthly/yearly view
+  - Integration of IncomeSelector in views
+- **Basic UI**:
+  - Navigation between all areas
+  - Basic templates for all CRUD operations
+  - Dashboard template with conflict display
 - **Tests**:
-  - 7 neue Tests für Konfliktprüfung und Services
-  - Tests für Zeitblock-Berechnung, Konflikte mit Lessons und Blockzeiten, Abfragen
+  - 7 new tests for conflict detection and services
+  - Tests for time block calculation, conflicts with lessons and blocked times, queries
 
-### Geändert
-- `apps.lessons.models.Lesson` - Erweitert um Konfliktprüfungs-Methoden
-- `backend/tutorflow/urls.py` - URLs für alle Apps eingebunden
-- `docs/ARCHITECTURE.md` - Konfliktlogik und Einnahmenberechnung dokumentiert
-- `docs/API.md` - Implementierte Views dokumentiert
-- `docs/PHASES.md` - Phase 3 als abgeschlossen markiert
-- `docs/CHECKPOINTS.md` - Checkpoint 3 dokumentiert
+### Changed
+- `apps.lessons.models.Lesson` - Extended with conflict detection methods
+- `backend/tutorflow/urls.py` - URLs for all apps included
+- `docs/ARCHITECTURE.md` - Conflict logic and income calculation documented
+- `docs/API.md` - Implemented views documented
+- `docs/PHASES.md` - Phase 3 marked as completed
+- `docs/CHECKPOINTS.md` - Checkpoint 3 documented
 
 ### Phase
-- Phase 3 – Kernfunktionen (Planung & Einnahmen) abgeschlossen
+- Phase 3 – Core Features (Planning & Income) completed
 
 ---
 
 ## [0.2.1] - 2025-12-04
 
-### Geändert
-- Korrektur falscher Datumsangaben: Alle Vorkommen von `2025-01-27` in der Dokumentation wurden auf das korrekte Datum `2025-12-04` (Europe/Berlin) korrigiert
-- `docs/CHECKPOINTS.md` - Datumsangaben in Checkpoint 1 und 2 korrigiert
-- `CHANGELOG.md` - Versionsdatumsangaben korrigiert
+### Changed
+- Correction of incorrect dates: All occurrences of `2025-01-27` in documentation were corrected to the correct date `2025-12-04` (Europe/Berlin)
+- `docs/CHECKPOINTS.md` - Dates in Checkpoint 1 and 2 corrected
+- `CHANGELOG.md` - Version dates corrected
 
 ---
 
 ## [0.2.0] - 2025-12-04
 
-### Hinzugefügt
-- Domain-Models implementiert:
-  - `apps.locations.Location` - Unterrichtsort-Verwaltung mit optionalen Koordinaten
-  - `apps.students.Student` - Schülerverwaltung mit Kontaktdaten, Schule, Fächern
-  - `apps.contracts.Contract` - Vertragsverwaltung mit Honorar, Dauer, Zeitraum
-  - `apps.lessons.Lesson` - Unterrichtsplanung mit Status-Tracking und Fahrtzeiten
-  - `apps.blocked_times.BlockedTime` - Blockzeiten-Verwaltung
-  - `apps.lesson_plans.LessonPlan` - KI-generierte Unterrichtspläne
-  - `apps.core.UserProfile` - User-Erweiterung mit Premium-Flag
-- `apps.core.selectors.IncomeSelector` - Service-Layer für Einnahmenberechnungen
-- Admin-Interfaces für alle Models
-- Migrations für alle Apps
-- 14 Unit-Tests für Models und Services
+### Added
+- Domain models implemented:
+  - `apps.locations.Location` - Lesson location management with optional coordinates
+  - `apps.students.Student` - Student management with contact data, school, subjects
+  - `apps.contracts.Contract` - Contract management with fee, duration, period
+  - `apps.lessons.Lesson` - Lesson planning with status tracking and travel times
+  - `apps.blocked_times.BlockedTime` - Blocked time management
+  - `apps.lesson_plans.LessonPlan` - AI-generated lesson plans
+  - `apps.core.UserProfile` - User extension with premium flag
+- `apps.core.selectors.IncomeSelector` - Service layer for income calculations
+- Admin interfaces for all models
+- Migrations for all apps
+- 14 unit tests for models and services
 
-### Geändert
-- `docs/ARCHITECTURE.md` - Datenmodell-Details hinzugefügt
-- `docs/PHASES.md` - Phase 2 als abgeschlossen markiert
-- `docs/CHECKPOINTS.md` - Checkpoint 2 dokumentiert
-- `backend/tutorflow/settings.py` - Alle Apps in INSTALLED_APPS registriert
+### Changed
+- `docs/ARCHITECTURE.md` - Data model details added
+- `docs/PHASES.md` - Phase 2 marked as completed
+- `docs/CHECKPOINTS.md` - Checkpoint 2 documented
+- `backend/tutorflow/settings.py` - All apps registered in INSTALLED_APPS
 
 ### Phase
-- Phase 2 – Domain-Datenmodell & Migrations abgeschlossen
+- Phase 2 – Domain Data Model & Migrations completed
 
 ---
 
 ## [0.1.0] - 2025-12-04
 
-### Hinzugefügt
-- Initiales Projekt-Setup
-- Django 5.2.9 Projekt initialisiert
-- Grundstruktur des Repositories angelegt:
-  - `backend/` - Django-Projekt
-  - `backend/apps/` - Platzhalter für Feature-Apps
-  - `backend/config/` - Projektkonfiguration
-  - `docs/` - Dokumentation
-  - `scripts/` - Validierungsskripte
-- Dokumentation erstellt:
-  - `README.md` - Projektbeschreibung und Setup-Anleitung
-  - `docs/ARCHITECTURE.md` - Architekturübersicht
-  - `docs/ETHICS.md` - Ethisch-christliche Leitlinien
-  - `docs/PHASES.md` - Entwicklungsphasen-Übersicht
-  - `docs/CHECKPOINTS.md` - Fortschrittsprotokoll
-  - `docs/API.md` - API-Dokumentation (Platzhalter)
-- `requirements.txt` mit Django 5.2.9
-- Virtuelles Environment Setup
-- `CHANGELOG.md` - Diese Datei
+### Added
+- Initial project setup
+- Django 5.2.9 project initialized
+- Basic repository structure created:
+  - `backend/` - Django project
+  - `backend/apps/` - Placeholder for feature apps
+  - `backend/config/` - Project configuration
+  - `docs/` - Documentation
+  - `scripts/` - Validation scripts
+- Documentation created:
+  - `README.md` - Project description and setup instructions
+  - `docs/ARCHITECTURE.md` - Architecture overview
+  - `docs/ETHICS.md` - Ethical-Christian guidelines
+  - `docs/PHASES.md` - Development phases overview
+  - `docs/CHECKPOINTS.md` - Progress log
+  - `docs/API.md` - API documentation (placeholder)
+- `requirements.txt` with Django 5.2.9
+- Virtual environment setup
+- `CHANGELOG.md` - This file
 
 ### Phase
-- Phase 1 – Projekt-Setup & Architekturgrundlagen gestartet
+- Phase 1 – Project Setup & Architecture Foundations started
