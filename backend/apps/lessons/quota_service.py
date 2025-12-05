@@ -3,6 +3,7 @@ Service für Kontingent-Prüfung basierend auf ContractMonthlyPlan.
 """
 from datetime import date
 from typing import List, Optional
+from django.utils.translation import gettext as _
 from apps.lessons.models import Lesson
 from apps.contracts.models import Contract, ContractMonthlyPlan
 
@@ -75,10 +76,15 @@ class ContractQuotaService:
         if actual_lessons + 1 > planned_total:
             return {
                 'type': 'quota',
-                'message': (
-                    f"Vertragskontingent überschritten: "
-                    f"Bis Ende {lesson_month:02d}.{lesson_year} sind {planned_total} Einheiten geplant, "
-                    f"aber {actual_lessons + 1} Stunden vorhanden/geplant."
+                'message': _(
+                    "Contract quota exceeded: "
+                    "By the end of {month:02d}.{year}, {planned} units are planned, "
+                    "but {actual} hours are present/planned."
+                ).format(
+                    month=lesson_month,
+                    year=lesson_year,
+                    planned=planned_total,
+                    actual=actual_lessons + 1
                 ),
                 'planned_total': planned_total,
                 'actual_total': actual_lessons + 1,

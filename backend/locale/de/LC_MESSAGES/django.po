@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 16:26+0100\n"
+"POT-Creation-Date: 2025-12-05 16:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -692,6 +692,41 @@ msgstr ""
 #: apps/lessons/recurring_models.py:103
 msgid "None"
 msgstr ""
+
+#: apps/blocked_times/recurring_service.py:298
+#, python-brace-format
+msgid "Overlap with lesson for {student} ({time})"
+msgstr ""
+
+#: apps/blocked_times/recurring_views.py:41
+msgid "Recurring blocked time successfully created."
+msgstr ""
+
+#: apps/blocked_times/recurring_views.py:58
+msgid "Recurring blocked time successfully updated."
+msgstr ""
+
+#: apps/blocked_times/recurring_views.py:74
+msgid "Recurring blocked time successfully deleted."
+msgstr ""
+
+#: apps/blocked_times/recurring_views.py:97
+#, python-brace-format
+msgid ""
+"{created} blocked time created, {skipped} skipped, {conflicts} conflict "
+"detected!"
+msgid_plural ""
+"{created} blocked times created, {skipped} skipped, {conflicts} conflicts "
+"detected!"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apps/blocked_times/recurring_views.py:110
+#, python-brace-format
+msgid "{created} blocked time successfully created, {skipped} skipped."
+msgid_plural "{created} blocked times successfully created, {skipped} skipped."
+msgstr[0] ""
+msgstr[1] ""
 
 #: apps/blocked_times/templates/blocked_times/blockedtime_confirm_delete.html:4
 #: apps/blocked_times/templates/blocked_times/blockedtime_confirm_delete.html:7
@@ -1465,6 +1500,17 @@ msgstr ""
 msgid "Lesson"
 msgstr ""
 
+#: apps/lessons/quota_service.py:80
+#, python-brace-format
+msgid ""
+"Contract quota exceeded: By the end of {month:02d}.{year}, {planned} units "
+"are planned, but {actual} hours are present/planned."
+msgstr ""
+
+#: apps/lessons/recurring_forms.py:55
+msgid "At least one weekday must be selected."
+msgstr ""
+
 #: apps/lessons/recurring_models.py:23
 msgid "Series end date (optional, empty = until contract end)"
 msgstr ""
@@ -1483,6 +1529,54 @@ msgstr ""
 #: apps/lessons/templates/lessons/recurringlesson_list.html:7
 msgid "Recurring Lessons"
 msgstr ""
+
+#: apps/lessons/recurring_views.py:64
+#, python-brace-format
+msgid "Recurring lesson created and {count} lesson generated."
+msgid_plural "Recurring lesson created and {count} lessons generated."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apps/lessons/recurring_views.py:75
+#, python-brace-format
+msgid "{count} lesson with conflicts detected."
+msgid_plural "{count} lessons with conflicts detected."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apps/lessons/recurring_views.py:87
+msgid "Recurring lesson successfully created."
+msgstr ""
+
+#: apps/lessons/recurring_views.py:99
+msgid "Recurring lesson successfully updated."
+msgstr ""
+
+#: apps/lessons/recurring_views.py:110
+msgid "Recurring lesson successfully deleted."
+msgstr ""
+
+#: apps/lessons/recurring_views.py:127
+#, python-brace-format
+msgid "{count} lesson successfully created."
+msgid_plural "{count} lessons successfully created."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apps/lessons/recurring_views.py:137
+#, python-brace-format
+msgid "{count} lesson skipped (already exists)."
+msgid_plural "{count} lessons skipped (already exist)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apps/lessons/recurring_views.py:148
+#, python-brace-format
+msgid "{count} lesson with conflicts detected. Please check the details."
+msgid_plural ""
+"{count} lessons with conflicts detected. Please check the details."
+msgstr[0] ""
+msgstr[1] ""
 
 #: apps/lessons/templates/lessons/calendar.html:4
 #: apps/lessons/templates/lessons/calendar.html:7

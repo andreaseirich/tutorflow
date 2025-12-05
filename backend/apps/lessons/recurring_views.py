@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.utils.translation import gettext as _, ngettext
 from apps.lessons.recurring_models import RecurringLesson
 from apps.lessons.recurring_forms import RecurringLessonForm
 from apps.lessons.recurring_service import RecurringLessonService
@@ -59,14 +60,22 @@ class RecurringLessonCreateView(CreateView):
         if result['created'] > 0:
             messages.success(
                 self.request,
-                f"Serientermin erstellt und {result['created']} Unterrichtsstunde(n) generiert."
+                ngettext(
+                    'Recurring lesson created and {count} lesson generated.',
+                    'Recurring lesson created and {count} lessons generated.',
+                    result['created']
+                ).format(count=result['created'])
             )
         
         if result['conflicts']:
             conflict_count = len(result['conflicts'])
             messages.warning(
                 self.request,
-                f"{conflict_count} Unterrichtsstunde(n) mit Konflikten erkannt."
+                ngettext(
+                    '{count} lesson with conflicts detected.',
+                    '{count} lessons with conflicts detected.',
+                    conflict_count
+                ).format(count=conflict_count)
             )
         
         # Weiterleitung zum Kalender
@@ -75,7 +84,7 @@ class RecurringLessonCreateView(CreateView):
         return reverse_lazy('lessons:calendar') + f'?year={today.year}&month={today.month}'
 
     def form_valid(self, form):
-        messages.success(self.request, 'Serientermin erfolgreich erstellt.')
+        messages.success(self.request, _('Recurring lesson successfully created.'))
         return super().form_valid(form)
 
 
@@ -87,7 +96,7 @@ class RecurringLessonUpdateView(UpdateView):
     success_url = reverse_lazy('lessons:recurring_list')
 
     def form_valid(self, form):
-        messages.success(self.request, 'Serientermin erfolgreich aktualisiert.')
+        messages.success(self.request, _('Recurring lesson successfully updated.'))
         return super().form_valid(form)
 
 
@@ -98,7 +107,7 @@ class RecurringLessonDeleteView(DeleteView):
     success_url = reverse_lazy('lessons:recurring_list')
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Serientermin erfolgreich gelöscht.')
+        messages.success(self.request, _('Recurring lesson successfully deleted.'))
         return super().delete(request, *args, **kwargs)
 
 
@@ -114,21 +123,32 @@ def generate_lessons_from_recurring(request, pk):
     if result['created'] > 0:
         messages.success(
             request,
-            f"{result['created']} Unterrichtsstunde(n) erfolgreich erstellt."
+            ngettext(
+                '{count} lesson successfully created.',
+                '{count} lessons successfully created.',
+                result['created']
+            ).format(count=result['created'])
         )
     
     if result['skipped'] > 0:
         messages.info(
             request,
-            f"{result['skipped']} Unterrichtsstunde(n) übersprungen (bereits vorhanden)."
+            ngettext(
+                '{count} lesson skipped (already exists).',
+                '{count} lessons skipped (already exist).',
+                result['skipped']
+            ).format(count=result['skipped'])
         )
     
     if result['conflicts']:
         conflict_count = len(result['conflicts'])
         messages.warning(
             request,
-            f"{conflict_count} Unterrichtsstunde(n) mit Konflikten erkannt. "
-            f"Bitte prüfen Sie die Details."
+            ngettext(
+                '{count} lesson with conflicts detected. Please check the details.',
+                '{count} lessons with conflicts detected. Please check the details.',
+                conflict_count
+            ).format(count=conflict_count)
         )
     
     # Weiterleitung zum Kalender, falls Lessons erstellt wurden
