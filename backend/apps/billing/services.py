@@ -100,7 +100,11 @@ class InvoiceService:
             InvoiceItem.objects.create(
                 invoice=invoice,
                 lesson=lesson,
-                description=f"Unterrichtsstunde {lesson.date} {lesson.start_time.strftime('%H:%M')} - {lesson.contract.student.full_name}",
+                description=_("Lesson {date} {time} - {student}").format(
+                    date=lesson.date,
+                    time=lesson.start_time.strftime('%H:%M'),
+                    student=lesson.contract.student.full_name
+                ),
                 date=lesson.date,
                 duration_minutes=lesson.duration_minutes,
                 amount=amount
