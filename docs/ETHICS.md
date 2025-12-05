@@ -1,110 +1,109 @@
-# Ethisch-christliche Leitlinien – TutorFlow
+# Ethical-Christian Guidelines – TutorFlow
 
-## Grundsätze
+## Principles
 
-TutorFlow orientiert sich an ethisch-christlichen Werten, die sich in der Entwicklung, im Code und im Umgang mit Nutzerdaten widerspiegeln.
+TutorFlow is guided by ethical-Christian values that are reflected in development, code, and handling of user data.
 
-### Kernprinzipien
+### Core Principles
 
-1. **Ehrlichkeit und Transparenz**
-   - Keine versteckten Funktionen
-   - Klare Kommunikation über Funktionalitäten
-   - Transparente Datennutzung
+1. **Honesty and Transparency**
+   - No hidden functions
+   - Clear communication about functionalities
+   - Transparent data usage
 
-2. **Ordnung und Klarheit**
-   - Strukturierter, nachvollziehbarer Code
-   - Klare Dokumentation
-   - Übersichtliche Benutzeroberfläche
+2. **Order and Clarity**
+   - Structured, comprehensible code
+   - Clear documentation
+   - Clear user interface
 
-3. **Dienst am Nutzer**
-   - Das Werkzeug soll dem Nutzer helfen, strukturierter und verantwortungsvoller zu arbeiten
-   - Keine manipulative Logik
-   - Respektvoller Umgang mit Benutzerdaten
+3. **Service to the User**
+   - The tool should help the user work more structured and responsibly
+   - No manipulative logic
+   - Respectful handling of user data
 
-4. **Kein Datenmissbrauch**
-   - Minimale Datensammlung (nur was nötig ist)
-   - Keine Weitergabe von Daten an Dritte ohne Zustimmung
-   - Sichere Speicherung und Verarbeitung
+4. **No Data Misuse**
+   - Minimal data collection (only what is necessary)
+   - No sharing of data with third parties without consent
+   - Secure storage and processing
 
-5. **Respektvoller Umgang**
-   - Respektvolle Sprache im Code und in der Benutzeroberfläche
-   - Keine diskriminierenden oder verletzenden Inhalte
+5. **Respectful Treatment**
+   - Respectful language in code and user interface
+   - No discriminatory or offensive content
 
-## Biblischer Bezug
+## Biblical Reference
 
-Der Stil der Software soll von Ordnung und Zuverlässigkeit geprägt sein. Es werden keine theologischen Aussagen im Code erzwungen, aber Werte wie Treue, Klarheit und Verantwortlichkeit sollen sich im Produkt widerspiegeln.
+The style of the software should be characterized by order and reliability. No theological statements are forced in the code, but values such as faithfulness, clarity, and responsibility should be reflected in the product.
 
-## Datenschutz
+## Privacy
 
-### Datensparsamkeit
-- Es werden nur die Daten gesammelt, die für die Funktionalität notwendig sind
-- Keine unnötige Speicherung von persönlichen Informationen
+### Data Minimization
+- Only data necessary for functionality is collected
+- No unnecessary storage of personal information
 
-### Transparenz
-- Nutzer werden über die Datennutzung informiert
-- Klare Datenschutzerklärung
-- **Transparenz bei Zeitangaben und Logs**: Alle Zeitstempel und Datumsangaben in der Anwendung verwenden die Zeitzone Europe/Berlin. Dies wird in der Dokumentation klar kommuniziert, und alle Log-Einträge, Zeitstempel und Datumsangaben sind konsistent in dieser Zeitzone. Nutzer werden über die verwendete Zeitzone informiert, um Verwirrung zu vermeiden.
+### Transparency
+- Users are informed about data usage
+- Clear privacy policy
+- **Transparency in time information and logs**: All timestamps and dates in the application use the timezone Europe/Berlin. This is clearly communicated in the documentation, and all log entries, timestamps, and dates are consistent in this timezone. Users are informed about the timezone used to avoid confusion.
 
-### Sicherheit
-- Sichere Speicherung von Daten
-- Verschlüsselung sensibler Informationen
-- Regelmäßige Sicherheitsprüfungen
+### Security
+- Secure storage of data
+- Encryption of sensitive information
+- Regular security checks
 
-### Demo-Daten und Datenschutz
-- **Keine echten Daten im Repository**: Das Repository enthält keine echten Schüler- oder Kundendaten
-- **Demo-Daten sind fiktiv**: Alle Demo-Daten (z. B. via `seed_demo_data` Command) sind vollständig fiktiv und dienen nur zu Demonstrationszwecken
-- **Verantwortungsvoller Umgang**: Nutzer werden ermutigt, verantwortungsvoll mit personenbezogenen Daten umzugehen und die Datenschutzbestimmungen einzuhalten
+### Demo Data and Privacy
+- **No real data in repository**: The repository contains no real student or customer data
+- **Demo data is fictional**: All demo data (e.g., via `seed_demo_data` command) is completely fictional and serves only for demonstration purposes
+- **Responsible handling**: Users are encouraged to handle personal data responsibly and comply with privacy regulations
 
-## KI-Einsatz (Premium-Funktion)
+## AI Usage (Premium Feature)
 
-### Verantwortungsvoller KI-Einsatz
-- KI wird nur für unterstützende Funktionen verwendet (Unterrichtsplan-Generierung)
-- **Human-in-the-Loop**: KI-generierte Unterrichtspläne sind nur Vorschläge und müssen vom Nachhilfelehrer geprüft, angepasst und verantwortet werden
-- Nutzer behalten die volle Kontrolle über generierte Inhalte
-- Klare Kennzeichnung von KI-generierten Inhalten (Modell-Name wird gespeichert)
-- Keine Manipulation oder Täuschung durch KI
+### Responsible AI Usage
+- AI is only used for supporting functions (lesson plan generation)
+- **Human-in-the-Loop**: AI-generated lesson plans are only suggestions and must be reviewed, adjusted, and verified by the tutor
+- Users retain full control over generated content
+- Clear labeling of AI-generated content (model name is stored)
+- No manipulation or deception through AI
 
-### Transparenz
-- Nutzer werden darüber informiert, wenn KI verwendet wird
-- Generierte Inhalte können vom Nutzer überprüft und angepasst werden
-- Das verwendete LLM-Modell wird dokumentiert
+### Transparency
+- Users are informed when AI is used
+- Generated content can be reviewed and adjusted by the user
+- The LLM model used is documented
 
-### Datenschutz bei KI-Nutzung
-- **Minimale Datensammlung**: Es werden nur die notwendigsten Informationen an die LLM-API gesendet:
-  - Name des Schülers (Vorname, Nachname)
-  - Klassenstufe
-  - Fach
-  - Dauer der Stunde
-  - Notizen zur Stunde (falls vorhanden)
-- **Keine sensiblen Daten**: Folgende Daten werden NICHT an die API gesendet:
-  - Vollständige Adressen
-  - Telefonnummern oder E-Mail-Adressen
-  - Persönliche Notizen, die nicht für die Unterrichtsplanung relevant sind
-- **Lokale Speicherung**: Generierte Pläne werden lokal in der Datenbank gespeichert, nicht bei der LLM-API
-- **API-Keys**: API-Keys werden über Umgebungsvariablen konfiguriert, nicht im Code gespeichert
+### Privacy in AI Usage
+- **Minimal data collection**: Only the most necessary information is sent to the LLM API:
+  - Student name (first name, last name)
+  - Grade level
+  - Subject
+  - Lesson duration
+  - Lesson notes (if available)
+- **No sensitive data**: The following data is NOT sent to the API:
+  - Full addresses
+  - Phone numbers or email addresses
+  - Personal notes that are not relevant for lesson planning
+- **Local storage**: Generated plans are stored locally in the database, not with the LLM API
+- **API Keys**: API keys are configured via environment variables, not stored in code
 
-## Hackathon-Konformität
+## Hackathon Compliance
 
-### Urheberrecht
-- Kein Kopieren kompletter Projekte oder größerer Codeblöcke aus fremden Repositories
-- Open-Source-Bibliotheken werden verwendet, müssen aber im README genannt werden
+### Copyright
+- No copying of complete projects or larger code blocks from other repositories
+- Open-source libraries are used but must be mentioned in the README
 
 ### Fairness
-- AI-Tools (Cursor, ChatGPT, etc.) sind erlaubt, aber es gibt eine sinnvolle menschliche Beteiligung
-- Keine Verletzung von Urheberrecht oder geistigem Eigentum
-- Kein verbotener oder unangemessener Content
+- AI tools (Cursor, ChatGPT, etc.) are allowed, but there is meaningful human involvement
+- No violation of copyright or intellectual property
+- No prohibited or inappropriate content
 
-## Umsetzung im Code
+## Implementation in Code
 
-Diese Prinzipien sollen sich im Code widerspiegeln:
+These principles should be reflected in the code:
 
-- Klare, verständliche Code-Struktur
-- Gute Dokumentation
-- Fehlerbehandlung ohne Verstecken von Problemen
-- Validierung aller Eingaben
-- Logging für Nachvollziehbarkeit (ohne Übermaß)
+- Clear, understandable code structure
+- Good documentation
+- Error handling without hiding problems
+- Validation of all inputs
+- Logging for traceability (without excess)
 
-## Kontinuierliche Überprüfung
+## Continuous Review
 
-Diese Leitlinien werden regelmäßig überprüft und bei Bedarf angepasst, um sicherzustellen, dass TutorFlow den ethischen Standards entspricht.
-
+These guidelines are regularly reviewed and adjusted as needed to ensure that TutorFlow meets ethical standards.

@@ -13,11 +13,11 @@ TutorFlow is a Django-based web application structured according to modern best 
 - [Domain-Modell (Implementiert)](#domain-modell-implementiert)
 - [Architekturprinzipien](#architekturprinzipien)
 - [Design Decisions & Architecture Rationale](#design-decisions--architecture-rationale)
-- [Datenfluss](#datenfluss)
-- [Zeitzonen-Handling](#zeitzonen-handling)
-- [Sicherheit](#sicherheit)
-- [Erweiterbarkeit](#erweiterbarkeit)
-- [Datenbank-Schema](#datenbank-schema)
+- [Data Flow](#data-flow)
+- [Timezone Handling](#timezone-handling)
+- [Security](#security)
+- [Extensibility](#extensibility)
+- [Database Schema](#database-schema)
 - [Status](#status)
 
 ## Internationalization (i18n)
@@ -38,28 +38,28 @@ TutorFlow is fully internationalized with English as the default language and Ge
 ### Backend
 
 #### Framework
-- **Django 5.2.9**: Modernes Python-Web-Framework
-- **SQLite**: Standard-Datenbank für Entwicklung
-- **PostgreSQL**: Optional für Produktion vorbereitet
+- **Django 5.2.9**: Modern Python web framework
+- **SQLite**: Standard database for development
+- **PostgreSQL**: Optional, prepared for production
 
-#### Projektstruktur
+#### Project Structure
 
 ```
 backend/
-├── tutorflow/          # Hauptprojektkonfiguration
-│   ├── settings.py     # Django-Einstellungen
-│   ├── urls.py         # URL-Routing
-│   ├── wsgi.py         # WSGI-Konfiguration
-│   └── asgi.py         # ASGI-Konfiguration
-├── apps/               # Feature-spezifische Django-Apps
-│   ├── students/       # Schülerverwaltung
-│   ├── contracts/      # Vertragsverwaltung
-│   ├── lessons/        # Unterrichtsplanung
-│   ├── blocked_times/  # Blockzeiten-Verwaltung
-│   ├── lesson_plans/   # KI-generierte Unterrichtspläne
-│   └── core/           # Kernfunktionalität (User-Erweiterung, Income-Selector)
-├── config/             # Zusätzliche Konfigurationsdateien
-└── manage.py           # Django-Management-Script
+├── tutorflow/          # Main project configuration
+│   ├── settings.py     # Django settings
+│   ├── urls.py         # URL routing
+│   ├── wsgi.py         # WSGI configuration
+│   └── asgi.py         # ASGI configuration
+├── apps/               # Feature-specific Django apps
+│   ├── students/       # Student management
+│   ├── contracts/      # Contract management
+│   ├── lessons/        # Lesson planning
+│   ├── blocked_times/  # Blocked time management
+│   ├── lesson_plans/   # AI-generated lesson plans
+│   └── core/           # Core functionality (User extension, Income-Selector)
+├── config/             # Additional configuration files
+└── manage.py           # Django management script
 ```
 
 ## Diagrams
@@ -382,131 +382,131 @@ sequenceDiagram
     BillingView-->>User: Invoice deleted, Lessons reset
 ```
 
-### Domain-Modell (Implementiert)
+### Domain Model (Implemented)
 
 Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Models implementiert:
 
 #### Student (apps.students)
-- **Felder**: first_name, last_name, email, phone, school, grade, subjects, notes
-- **Beziehungen**: One-to-Many zu Contract
-- **Zweck**: Zentrale Verwaltung von Schülern mit Kontaktdaten und Schulinformationen
+- **Fields**: first_name, last_name, email, phone, school, grade, subjects, notes
+- **Relationships**: One-to-Many to Contract
+- **Purpose**: Centralized management of students with contact data and school information
 
 #### Contract (apps.contracts)
-- **Felder**: student (FK), institute, hourly_rate, unit_duration_minutes, start_date, end_date, is_active, notes
-- **Beziehungen**: Many-to-One zu Student, One-to-Many zu Lesson, One-to-Many zu ContractMonthlyPlan
-- **Zweck**: Verwaltung von Verträgen mit Honorar, Dauer und Vertragszeitraum
-- **Hinweis**: Geplante Einheiten pro Monat werden explizit pro Monat in `ContractMonthlyPlan` erfasst (nicht mehr über das alte Feld `planned_units_per_month`).
+- **Fields**: student (FK), institute, hourly_rate, unit_duration_minutes, start_date, end_date, is_active, notes
+- **Relationships**: Many-to-One to Student, One-to-Many to Lesson, One-to-Many to ContractMonthlyPlan
+- **Purpose**: Management of contracts with fee, duration and contract period
+- **Note**: Planned units per month are explicitly recorded per month in `ContractMonthlyPlan` (no longer via the old field `planned_units_per_month`).
 
 #### ContractMonthlyPlan (apps.contracts)
-- **Felder**: contract (FK), year, month, planned_units
-- **Beziehungen**: Many-to-One zu Contract
+- **Fields**: contract (FK), year, month, planned_units
+- **Relationships**: Many-to-One to Contract
 - **Unique Constraint**: (contract, year, month)
-- **Zweck**: Explizite monatliche Planung von geplanten Einheiten pro Vertrag. Erlaubt ungleichmäßige Verteilung über das Jahr (z. B. mehr Einheiten in Prüfungsphasen).
-- **Wichtig**: Monthly Plans werden stets für den gesamten Vertragszeitraum (start_date bis end_date) erzeugt, unabhängig vom aktuellen Datum. Dies ermöglicht die Planung für zukünftige Verträge sowie die Erfassung von Plänen für vergangene Zeiträume.
+- **Purpose**: Explicit monthly planning of planned units per contract. Allows uneven distribution over the year (e.g., more units during exam periods).
+- **Important**: Monthly plans are always generated for the entire contract period (start_date to end_date), regardless of the current date. This enables planning for future contracts as well as recording plans for past periods.
 
 #### Lesson (apps.lessons)
-- **Felder**: contract (FK), date, start_time, duration_minutes, status (choices), travel_time_before_minutes, travel_time_after_minutes, notes
+- **Fields**: contract (FK), date, start_time, duration_minutes, status (choices), travel_time_before_minutes, travel_time_after_minutes, notes
 - **Status**: 'planned', 'taught', 'cancelled', 'paid'
-- **Beziehungen**: Many-to-One zu Contract
-- **Zweck**: Planung und Verwaltung von Unterrichtsstunden mit Status-Tracking
+- **Relationships**: Many-to-One to Contract
+- **Purpose**: Planning and management of lessons with status tracking
 
 #### RecurringLesson (apps.lessons.recurring_models)
-- **Felder**: contract (FK), start_date, end_date, start_time, duration_minutes, travel_time_before_minutes, travel_time_after_minutes, recurrence_type (weekly/biweekly/monthly), monday-sunday (Boolean), is_active, notes
-- **Beziehungen**: Many-to-One zu Contract
-- **Zweck**: Vorlage für wiederholende Unterrichtsstunden (Serientermine). Ermöglicht die Definition von Serien (z. B. "jeden Montag 14 Uhr") und automatische Generierung von Lessons über einen Zeitraum.
-- **Wiederholungsarten**:
-  - `weekly`: Wöchentlich - jede Woche an den ausgewählten Wochentagen
-  - `biweekly`: Alle 2 Wochen - jede zweite Woche an den ausgewählten Wochentagen
-  - `monthly`: Monatlich - jeden Monat am gleichen Kalendertag, wenn dieser Tag ein ausgewählter Wochentag ist
-- **Service**: `RecurringLessonService` generiert Lessons aus RecurringLesson-Vorlagen basierend auf `recurrence_type`, prüft Konflikte und überspringt bereits vorhandene Lessons.
+- **Fields**: contract (FK), start_date, end_date, start_time, duration_minutes, travel_time_before_minutes, travel_time_after_minutes, recurrence_type (weekly/biweekly/monthly), monday-sunday (Boolean), is_active, notes
+- **Relationships**: Many-to-One to Contract
+- **Purpose**: Template for repeating lessons (recurring lessons). Enables definition of series (e.g., "every Monday at 2 PM") and automatic generation of lessons over a period.
+- **Recurrence types**:
+  - `weekly`: Weekly - every week on selected weekdays
+  - `biweekly`: Every 2 weeks - every second week on selected weekdays
+  - `monthly`: Monthly - every month on the same calendar day, if that day is a selected weekday
+- **Service**: `RecurringLessonService` generates lessons from RecurringLesson templates based on `recurrence_type`, checks conflicts and skips already existing lessons.
 
 #### BlockedTime (apps.blocked_times)
-- **Felder**: title, description, start_datetime, end_datetime, is_recurring, recurring_pattern
-- **Beziehungen**: Keine direkten Beziehungen
-- **Zweck**: Verwaltung eigener Termine/Blockzeiten (z. B. Uni, Job, Gemeinde)
-- **Kalender-Integration**: Blockzeiten werden ausschließlich über den Kalender verwaltet (Erstellen, Bearbeiten, Anzeigen). Es gibt keine Listenansicht mehr.
-- **Mehrtägige Blockzeiten**: Unterstützt durch start_datetime und end_datetime (z. B. Urlaub/Reise)
-- **Anzeige**: Optisch unterscheidbar von Lessons (gelbe Hintergrundfarbe) im Kalender
+- **Fields**: title, description, start_datetime, end_datetime, is_recurring, recurring_pattern
+- **Relationships**: No direct relationships
+- **Purpose**: Management of personal appointments/blocked times (e.g., university, job, community)
+- **Calendar Integration**: Blocked times are managed exclusively via the calendar (create, edit, display). There is no list view anymore.
+- **Multi-day blocked times**: Supported by start_datetime and end_datetime (e.g., vacation/travel)
+- **Display**: Visually distinct from lessons (yellow background color) in the calendar
 
 #### RecurringBlockedTime (apps.blocked_times.recurring_models)
-- **Felder**: title, description, start_date, end_date, start_time, end_time, recurrence_type (weekly/biweekly/monthly), monday-sunday (Boolean), is_active
-- **Beziehungen**: Keine direkten Beziehungen
-- **Zweck**: Vorlage für wiederholende Blockzeiten (Serientermine). Ermöglicht die Definition von Serien (z. B. "jeden Dienstag 18–20 Uhr") und automatische Generierung von BlockedTime-Einträgen über einen Zeitraum.
-- **Wiederholungsarten**:
-  - `weekly`: Wöchentlich - jede Woche an den ausgewählten Wochentagen
-  - `biweekly`: Alle 2 Wochen - jede zweite Woche an den ausgewählten Wochentagen
-  - `monthly`: Monatlich - jeden Monat am gleichen Kalendertag, wenn dieser Tag ein ausgewählter Wochentag ist
-- **Service**: `RecurringBlockedTimeService` generiert BlockedTime-Einträge aus RecurringBlockedTime-Vorlagen basierend auf `recurrence_type`, prüft Konflikte und überspringt bereits vorhandene Blockzeiten.
+- **Fields**: title, description, start_date, end_date, start_time, end_time, recurrence_type (weekly/biweekly/monthly), monday-sunday (Boolean), is_active
+- **Relationships**: No direct relationships
+- **Purpose**: Template for repeating blocked times (recurring appointments). Enables definition of series (e.g., "every Tuesday 6–8 PM") and automatic generation of BlockedTime entries over a period.
+- **Recurrence types**:
+  - `weekly`: Weekly - every week on selected weekdays
+  - `biweekly`: Every 2 weeks - every second week on selected weekdays
+  - `monthly`: Monthly - every month on the same calendar day, if that day is a selected weekday
+- **Service**: `RecurringBlockedTimeService` generates BlockedTime entries from RecurringBlockedTime templates based on `recurrence_type`, checks conflicts and skips already existing blocked times.
 
 #### LessonPlan (apps.lesson_plans)
-- **Felder**: student (FK), lesson (FK, optional), topic, subject, content, grade_level, duration_minutes, llm_model
-- **Beziehungen**: Many-to-One zu Student und Lesson (optional)
-- **Zweck**: Speicherung von KI-generierten Unterrichtsplänen
+- **Fields**: student (FK), lesson (FK, optional), topic, subject, content, grade_level, duration_minutes, llm_model
+- **Relationships**: Many-to-One to Student and Lesson (optional)
+- **Purpose**: Storage of AI-generated lesson plans
 
 #### UserProfile (apps.core)
-- **Felder**: user (OneToOne), is_premium, premium_since
-- **Beziehungen**: One-to-One zu Django User
-- **Zweck**: Erweiterung des Django-User-Models um Premium-Flag
+- **Fields**: user (OneToOne), is_premium, premium_since
+- **Relationships**: One-to-One to Django User
+- **Purpose**: Extension of Django User model with premium flag
 
 #### IncomeSelector (apps.core.selectors)
-- **Kein Model**: Service-Layer für Einnahmenberechnungen
-- **Methoden**: 
-  - `get_monthly_income()`: Einnahmen für einen Monat basierend auf tatsächlichen Lessons
-  - `get_yearly_income()`: Einnahmen für ein Jahr
-  - `get_income_by_status()`: Gruppierung nach Status
-  - `get_monthly_planned_vs_actual()`: Vergleich geplanter vs. tatsächlicher Einheiten und Einnahmen pro Monat
-- **Zweck**: Abgeleitete Monats-/Jahresauswertungen ohne eigenes Model. Unterstützt Vergleich zwischen geplanten (aus ContractMonthlyPlan) und tatsächlichen (aus Lessons) Werten.
+- **Not a Model**: Service layer for income calculations
+- **Methods**: 
+  - `get_monthly_income()`: Income for a month based on actual lessons
+  - `get_yearly_income()`: Income for a year
+  - `get_income_by_status()`: Grouping by status
+  - `get_monthly_planned_vs_actual()`: Comparison of planned vs. actual units and income per month
+- **Purpose**: Derived monthly/yearly reports without own model. Supports comparison between planned (from ContractMonthlyPlan) and actual (from Lessons) values.
 
 #### LessonStatusService (apps.lessons.status_service)
-- **Kein Model**: Service-Layer für automatische Status-Verwaltung von Lessons
-- **Methoden**:
-  - `update_status_for_lesson(lesson)`: Aktualisiert Status basierend auf Datum/Zeit
-    - Vergangene Lessons (end_datetime < jetzt) mit Status PLANNED oder leer → TAUGHT
-    - Zukünftige Lessons (start_datetime >= jetzt) ohne Status → PLANNED
-    - PAID oder CANCELLED werden NICHT überschrieben
-    - Speichert nur, wenn Lesson bereits Primary Key hat (sonst nur Status setzen)
-  - `bulk_update_past_lessons()`: Setzt alle vergangenen PLANNED Lessons auf TAUGHT
-- **Zweck**: Automatische Status-Setzung beim Anlegen/Aktualisieren von Lessons
+- **Not a Model**: Service layer for automatic status management of lessons
+- **Methods**:
+  - `update_status_for_lesson(lesson)`: Updates status based on date/time
+    - Past lessons (end_datetime < now) with status PLANNED or empty → TAUGHT
+    - Future lessons (start_datetime >= now) without status → PLANNED
+    - PAID or CANCELLED are NOT overwritten
+    - Saves only if lesson already has Primary Key (otherwise only sets status)
+  - `bulk_update_past_lessons()`: Sets all past PLANNED lessons to TAUGHT
+- **Purpose**: Automatic status setting when creating/updating lessons
 - **Integration**: 
-  - Wird in LessonCreateView und LessonUpdateView aufgerufen
-  - Wird in RecurringLessonService.generate_lessons() aufgerufen (vor und nach Speichern)
-- **Wichtig**: Status wird im normalen Lesson-Formular NICHT mehr manuell auswählbar - nur automatisch gesetzt
+  - Called in LessonCreateView and LessonUpdateView
+  - Called in RecurringLessonService.generate_lessons() (before and after saving)
+- **Important**: Status is NO LONGER manually selectable in the normal lesson form - only automatically set
 
 #### CalendarService (apps.lessons.calendar_service)
-- **Kein Model**: Service-Layer für Monatskalender-Ansicht
-- **Methoden**:
-  - `get_calendar_data(year, month)`: Lädt Lessons und Blockzeiten für einen Monat und gruppiert sie nach Tagen
-- **Zweck**: Bereitstellung von Daten für die Monatskalender-Ansicht. Gruppiert Lessons und Blockzeiten nach Datum und prüft Konflikte.
+- **Not a Model**: Service layer for monthly calendar view
+- **Methods**:
+  - `get_calendar_data(year, month)`: Loads lessons and blocked times for a month and groups them by days
+- **Purpose**: Provision of data for the monthly calendar view. Groups lessons and blocked times by date and checks conflicts.
 
 #### WeekService (apps.lessons.week_service)
-- **Kein Model**: Service-Layer für Wochenansicht
-- **Methoden**:
-  - `get_week_data(year, month, day)`: Lädt Lessons und Blockzeiten für eine Woche (Montag bis Sonntag) und gruppiert sie nach Tagen
-- **Zweck**: Bereitstellung von Daten für die interaktive Wochenansicht. Bestimmt automatisch den Wochenbereich (Montag bis Sonntag) basierend auf einem beliebigen Tag.
-- **Wichtig**: 
-  - **Wochenansicht ist die zentrale UI für Terminplanung** - Lessons und Blockzeiten werden primär über die Wochenansicht geplant und bearbeitet.
-  - **Drag-to-Create**: Nutzer können Zeitbereiche im Wochenraster ziehen, um neue Termine anzulegen.
-  - **Zeitachse**: 08:00-22:00 Uhr mit stündlichen Zeilen.
-  - **Termin-Anzeige**: Lessons (blau), Blockzeiten (orange), Konflikte (roter Rahmen/Icon).
-  - **Klick auf Termin**: Öffnet Bearbeitungsformular.
+- **Not a Model**: Service layer for week view
+- **Methods**:
+  - `get_week_data(year, month, day)`: Loads lessons and blocked times for a week (Monday to Sunday) and groups them by days
+- **Purpose**: Provision of data for the interactive week view. Automatically determines the week range (Monday to Sunday) based on any given day.
+- **Important**: 
+  - **Week view is the central UI for appointment planning** - Lessons and blocked times are primarily planned and edited via the week view.
+  - **Drag-to-Create**: Users can drag time ranges in the weekly grid to create new appointments.
+  - **Time axis**: 08:00-22:00 with hourly rows.
+  - **Appointment display**: Lessons (blue), blocked times (orange), conflicts (red border/icon).
+  - **Click on appointment**: Opens edit form.
 
-### Architekturprinzipien
+### Architecture Principles
 
-#### Modultrennung
-- Code-Dateien sollen kurz und fokussiert sein (max. 300–400 Zeilen)
-- Bei größeren Dateien: Aufteilung in services.py, selectors.py, validators.py
-- Keine "God-Modules" mit zu vielen Verantwortlichkeiten
+#### Module Separation
+- Code files should be short and focused (max. 300–400 lines)
+- For larger files: Split into services.py, selectors.py, validators.py
+- No "God-Modules" with too many responsibilities
 
 #### Naming Conventions
-- **snake_case** für Python-Funktionen und -Variablen
-- **PascalCase** für Klassen
-- Sprechende Namen, keine Abkürzungen
-- Django-Apps nach Domain benennen (students, contracts, lessons, billing, core)
+- **snake_case** for Python functions and variables
+- **PascalCase** for classes
+- Descriptive names, no abbreviations
+- Django apps named by domain (students, contracts, lessons, billing, core)
 
-#### Logging und Error Handling
-- Gezielt und sparsam loggen
-- Keine stummen Fehler
-- Fehler möglichst früh validieren (Form-/Serializer-Validierung)
+#### Logging and Error Handling
+- Log targeted and sparingly
+- No silent errors
+- Validate errors as early as possible (form/serializer validation)
 
 ## Design Decisions & Architecture Rationale
 
@@ -558,174 +558,174 @@ The app structure (`apps.core`, `apps.students`, `apps.contracts`, `apps.lessons
 
 This structure makes it easy to find related code: if you're working on scheduling, you know to look in `apps.lessons`; if you're working on billing, you look in `apps.billing`.
 
-## Datenfluss
+## Data Flow
 
-### Planung einer Unterrichtsstunde
-1. **Kalender als zentrale UI**: Benutzer öffnet Kalenderansicht
-2. **Anlegen**: Klick auf Tag im Kalender → Formular mit voreingestelltem Datum
-   - Benutzer wählt Schüler/Vertrag, Zeit, Fahrtzeiten
-   - Blockzeiten können ebenfalls über Klick auf Tag erstellt werden (🚫-Symbol)
-3. **Bearbeiten**: Klick auf bestehende Lesson oder Blockzeit → Bearbeitungsformular
-4. **Serientermine**: Button "Serientermin anlegen" → RecurringLesson-Formular
-   - Nach Speichern: Automatische Generierung aller Lessons im Zeitraum
-5. System prüft Konflikte (Blockzeiten, andere Lessons) inkl. Fahrtzeiten
-6. **Konfliktprüfung**: 
-   - Berechnung des Gesamtzeitblocks: `start = start_time - travel_before`, `ende = start_time + duration + travel_after`
-   - Prüfung auf Überlappung mit anderen Lessons (inkl. deren Fahrtzeiten)
-   - Prüfung auf Überlappung mit Blockzeiten
-   - Konflikte werden als Warnung angezeigt
-7. Lesson wird erstellt (ohne manuelle Status-Auswahl im Formular)
-8. **Automatische Status-Setzung**: `LessonStatusService.update_status_for_lesson()`
-   - Vergangene Lessons → Status TAUGHT
-   - Zukünftige Lessons → Status PLANNED
-   - PAID/CANCELLED werden nicht überschrieben
-   - Wird sowohl bei manueller Erstellung als auch bei Recurring Lessons angewendet
-9. Bei Abschluss: Status auf "unterrichtet" → "ausgezahlt" (über Abrechnungssystem)
-10. **Kalender zeigt alle Lessons**: Vergangene und zukünftige Lessons werden im Kalender angezeigt
-    - Vergangene Lessons sind optisch ausgegraut, aber anklickbar
-    - Alle Lessons sind bearbeitbar
-11. **Kalender-Datum-Synchronisation**: 
-    - CalendarView verwendet ausschließlich year/month aus URL-Parametern (kein 'heute' für Monatsberechnung)
-    - Zentrale Variable `current_month_date = date(year, month, 1)` für alle Berechnungen
-    - Monatsname (month_label) wird aus current_month_date abgeleitet
-    - Default-Datum im Create-Formular entspricht dem angeklickten Tag (date Parameter) oder year/month
-    - Redirect nach Create/Update führt zurück zum korrekten Monat (year/month aus Request)
+### Planning a Lesson
+1. **Calendar as central UI**: User opens calendar view
+2. **Create**: Click on day in calendar → Form with pre-filled date
+   - User selects student/contract, time, travel times
+   - Blocked times can also be created via click on day (🚫 symbol)
+3. **Edit**: Click on existing lesson or blocked time → Edit form
+4. **Recurring lessons**: Button "Create recurring lesson" → RecurringLesson form
+   - After saving: Automatic generation of all lessons in the period
+5. System checks conflicts (blocked times, other lessons) including travel times
+6. **Conflict detection**: 
+   - Calculation of total time block: `start = start_time - travel_before`, `end = start_time + duration + travel_after`
+   - Check for overlap with other lessons (including their travel times)
+   - Check for overlap with blocked times
+   - Conflicts are displayed as warnings
+7. Lesson is created (without manual status selection in form)
+8. **Automatic status setting**: `LessonStatusService.update_status_for_lesson()`
+   - Past lessons → Status TAUGHT
+   - Future lessons → Status PLANNED
+   - PAID/CANCELLED are not overwritten
+   - Applied both for manual creation and Recurring Lessons
+9. On completion: Status changes to "taught" → "paid" (via billing system)
+10. **Calendar shows all lessons**: Past and future lessons are displayed in the calendar
+    - Past lessons are visually grayed out but clickable
+    - All lessons are editable
+11. **Calendar date synchronization**: 
+    - CalendarView uses exclusively year/month from URL parameters (no 'today' for month calculation)
+    - Central variable `current_month_date = date(year, month, 1)` for all calculations
+    - Month name (month_label) is derived from current_month_date
+    - Default date in Create form corresponds to clicked day (date parameter) or year/month
+    - Redirect after Create/Update leads back to correct month (year/month from request)
 
-### Abrechnungs-Workflow
-1. **Zeitraum auswählen**: Benutzer wählt Zeitraum (period_start, period_end) und optional Vertrag
-2. **Automatische Auswahl**: System wählt automatisch alle Lessons mit Status TAUGHT im Zeitraum
-   - Lessons mit Status PLANNED oder PAID werden nicht berücksichtigt
-   - Lessons, die bereits in einer Rechnung sind, werden ausgeschlossen
-   - Eine Lesson kann nur in einer Rechnung vorkommen (1:1-Beziehung über invoice_items)
-3. **Vorschau**: System zeigt Vorschau der verfügbaren Lessons (optional)
-4. **Rechnung erstellen**: `InvoiceService.create_invoice_from_lessons()`
-   - Erstellt Invoice mit period_start, period_end, payer_info
-   - Erstellt InvoiceItems für alle verfügbaren TAUGHT Lessons im Zeitraum (mit Kopie der Daten)
-   - **Berechnung**: `units = lesson_duration_minutes / contract_unit_duration_minutes`, `amount = units * hourly_rate`
-   - Berechnet total_amount als Summe aller InvoiceItems
-   - Markiert alle Lessons automatisch als "bezahlt" (Status TAUGHT → PAID)
-5. **Rechnungsdokument**: Optional: Generierung eines HTML/PDF-Dokuments
-6. **Rechnung löschen**: `Invoice.delete()` (überschrieben) oder `InvoiceService.delete_invoice()`
-   - Die `delete()`-Methode des Invoice Models ist überschrieben, um automatisch alle Lessons mit Status PAID auf TAUGHT zurückzusetzen
-   - Funktioniert sowohl bei direktem `invoice.delete()` als auch über `InvoiceService.delete_invoice()`
-   - Löscht Invoice und alle InvoiceItems (CASCADE)
-   - Setzt alle zugehörigen Lessons zurück auf TAUGHT (PAID → TAUGHT)
-7. **Bulk-Reset bezahlter Lessons**: Management Command `reset_paid_lessons`
-   - Setzt alle Lessons mit Status PAID auf TAUGHT zurück
-   - Option `--delete-invoices`: Löscht auch die zugehörigen Rechnungen
-   - Option `--dry-run`: Zeigt nur an, was geändert würde
-   - Verwendung: `python manage.py reset_paid_lessons [--delete-invoices] [--dry-run]`
-8. **Finanzansicht**: Unterscheidung zwischen abgerechneten und nicht abgerechneten Lessons
+### Billing Workflow
+1. **Select period**: User selects period (period_start, period_end) and optionally contract
+2. **Automatic selection**: System automatically selects all lessons with status TAUGHT in the period
+   - Lessons with status PLANNED or PAID are not considered
+   - Lessons that are already in an invoice are excluded
+   - A lesson can only appear in one invoice (1:1 relationship via invoice_items)
+3. **Preview**: System shows preview of available lessons (optional)
+4. **Create invoice**: `InvoiceService.create_invoice_from_lessons()`
+   - Creates Invoice with period_start, period_end, payer_info
+   - Creates InvoiceItems for all available TAUGHT lessons in the period (with copy of data)
+   - **Calculation**: `units = lesson_duration_minutes / contract_unit_duration_minutes`, `amount = units * hourly_rate`
+   - Calculates total_amount as sum of all InvoiceItems
+   - Automatically marks all lessons as "paid" (Status TAUGHT → PAID)
+5. **Invoice document**: Optional: Generation of HTML/PDF document
+6. **Delete invoice**: `Invoice.delete()` (overridden) or `InvoiceService.delete_invoice()`
+   - The `delete()` method of the Invoice model is overridden to automatically reset all lessons with status PAID to TAUGHT
+   - Works both with direct `invoice.delete()` and via `InvoiceService.delete_invoice()`
+   - Deletes Invoice and all InvoiceItems (CASCADE)
+   - Resets all associated lessons to TAUGHT (PAID → TAUGHT)
+7. **Bulk reset of paid lessons**: Management command `reset_paid_lessons`
+   - Resets all lessons with status PAID to TAUGHT
+   - Option `--delete-invoices`: Also deletes associated invoices
+   - Option `--dry-run`: Only shows what would be changed
+   - Usage: `python manage.py reset_paid_lessons [--delete-invoices] [--dry-run]`
+8. **Financial view**: Distinction between billed and unbilled lessons
 
-### Konfliktlogik (Phase 3)
-- **LessonConflictService**: Zentrale Service-Klasse für Konfliktprüfung
-- **Zeitblock-Berechnung**: Berücksichtigt Fahrtzeiten vor und nach der Stunde
-- **Konflikttypen**:
-  - `lesson`: Überschneidung mit anderen Unterrichtsstunden
-  - `blocked_time`: Überschneidung mit Blockzeiten
-  - `quota`: Vertragskontingent überschritten (siehe unten)
-- **Konfliktmarkierung**: Lessons haben `has_conflicts` Property und `get_conflicts()` Methode
-- **UI-Darstellung**: Konflikte werden in Listen und Detailansichten als Warnung angezeigt
+### Conflict Logic (Phase 3)
+- **LessonConflictService**: Central service class for conflict detection
+- **Time block calculation**: Considers travel times before and after the lesson
+- **Conflict types**:
+  - `lesson`: Overlap with other lessons
+  - `blocked_time`: Overlap with blocked times
+  - `quota`: Contract quota exceeded (see below)
+- **Conflict marking**: Lessons have `has_conflicts` property and `get_conflicts()` method
+- **UI display**: Conflicts are displayed as warnings in lists and detail views
 
-### Vertragskontingent & Quoten-Konflikte
-- **ContractQuotaService**: Service für Prüfung von Vertragskontingenten basierend auf ContractMonthlyPlan
-- **Regel**: Man darf im Verlauf eines Vertragszeitraums nicht "vorarbeiten"
-- **Prüfung**: Für jeden Monat M gilt:
-  - Summe der tatsächlich gehalten/geplanten Lessons von Vertragsbeginn bis Ende Monat M
-  - darf die Summe der geplanten Einheiten (ContractMonthlyPlan) von Vertragsbeginn bis Monat M NICHT überschreiten
-- **Nachholen erlaubt**: Wenn in früheren Monaten weniger als geplant stattgefunden hat, darf nachgeholt werden
-- **Status-Berücksichtigung**: Nur Lessons mit Status PLANNED, TAUGHT oder PAID werden gezählt (CANCELLED nicht)
-- **Integration**: Quota-Konflikte werden automatisch in `LessonConflictService.check_conflicts()` geprüft und als Konflikttyp `quota` zurückgegeben
-- **UI-Anzeige**: Quota-Konflikte werden in der Lesson-Detailansicht mit speziellem Warnhinweis angezeigt
+### Contract Quota & Quota Conflicts
+- **ContractQuotaService**: Service for checking contract quotas based on ContractMonthlyPlan
+- **Rule**: One may not "work ahead" during a contract period
+- **Check**: For each month M:
+  - Sum of actually held/planned lessons from contract start to end of month M
+  - must NOT exceed the sum of planned units (ContractMonthlyPlan) from contract start to month M
+- **Catch-up allowed**: If fewer than planned occurred in earlier months, catch-up is allowed
+- **Status consideration**: Only lessons with status PLANNED, TAUGHT or PAID are counted (CANCELLED not)
+- **Integration**: Quota conflicts are automatically checked in `LessonConflictService.check_conflicts()` and returned as conflict type `quota`
+- **UI display**: Quota conflicts are displayed in the lesson detail view with special warning
 
-### Einnahmenberechnung (Phase 3)
-1. System sammelt alle Lessons für einen Monat/Jahr (filterbar nach Status)
-2. **IncomeSelector**: Service-Layer für Einnahmenberechnungen
-   - `get_monthly_income()`: Monatliche Einnahmen nach Status
-   - `get_yearly_income()`: Jährliche Einnahmen mit Monatsaufschlüsselung
-   - `get_income_by_status()`: Gruppierung nach Status (geplant, unterrichtet, ausgezahlt)
-3. Berechnung basierend auf Vertragshonorar × Dauer (in Stunden)
-4. Aggregation nach Status und Monat
-5. Darstellung in IncomeOverview-View mit Filterung nach Jahr/Monat
+### Income Calculation (Phase 3)
+1. System collects all lessons for a month/year (filterable by status)
+2. **IncomeSelector**: Service layer for income calculations
+   - `get_monthly_income()`: Monthly income by status
+   - `get_yearly_income()`: Yearly income with monthly breakdown
+   - `get_income_by_status()`: Grouping by status (planned, taught, paid)
+3. Calculation based on contract fee × duration (in hours)
+4. Aggregation by status and month
+5. Display in IncomeOverview view with filtering by year/month
 
-### KI-Unterrichtsplan-Generierung (Premium) - Phase 4
-1. Premium-User wählt eine Lesson aus
-2. **Premium-Check**: System prüft, ob User Premium-Zugang hat (`apps.core.utils.is_premium_user()`)
-3. **Kontext-Sammlung**: System sammelt relevante Informationen:
-   - Schüler: Name, Klasse, Fach, Notizen
-   - Lesson: Datum, Dauer, Status, Notizen
-   - Vorherige Lessons: Letzte 5 Lessons für Kontext
-4. **Prompt-Bau**: `apps.ai.prompts.build_lesson_plan_prompt()` erstellt strukturierten Prompt
-5. **LLM-Aufruf**: `apps.ai.client.LLMClient` kommuniziert mit LLM-API (OpenAI-kompatibel)
-6. **Fehlerbehandlung**: Timeouts, Netzwerk- und API-Fehler werden sauber abgefangen
-7. **Speicherung**: Ergebnis wird als `LessonPlan` gespeichert mit:
-   - Verknüpfung zu Lesson und Student
-   - Generiertem Inhalt (Markdown-Text)
-   - Metadaten (Modell-Name, Erstellungszeitpunkt)
-8. **UI-Anzeige**: LessonPlan wird in Lesson-Detail-Ansicht angezeigt
-9. **Human-in-the-Loop**: Nachhilfelehrer prüft und passt den Plan an
+### AI Lesson Plan Generation (Premium) - Phase 4
+1. Premium user selects a lesson
+2. **Premium check**: System checks if user has premium access (`apps.core.utils.is_premium_user()`)
+3. **Context collection**: System collects relevant information:
+   - Student: Name, grade, subject, notes
+   - Lesson: Date, duration, status, notes
+   - Previous lessons: Last 5 lessons for context
+4. **Prompt building**: `apps.ai.prompts.build_lesson_plan_prompt()` creates structured prompt
+5. **LLM call**: `apps.ai.client.LLMClient` communicates with LLM API (OpenAI-compatible)
+6. **Error handling**: Timeouts, network and API errors are handled cleanly
+7. **Storage**: Result is stored as `LessonPlan` with:
+   - Link to Lesson and Student
+   - Generated content (Markdown text)
+   - Metadata (model name, creation timestamp)
+8. **UI display**: LessonPlan is displayed in lesson detail view
+9. **Human-in-the-Loop**: Tutor reviews and adjusts the plan
 
-### AI-Architektur (Phase 4)
-- **apps.ai.client.LLMClient**: Low-Level-API-Kommunikation
-  - OpenAI-kompatibles Format
-  - Timeout-Handling
-  - Fehlerbehandlung (LLMClientError)
-- **apps.ai.prompts**: Prompt-Bau
-  - Strukturierte System- und User-Prompts
-  - Kontext-Aggregation
-- **apps.ai.services.LessonPlanService**: High-Level-Service
-  - Orchestriert Kontext-Sammlung, Prompt-Bau und LLM-Aufruf
-  - Erstellt/aktualisiert LessonPlan-Model
-- **Konfiguration**: LLM-Settings über Umgebungsvariablen (LLM_API_KEY, LLM_API_BASE_URL, LLM_MODEL_NAME)
+### AI Architecture (Phase 4)
+- **apps.ai.client.LLMClient**: Low-level API communication
+  - OpenAI-compatible format
+  - Timeout handling
+  - Error handling (LLMClientError)
+- **apps.ai.prompts**: Prompt building
+  - Structured system and user prompts
+  - Context aggregation
+- **apps.ai.services.LessonPlanService**: High-level service
+  - Orchestrates context collection, prompt building and LLM call
+  - Creates/updates LessonPlan model
+- **Configuration**: LLM settings via environment variables (LLM_API_KEY, LLM_API_BASE_URL, LLM_MODEL_NAME)
 
-## Zeitzonen-Handling
+## Timezone Handling
 
-- **Zeitzone**: Europe/Berlin (gemäß Master Prompt)
-- Django ist konfiguriert mit `TIME_ZONE = 'Europe/Berlin'` und `USE_TZ = True`
-- Alle Zeitstempel, Datumsangaben und Log-Einträge verwenden die Zeitzone Europe/Berlin
-- Models mit DateTimeField nutzen Django's timezone-aware Datetime-Felder
-- Admin-Interfaces und Tests berücksichtigen die Zeitzone korrekt
+- **Timezone**: Europe/Berlin (according to Master Prompt)
+- Django is configured with `TIME_ZONE = 'Europe/Berlin'` and `USE_TZ = True`
+- All timestamps, dates and log entries use the timezone Europe/Berlin
+- Models with DateTimeField use Django's timezone-aware datetime fields
+- Admin interfaces and tests correctly consider the timezone
 
-## Sicherheit
+## Security
 
-- Django-Standard-Sicherheitsfeatures aktiviert
-- CSRF-Schutz
-- Authentifizierung über Django-Auth-System
-- Validierung aller Eingaben
-- Keine direkten SQL-Queries (ORM verwenden)
+- Django standard security features enabled
+- CSRF protection
+- Authentication via Django auth system
+- Validation of all inputs
+- No direct SQL queries (use ORM)
 
-## Erweiterbarkeit
+## Extensibility
 
-Die Architektur ist darauf ausgelegt, einfach erweitert zu werden:
+The architecture is designed to be easily extended:
 
-- Neue Apps können in `backend/apps/` hinzugefügt werden
-- Services können in separaten Modulen organisiert werden
-- API-Endpoints können schrittweise hinzugefügt werden
-- Frontend kann später integriert werden (Django-Templates, HTMX, React, etc.)
+- New apps can be added in `backend/apps/`
+- Services can be organized in separate modules
+- API endpoints can be added incrementally
+- Frontend can be integrated later (Django templates, HTMX, React, etc.)
 
-## Datenbank-Schema
+## Database Schema
 
-### Beziehungen
+### Relationships
 - **Student** ← (1:N) → **Contract**
 - **Contract** ← (1:N) → **Lesson**
 - **Student** ← (1:N) → **LessonPlan**
 - **Lesson** ← (1:N) → **LessonPlan** (optional)
 - **User** ← (1:1) → **UserProfile**
 
-### Indizes
-- Lesson: Index auf (date, start_time) und status für performante Abfragen
-- BlockedTime: Index auf (start_datetime, end_datetime) für Konfliktprüfung
+### Indexes
+- Lesson: Index on (date, start_time) and status for performant queries
+- BlockedTime: Index on (start_datetime, end_datetime) for conflict detection
 
-### Entfernte Features
-- **Location-App**: Die gesamte Location-App wurde entfernt. Unterrichtsort-Felder wurden aus allen Modellen (Lesson, RecurringLesson, Student) entfernt.
-- **Blockzeiten-Listenansicht**: Blockzeiten werden ausschließlich über den Kalender verwaltet. Es gibt keine separate Listenansicht mehr.
+### Removed Features
+- **Location App**: The entire Location app was removed. Lesson location fields were removed from all models (Lesson, RecurringLesson, Student).
+- **Blocked times list view**: Blocked times are managed exclusively via the calendar. There is no separate list view anymore.
 
 ## Status
 
-**Phase 2**: Domain-Models implementiert, Migrations erstellt und ausgeführt, Tests geschrieben.
+**Phase 2**: Domain models implemented, migrations created and executed, tests written.
 
-- Alle 7 Domain-Models sind implementiert
-- Migrations erfolgreich ausgeführt
-- 14 Unit-Tests laufen erfolgreich
-- IncomeSelector als Service-Layer implementiert
+- All 7 domain models are implemented
+- Migrations successfully executed
+- 14 unit tests run successfully
+- IncomeSelector implemented as service layer
 
