@@ -66,12 +66,17 @@
                                         cursor: pointer;
                                         z-index: 10;
                                         overflow: hidden;
+                                        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+                                        transition: all 0.2s;
                                         {% if lesson.id in conflicts_by_lesson %}border: 2px solid #dc3545;{% endif %}"
+                                 onmouseover="showLessonPreview(this, event); this.style.background='#1976d2'; this.style.transform='scale(1.02)'; this.style.zIndex='20';"
+                                 onmouseout="hideLessonPreview(); this.style.background='#2196f3'; this.style.transform='scale(1)'; this.style.zIndex='10';"
                                  onclick="event.stopPropagation(); window.location.href='{% url 'lessons:update' lesson.pk %}?year={{ weekday.date.year }}&month={{ weekday.date.month }}&day={{ weekday.date.day }}'"
                                  title="{{ lesson.contract.student.full_name }} - {{ lesson.start_time|time:'H:i' }} ({{ lesson.duration_minutes }} Min.)">
-                                <strong>{{ lesson.contract.student.first_name }}</strong><br>
-                                <small>{{ lesson.start_time|time:'H:i' }} - {{ lesson.duration_minutes }} Min.</small>
-                                {% if lesson.id in conflicts_by_lesson %}<span style="color: #ffeb3b;">⚠️</span>{% endif %}
+                                <span style="font-size: 1.1em; margin-right: 4px;">📚</span> <strong>{{ lesson.contract.student.first_name }}</strong>
+                                {% if lesson.id in conflicts_by_lesson %}<span style="color: #ffeb3b; font-size: 1.1em; margin-left: 4px;" title="{% trans 'Conflict detected' %}">⚠️</span>{% endif %}<br>
+                                <small style="opacity: 0.9;">{{ lesson.start_time|time:'H:i' }} - {{ lesson.duration_minutes }} {% trans "Min." %}</small>
+                                {% if lesson.status == 'paid' %}<small style="display: block; opacity: 0.8;">✓ {% trans "Paid" %}</small>{% endif %}
                             </div>
                             {% endif %}
                         {% endfor %}
@@ -96,10 +101,14 @@
                                         border-radius: 3px;
                                         cursor: pointer;
                                         z-index: 10;
-                                        overflow: hidden;"
+                                        overflow: hidden;
+                                        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+                                        transition: all 0.2s;"
+                                 onmouseover="showBlockedTimePreview(this, event); this.style.background='#e68900'; this.style.transform='scale(1.02)'; this.style.zIndex='20';"
+                                 onmouseout="hideBlockedTimePreview(); this.style.background='#ff9800'; this.style.transform='scale(1)'; this.style.zIndex='10';"
                                  onclick="event.stopPropagation(); window.location.href='{% url 'blocked_times:update' blocked_time.pk %}?year={{ weekday.date.year }}&month={{ weekday.date.month }}&day={{ weekday.date.day }}'"
                                  title="{{ blocked_time.title }} - {{ blocked_time.start_datetime|time:'H:i' }} bis {{ blocked_time.end_datetime|time:'H:i' }}">
-                                <strong>🚫 {{ blocked_time.title }}</strong><br>
+                                <span style="font-size: 1.1em;">🚫</span> <strong>{{ blocked_time.title }}</strong><br>
                                 <small>{{ blocked_time.start_datetime|time:'H:i' }} - {{ blocked_time.end_datetime|time:'H:i' }}</small>
                             </div>
                             {% endwith %}
@@ -278,5 +287,87 @@ function cancelCreate() {
 
 // Schließe Dialog bei Klick auf Overlay
 document.getElementById('dialog-overlay').addEventListener('click', cancelCreate);
+
+// Hover-Preview für Lessons
+let previewTooltip = null;
+
+function showLessonPreview(element, event) {
+    if (previewTooltip) return;
+    
+    const lessonId = element.dataset.lessonId;
+    const studentName = element.querySelector('strong').textContent.trim();
+    const timeInfo = element.querySelector('small').textContent.trim();
+    const hasConflict = element.classList.contains('has-conflict');
+    
+    previewTooltip = document.createElement('div');
+    previewTooltip.style.cssText = `
+        position: absolute;
+        background: #2c3e50;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        z-index: 1000;
+        pointer-events: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        max-width: 250px;
+        white-space: nowrap;
+    `;
+    previewTooltip.innerHTML = `
+        <strong>${studentName}</strong><br>
+        <small>${timeInfo}</small>
+        ${hasConflict ? '<br><small style="color: #ffeb3b;">⚠️ {% trans "Conflict" %}</small>' : ''}
+    `;
+    
+    document.body.appendChild(previewTooltip);
+    const rect = element.getBoundingClientRect();
+    previewTooltip.style.left = (rect.left + rect.width / 2 - previewTooltip.offsetWidth / 2) + 'px';
+    previewTooltip.style.top = (rect.top - previewTooltip.offsetHeight - 8) + 'px';
+}
+
+function hideLessonPreview() {
+    if (previewTooltip) {
+        previewTooltip.remove();
+        previewTooltip = null;
+    }
+}
+
+function showBlockedTimePreview(element, event) {
+    if (previewTooltip) return;
+    
+    const title = element.querySelector('strong').textContent.trim();
+    const timeInfo = element.querySelector('small').textContent.trim();
+    
+    previewTooltip = document.createElement('div');
+    previewTooltip.style.cssText = `
+        position: absolute;
+        background: #2c3e50;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        z-index: 1000;
+        pointer-events: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        max-width: 250px;
+        white-space: nowrap;
+    `;
+    previewTooltip.innerHTML = `
+        <strong>${title}</strong><br>
+        <small>${timeInfo}</small>
+    `;
+    
+    document.body.appendChild(previewTooltip);
+    const rect = element.getBoundingClientRect();
+    previewTooltip.style.left = (rect.left + rect.width / 2 - previewTooltip.offsetWidth / 2) + 'px';
+    previewTooltip.style.top = (rect.top - previewTooltip.offsetHeight - 8) + 'px';
+}
+
+function hideBlockedTimePreview() {
+    if (previewTooltip) {
+        previewTooltip.remove();
+        previewTooltip = null;
+    }
+}
 </script>
 {% endblock %}

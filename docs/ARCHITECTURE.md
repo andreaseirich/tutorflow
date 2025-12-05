@@ -4,6 +4,22 @@
 
 TutorFlow is a Django-based web application structured according to modern best practices. The architecture follows the principle of clear separation of responsibilities and modularity.
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Internationalization (i18n)](#internationalization-i18n)
+- [Technische Architektur](#technische-architektur)
+- [Diagrams](#diagrams)
+- [Domain-Modell (Implementiert)](#domain-modell-implementiert)
+- [Architekturprinzipien](#architekturprinzipien)
+- [Design Decisions & Architecture Rationale](#design-decisions--architecture-rationale)
+- [Datenfluss](#datenfluss)
+- [Zeitzonen-Handling](#zeitzonen-handling)
+- [Sicherheit](#sicherheit)
+- [Erweiterbarkeit](#erweiterbarkeit)
+- [Datenbank-Schema](#datenbank-schema)
+- [Status](#status)
+
 ## Internationalization (i18n)
 
 TutorFlow is fully internationalized with English as the default language and German as a secondary language.
@@ -44,6 +60,326 @@ backend/
 │   └── core/           # Kernfunktionalität (User-Erweiterung, Income-Selector)
 ├── config/             # Zusätzliche Konfigurationsdateien
 └── manage.py           # Django-Management-Script
+```
+
+## Diagrams
+
+### Component Diagram (System Overview)
+
+```mermaid
+graph TB
+    subgraph "Frontend Layer"
+        UI[Web UI<br/>Django Templates]
+        WeekView[Week View<br/>Interactive Calendar]
+        CalendarView[Month View<br/>Calendar]
+    end
+    
+    subgraph "View Layer"
+        StudentViews[Student Views]
+        ContractViews[Contract Views]
+        LessonViews[Lesson Views]
+        BlockedTimeViews[BlockedTime Views]
+        BillingViews[Billing Views]
+        CoreViews[Core Views<br/>Dashboard, Income]
+    end
+    
+    subgraph "Service Layer"
+        LessonConflictService[LessonConflictService<br/>Conflict Detection]
+        ContractQuotaService[ContractQuotaService<br/>Quota Validation]
+        RecurringLessonService[RecurringLessonService<br/>Recurring Generation]
+        RecurringBlockedTimeService[RecurringBlockedTimeService<br/>Recurring Generation]
+        InvoiceService[InvoiceService<br/>Invoice Creation]
+        CalendarService[CalendarService<br/>Month Data]
+        WeekService[WeekService<br/>Week Data]
+        IncomeSelector[IncomeSelector<br/>Income Calculation]
+        LessonStatusService[LessonStatusService<br/>Status Management]
+    end
+    
+    subgraph "Model Layer"
+        Student[Student Model]
+        Contract[Contract Model]
+        ContractMonthlyPlan[ContractMonthlyPlan Model]
+        Lesson[Lesson Model]
+        RecurringLesson[RecurringLesson Model]
+        BlockedTime[BlockedTime Model]
+        RecurringBlockedTime[RecurringBlockedTime Model]
+        Invoice[Invoice Model]
+        InvoiceItem[InvoiceItem Model]
+        LessonPlan[LessonPlan Model]
+        UserProfile[UserProfile Model]
+    end
+    
+    subgraph "External"
+        Database[(Database<br/>SQLite/PostgreSQL)]
+        LLMAPI[LLM API<br/>OpenAI-compatible]
+    end
+    
+    UI --> WeekView
+    UI --> CalendarView
+    WeekView --> LessonViews
+    CalendarView --> LessonViews
+    LessonViews --> LessonConflictService
+    LessonViews --> ContractQuotaService
+    LessonViews --> RecurringLessonService
+    LessonViews --> CalendarService
+    LessonViews --> WeekService
+    LessonViews --> LessonStatusService
+    
+    StudentViews --> Student
+    ContractViews --> Contract
+    ContractViews --> ContractMonthlyPlan
+    LessonViews --> Lesson
+    LessonViews --> RecurringLesson
+    BlockedTimeViews --> BlockedTime
+    BlockedTimeViews --> RecurringBlockedTime
+    BlockedTimeViews --> RecurringBlockedTimeService
+    BillingViews --> InvoiceService
+    CoreViews --> IncomeSelector
+    
+    LessonConflictService --> Lesson
+    LessonConflictService --> BlockedTime
+    LessonConflictService --> ContractQuotaService
+    ContractQuotaService --> ContractMonthlyPlan
+    RecurringLessonService --> Lesson
+    RecurringBlockedTimeService --> BlockedTime
+    InvoiceService --> Invoice
+    InvoiceService --> InvoiceItem
+    InvoiceService --> Lesson
+    CalendarService --> Lesson
+    CalendarService --> BlockedTime
+    WeekService --> Lesson
+    WeekService --> BlockedTime
+    IncomeSelector --> Lesson
+    IncomeSelector --> ContractMonthlyPlan
+    LessonStatusService --> Lesson
+    
+    Student --> Database
+    Contract --> Database
+    ContractMonthlyPlan --> Database
+    Lesson --> Database
+    RecurringLesson --> Database
+    BlockedTime --> Database
+    RecurringBlockedTime --> Database
+    Invoice --> Database
+    InvoiceItem --> Database
+    LessonPlan --> Database
+    UserProfile --> Database
+    
+    LessonPlan --> LLMAPI
+```
+
+### Data Model Diagram
+
+```mermaid
+erDiagram
+    User ||--|| UserProfile : "has"
+    User ||--o{ LessonPlan : "creates"
+    
+    Student ||--o{ Contract : "has"
+    Student ||--o{ LessonPlan : "has"
+    
+    Contract ||--o{ Lesson : "has"
+    Contract ||--o{ ContractMonthlyPlan : "has"
+    Contract ||--o{ Invoice : "has"
+    Contract ||--o{ RecurringLesson : "has"
+    
+    Lesson ||--o| InvoiceItem : "billed_in"
+    Lesson ||--o{ LessonPlan : "linked_to"
+    
+    Invoice ||--o{ InvoiceItem : "contains"
+    
+    RecurringLesson }o--|| Contract : "belongs_to"
+    
+    BlockedTime }o--o| RecurringBlockedTime : "generated_from"
+    
+    User {
+        int id PK
+        string username
+        string email
+    }
+    
+    UserProfile {
+        int id PK
+        int user_id FK
+        boolean is_premium
+        datetime premium_since
+    }
+    
+    Student {
+        int id PK
+        string first_name
+        string last_name
+        string email
+        string phone
+    }
+    
+    Contract {
+        int id PK
+        int student_id FK
+        string institute
+        decimal hourly_rate
+        int unit_duration_minutes
+        date start_date
+        date end_date
+        boolean is_active
+    }
+    
+    ContractMonthlyPlan {
+        int id PK
+        int contract_id FK
+        int year
+        int month
+        int planned_units
+    }
+    
+    Lesson {
+        int id PK
+        int contract_id FK
+        date date
+        time start_time
+        int duration_minutes
+        string status
+        int travel_time_before_minutes
+        int travel_time_after_minutes
+    }
+    
+    RecurringLesson {
+        int id PK
+        int contract_id FK
+        date start_date
+        date end_date
+        time start_time
+        int duration_minutes
+        string recurrence_type
+        boolean monday
+        boolean tuesday
+        boolean wednesday
+        boolean thursday
+        boolean friday
+        boolean saturday
+        boolean sunday
+    }
+    
+    BlockedTime {
+        int id PK
+        string title
+        datetime start_datetime
+        datetime end_datetime
+        int recurring_blockedtime_id FK
+    }
+    
+    RecurringBlockedTime {
+        int id PK
+        string title
+        date start_date
+        date end_date
+        time start_time
+        time end_time
+        string recurrence_type
+        boolean monday
+        boolean tuesday
+        boolean wednesday
+        boolean thursday
+        boolean friday
+        boolean saturday
+        boolean sunday
+    }
+    
+    Invoice {
+        int id PK
+        int contract_id FK
+        string payer_name
+        text payer_address
+        date period_start
+        date period_end
+        string status
+        decimal total_amount
+    }
+    
+    InvoiceItem {
+        int id PK
+        int invoice_id FK
+        int lesson_id FK
+        string description
+        date date
+        int duration_minutes
+        decimal amount
+    }
+    
+    LessonPlan {
+        int id PK
+        int student_id FK
+        int lesson_id FK
+        string topic
+        string subject
+        text content
+        string grade_level
+        string llm_model
+    }
+```
+
+### Sequence Diagram for Billing
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant BillingView
+    participant InvoiceService
+    participant InvoiceModel
+    participant InvoiceItemModel
+    participant LessonModel
+    participant Database
+    
+    User->>BillingView: Create Invoice (period_start, period_end, contract)
+    BillingView->>InvoiceService: create_invoice_from_lessons()
+    
+    InvoiceService->>InvoiceService: get_billable_lessons()
+    InvoiceService->>Database: Query Lessons (status='taught', date in range, not in invoice)
+    Database-->>InvoiceService: List of Lessons
+    
+    InvoiceService->>InvoiceModel: create()
+    InvoiceModel->>Database: INSERT Invoice
+    Database-->>InvoiceModel: Invoice created
+    
+    loop For each Lesson
+        InvoiceService->>InvoiceService: Calculate units and amount
+        InvoiceService->>InvoiceItemModel: create()
+        InvoiceItemModel->>Database: INSERT InvoiceItem
+        Database-->>InvoiceItemModel: InvoiceItem created
+        
+        InvoiceService->>LessonModel: Update status to 'paid'
+        LessonModel->>Database: UPDATE Lesson (status='paid')
+        Database-->>LessonModel: Lesson updated
+    end
+    
+    InvoiceService->>InvoiceModel: Calculate total_amount
+    InvoiceService->>InvoiceModel: save()
+    InvoiceModel->>Database: UPDATE Invoice (total_amount)
+    Database-->>InvoiceModel: Invoice updated
+    
+    InvoiceService-->>BillingView: Invoice instance
+    BillingView-->>User: Display Invoice
+    
+    User->>BillingView: Delete Invoice
+    BillingView->>InvoiceModel: delete()
+    
+    InvoiceModel->>InvoiceItemModel: Get all items
+    InvoiceItemModel-->>InvoiceModel: List of InvoiceItems
+    
+    loop For each Lesson in InvoiceItems
+        InvoiceModel->>Database: Check if Lesson in other invoices
+        Database-->>InvoiceModel: No other invoices
+        
+        InvoiceModel->>LessonModel: Update status to 'taught'
+        LessonModel->>Database: UPDATE Lesson (status='taught')
+        Database-->>LessonModel: Lesson updated
+    end
+    
+    InvoiceModel->>Database: DELETE Invoice (CASCADE deletes InvoiceItems)
+    Database-->>InvoiceModel: Invoice deleted
+    
+    InvoiceModel-->>BillingView: Reset count
+    BillingView-->>User: Invoice deleted, Lessons reset
 ```
 
 ### Domain-Modell (Implementiert)

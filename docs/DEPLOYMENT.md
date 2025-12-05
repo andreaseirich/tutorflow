@@ -265,6 +265,85 @@ psql -U tutorflow_user tutorflow < backup_20231205.sql
 - [ ] Firewall configured (only necessary ports open)
 - [ ] Regular backups configured and tested
 
+## Deployment with Docker
+
+Docker provides the easiest way to deploy TutorFlow in production.
+
+### Prerequisites
+
+- Docker and Docker Compose installed
+- Domain name (optional, for SSL)
+
+### Quick Start
+
+1. **Clone repository:**
+   ```bash
+   git clone <repository-url>
+   cd tutorflow
+   ```
+
+2. **Create `.env` file:**
+   ```bash
+   SECRET_KEY=your-secret-key-here
+   DEBUG=False
+   ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+   DATABASE_URL=postgresql://tutorflow_user:tutorflow_password@db:5432/tutorflow
+   LLM_API_KEY=your-api-key  # Optional, for premium features
+   ```
+
+3. **Build and start services:**
+   ```bash
+   docker-compose up -d --build
+   ```
+
+4. **Run migrations:**
+   ```bash
+   docker-compose exec web python manage.py migrate
+   docker-compose exec web python manage.py compilemessages
+   docker-compose exec web python manage.py collectstatic --noinput
+   ```
+
+5. **Create superuser:**
+   ```bash
+   docker-compose exec web python manage.py createsuperuser
+   ```
+
+6. **Access application:**
+   - Application: `http://localhost:8000`
+   - Admin: `http://localhost:8000/admin/`
+
+### Docker Services
+
+- **web**: Django application (Gunicorn)
+- **db**: PostgreSQL database
+- **nginx**: Reverse proxy and static file server
+
+### Updating
+
+```bash
+git pull
+docker-compose up -d --build
+docker-compose exec web python manage.py migrate
+docker-compose exec web python manage.py collectstatic --noinput
+docker-compose restart web
+```
+
+### Backup Database
+
+```bash
+docker-compose exec db pg_dump -U tutorflow_user tutorflow > backup_$(date +%Y%m%d).sql
+```
+
+### Restore Database
+
+```bash
+docker-compose exec -T db psql -U tutorflow_user tutorflow < backup_20231205.sql
+```
+
+### SSL/HTTPS with Let's Encrypt
+
+For production with SSL, use a reverse proxy (e.g., Traefik) or configure nginx with Let's Encrypt certificates.
+
 ## Troubleshooting
 
 **Common issues:**
@@ -272,6 +351,7 @@ psql -U tutorflow_user tutorflow < backup_20231205.sql
 - **Database connection errors**: Verify database credentials and network connectivity
 - **Permission errors**: Check file permissions for static/media directories
 - **500 errors**: Check Django logs for detailed error messages
+- **Docker issues**: Check logs with `docker-compose logs web`
 
 ## Updates
 
@@ -284,4 +364,13 @@ When updating TutorFlow:
 5. Compile translations: `python manage.py compilemessages`
 6. Collect static files: `python manage.py collectstatic --noinput`
 7. Restart Gunicorn: `sudo systemctl restart tutorflow`
+
+**Or with Docker:**
+```bash
+git pull
+docker-compose up -d --build
+docker-compose exec web python manage.py migrate
+docker-compose exec web python manage.py collectstatic --noinput
+docker-compose restart web
+```
 

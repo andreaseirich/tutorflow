@@ -1,7 +1,7 @@
 """
 Views für Lesson-CRUD-Operationen und Planungsübersicht.
 """
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
@@ -26,7 +26,7 @@ class LessonListView(ListView):
     def get_queryset(self):
         """Erweitert Queryset um Konfliktinformationen."""
         queryset = super().get_queryset().select_related(
-            'contract', 'contract__student', 'location'
+            'contract', 'contract__student'
         )
         # Füge Konflikt-Info hinzu
         for lesson in queryset:
@@ -151,12 +151,16 @@ class LessonUpdateView(UpdateView):
     template_name = 'lessons/lesson_form.html'
 
     def get_success_url(self):
-        """Weiterleitung zurück zum Kalender mit Jahr/Monat."""
+        """Weiterleitung zurück zur Wochenansicht, falls day-Parameter vorhanden, sonst Kalender."""
         lesson = self.object
-        # Verwende year/month aus Request, falls vorhanden, sonst aus Lesson-Datum
+        # Verwende year/month/day aus Request, falls vorhanden, sonst aus Lesson-Datum
         year = int(self.request.GET.get('year', lesson.date.year))
         month = int(self.request.GET.get('month', lesson.date.month))
-        return reverse_lazy('lessons:calendar') + f'?year={year}&month={month}'
+        day = self.request.GET.get('day')
+        if day:
+            return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
+        else:
+            return reverse_lazy('lessons:calendar') + f'?year={year}&month={month}'
 
     def form_valid(self, form):
         lesson = form.save()
@@ -250,9 +254,15 @@ class LessonDeleteView(DeleteView):
     template_name = 'lessons/lesson_confirm_delete.html'
 
     def get_success_url(self):
-        """Weiterleitung zurück zum Kalender."""
+        """Weiterleitung zurück zur Wochenansicht, falls day-Parameter vorhanden, sonst Kalender."""
         lesson = self.object
-        return reverse_lazy('lessons:calendar') + f'?year={lesson.date.year}&month={lesson.date.month}'
+        day = self.request.GET.get('day')
+        if day:
+            year = int(self.request.GET.get('year', lesson.date.year))
+            month = int(self.request.GET.get('month', lesson.date.month))
+            return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
+        else:
+            return reverse_lazy('lessons:calendar') + f'?year={lesson.date.year}&month={lesson.date.month}'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Unterrichtsstunde erfolgreich gelöscht.')
