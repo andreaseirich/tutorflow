@@ -157,11 +157,12 @@ class LessonConflictService:
         
         # Prüfe Konflikte mit Blockzeiten
         # Verwende eine breitere Query, aber prüfe dann explizit auf Overlap
-        # Filter nach Datum, um Performance zu verbessern
+        # Filter nach Datum, um Performance zu verbessern (für mehrtägige Blockzeiten)
         lesson_date = lesson.date
+        # Find blocked times that could overlap: start before lesson ends, end after lesson starts
         blocked_times = BlockedTime.objects.filter(
-            start_datetime__date__lte=lesson_date,
-            end_datetime__date__gte=lesson_date
+            start_datetime__lt=end_datetime,
+            end_datetime__gt=start_datetime
         )
         
         for blocked_time in blocked_times:
