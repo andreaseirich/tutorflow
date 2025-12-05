@@ -191,9 +191,11 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
    - Berechnet total_amount als Summe aller InvoiceItems
    - Markiert alle Lessons automatisch als "bezahlt" (Status TAUGHT → PAID)
 5. **Rechnungsdokument**: Optional: Generierung eines HTML/PDF-Dokuments
-6. **Rechnung löschen**: `InvoiceService.delete_invoice()`
+6. **Rechnung löschen**: `Invoice.delete()` (überschrieben) oder `InvoiceService.delete_invoice()`
+   - Die `delete()`-Methode des Invoice Models ist überschrieben, um automatisch alle Lessons mit Status PAID auf TAUGHT zurückzusetzen
+   - Funktioniert sowohl bei direktem `invoice.delete()` als auch über `InvoiceService.delete_invoice()`
    - Löscht Invoice und alle InvoiceItems (CASCADE)
-   - Setzt Lessons zurück auf TAUGHT (PAID → TAUGHT), da eine Lesson nur in einer Rechnung sein kann
+   - Setzt alle zugehörigen Lessons zurück auf TAUGHT (PAID → TAUGHT)
 7. **Bulk-Reset bezahlter Lessons**: Management Command `reset_paid_lessons`
    - Setzt alle Lessons mit Status PAID auf TAUGHT zurück
    - Option `--delete-invoices`: Löscht auch die zugehörigen Rechnungen

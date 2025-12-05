@@ -5,6 +5,21 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.8] - 2025-12-04
+
+### Behoben
+- **Status-Rückstellung beim Löschen von Rechnungen**:
+  - `Invoice.delete()` Methode überschrieben, um automatisch alle Lessons mit Status PAID auf TAUGHT zurückzusetzen
+  - Funktioniert sowohl bei direktem `invoice.delete()` als auch über `InvoiceService.delete_invoice()`
+  - Vereinfachte Logik: Da eine Lesson nur in einer Rechnung vorkommen kann, ist keine Prüfung auf andere Rechnungen nötig
+  - `InvoiceService.delete_invoice()` vereinfacht, da Logik jetzt im Model ist
+
+### Tests
+- 5 neue Tests für Status-Rückstellung beim Löschen
+- Tests für: einzelne Lesson, mehrere Lessons, direkter delete()-Aufruf, nur PAID Lessons werden zurückgesetzt
+
+---
+
 ## [0.8.7] - 2025-12-04
 
 ### Hinzugefügt
