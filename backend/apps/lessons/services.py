@@ -3,6 +3,7 @@ Service-Layer für Lesson-Planungslogik und Konfliktprüfung.
 """
 from datetime import datetime, date, time, timedelta
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.db.models import Q
 from apps.lessons.models import Lesson
 from apps.blocked_times.models import BlockedTime

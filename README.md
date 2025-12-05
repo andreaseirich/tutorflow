@@ -75,11 +75,38 @@ python manage.py seed_demo_data
 
 ## Screenshots / Demo
 
-> **TODO**: Add screenshots of:
-> - Dashboard with today's lessons and conflicts
-> - Interactive week view with drag-to-create functionality
-> - Income overview showing planned vs. actual comparisons
-> - Invoice generation and preview
+### Screenshots
+
+![Dashboard](docs/screenshots/dashboard.png)
+*Dashboard showing today's lessons, upcoming appointments, and conflicts*
+
+![Weekly Calendar](docs/screenshots/weekly_calendar.png)
+*Interactive week view with drag-to-create functionality for lessons and blocked times*
+
+![Invoice Overview](docs/screenshots/invoice_overview.png)
+*Invoice list and detail view with automatic generation from taught lessons*
+
+### Full Demo GIF
+
+> **TODO**: Add animated GIF showing complete workflow:
+> - Creating a student and contract
+> - Scheduling lessons via drag-to-create in week view
+> - Detecting and resolving conflicts
+> - Generating invoices from taught lessons
+> - Viewing income overview
+
+### How It Works
+
+TutorFlow follows a simple 3-step workflow:
+
+1. **📅 Scheduling**: Plan lessons via the interactive week view. Drag time ranges to create appointments, set up recurring lessons, and block personal time. The system automatically detects scheduling conflicts and contract quota violations.
+
+2. **⚠️ Conflict Detection**: Real-time conflict detection ensures you never double-book. The system checks for:
+   - Time overlaps with other lessons (including travel times)
+   - Overlaps with blocked times
+   - Contract quota violations (planned vs. actual units)
+
+3. **💰 Billing**: Once lessons are marked as "taught", generate invoices automatically. The system calculates amounts based on contract rates and unit durations, creates invoice documents, and tracks income with planned vs. actual comparisons.
 
 ## Problem
 
