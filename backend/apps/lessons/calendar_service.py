@@ -39,7 +39,7 @@ class CalendarService:
         lessons = Lesson.objects.filter(
             date__gte=start_date,
             date__lt=end_date
-        ).select_related('contract', 'contract__student', 'location').order_by('date', 'start_time')
+        ).select_related('contract', 'contract__student').order_by('date', 'start_time')
         
         # Lade Blockzeiten im Monatsbereich
         start_datetime = timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
