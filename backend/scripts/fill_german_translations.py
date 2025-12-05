@@ -75,6 +75,12 @@ TRANSLATIONS = {
     "Details": "Details",
     "Edit": "Bearbeiten",
     "No lessons available.": "Keine Stunden vorhanden.",
+    "LLM_API_KEY is not configured. Please set the LLM_API_KEY environment variable.": "LLM_API_KEY ist nicht konfiguriert. Bitte setze die Umgebungsvariable LLM_API_KEY.",
+    "LLM error: {error}": "LLM-Fehler: {error}",
+    "Unexpected API response format": "Unerwartetes API-Response-Format",
+    "API timeout after {seconds} seconds": "API-Timeout nach {seconds} Sekunden",
+    "API error: {error}": "API-Fehler: {error}",
+    "Error parsing API response: {error}": "Fehler beim Parsen der API-Antwort: {error}",
     # Add more translations as needed
 }
 
