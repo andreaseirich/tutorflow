@@ -1,5 +1,8 @@
 from django.db import models
 
+# Import RecurringBlockedTime für Django-Erkennung
+from .recurring_models import RecurringBlockedTime
+
 
 class BlockedTime(models.Model):
     """Eigene Termine/Blockzeiten (z. B. Uni, Job, Gemeinde)."""

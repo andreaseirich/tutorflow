@@ -108,6 +108,25 @@
         {% endfor %}
     </ul>
     {% endif %}
+    
+    {% if quota_conflicts %}
+    <h3 style="margin-top: 20px; color: #dc3545;">⚠ Vertragskontingent überschritten ({{ quota_conflicts|length }})</h3>
+    <div style="background: #f8d7da; padding: 15px; border-radius: 5px; margin-top: 10px;">
+        {% for quota_conflict in quota_conflicts %}
+        <p style="margin: 5px 0; color: #721c24;">
+            <strong>{{ quota_conflict.message }}</strong><br>
+            <small>
+                Geplant: {{ quota_conflict.planned_total }} Einheiten | 
+                Tatsächlich: {{ quota_conflict.actual_total }} Stunden
+            </small>
+        </p>
+        {% endfor %}
+        <p style="margin-top: 10px; font-size: 0.9em; color: #721c24;">
+            <strong>Hinweis:</strong> Diese Stunde überschreitet das geplante Kontingent bis Ende {{ quota_conflicts.0.month|stringformat:"02d" }}.{{ quota_conflicts.0.year }}.
+            Nachholen ist erlaubt, aber Vorarbeiten nicht.
+        </p>
+    </div>
+    {% endif %}
 </div>
 {% endif %}
 

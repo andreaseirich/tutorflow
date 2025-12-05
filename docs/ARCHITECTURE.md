@@ -81,6 +81,19 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Felder**: title, description, start_datetime, end_datetime, is_recurring, recurring_pattern
 - **Beziehungen**: Keine direkten Beziehungen
 - **Zweck**: Verwaltung eigener Termine/Blockzeiten (z. B. Uni, Job, Gemeinde)
+- **Kalender-Integration**: Blockzeiten werden direkt im Kalender angezeigt, erstellt und bearbeitet
+- **Mehrtägige Blockzeiten**: Unterstützt durch start_datetime und end_datetime (z. B. Urlaub/Reise)
+- **Anzeige**: Optisch unterscheidbar von Lessons (gelbe Hintergrundfarbe) im Kalender
+
+#### RecurringBlockedTime (apps.blocked_times.recurring_models)
+- **Felder**: title, description, start_date, end_date, start_time, end_time, recurrence_type (weekly/biweekly/monthly), monday-sunday (Boolean), is_active
+- **Beziehungen**: Keine direkten Beziehungen
+- **Zweck**: Vorlage für wiederholende Blockzeiten (Serientermine). Ermöglicht die Definition von Serien (z. B. "jeden Dienstag 18–20 Uhr") und automatische Generierung von BlockedTime-Einträgen über einen Zeitraum.
+- **Wiederholungsarten**:
+  - `weekly`: Wöchentlich - jede Woche an den ausgewählten Wochentagen
+  - `biweekly`: Alle 2 Wochen - jede zweite Woche an den ausgewählten Wochentagen
+  - `monthly`: Monatlich - jeden Monat am gleichen Kalendertag, wenn dieser Tag ein ausgewählter Wochentag ist
+- **Service**: `RecurringBlockedTimeService` generiert BlockedTime-Einträge aus RecurringBlockedTime-Vorlagen basierend auf `recurrence_type`, prüft Konflikte und überspringt bereits vorhandene Blockzeiten.
 
 #### LessonPlan (apps.lesson_plans)
 - **Felder**: student (FK), lesson (FK, optional), topic, subject, content, grade_level, duration_minutes, llm_model
@@ -126,6 +139,9 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
   - **Lessons in der Vergangenheit werden im Kalender nicht mehr angezeigt** (nur zukünftige/aktuelle), sind aber weiterhin in der Finanzsicht vorhanden.
   - **Blockzeiten in der Vergangenheit werden ebenfalls ausgeblendet** (nur ab heute).
   - **RecurringLesson kann über Kalender/Contract ausgelöst werden** - Serientermine werden automatisch generiert und erscheinen im Kalender.
+  - **Blockzeiten im Kalender**: Blockzeiten werden direkt im Kalender angezeigt (optisch unterscheidbar von Lessons), können per Klick auf einen Tag erstellt und per Klick auf eine bestehende Blockzeit bearbeitet werden.
+  - **Mehrtägige Blockzeiten**: Werden an allen betroffenen Tagen im Kalender angezeigt.
+  - **Serien-Blockzeiten**: Button "Serien-Blockzeit erstellen" im Kalender ermöglicht Erstellung von RecurringBlockedTime-Vorlagen.
 
 ### Architekturprinzipien
 
@@ -209,8 +225,20 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Konflikttypen**:
   - `lesson`: Überschneidung mit anderen Unterrichtsstunden
   - `blocked_time`: Überschneidung mit Blockzeiten
+  - `quota`: Vertragskontingent überschritten (siehe unten)
 - **Konfliktmarkierung**: Lessons haben `has_conflicts` Property und `get_conflicts()` Methode
 - **UI-Darstellung**: Konflikte werden in Listen und Detailansichten als Warnung angezeigt
+
+### Vertragskontingent & Quoten-Konflikte
+- **ContractQuotaService**: Service für Prüfung von Vertragskontingenten basierend auf ContractMonthlyPlan
+- **Regel**: Man darf im Verlauf eines Vertragszeitraums nicht "vorarbeiten"
+- **Prüfung**: Für jeden Monat M gilt:
+  - Summe der tatsächlich gehalten/geplanten Lessons von Vertragsbeginn bis Ende Monat M
+  - darf die Summe der geplanten Einheiten (ContractMonthlyPlan) von Vertragsbeginn bis Monat M NICHT überschreiten
+- **Nachholen erlaubt**: Wenn in früheren Monaten weniger als geplant stattgefunden hat, darf nachgeholt werden
+- **Status-Berücksichtigung**: Nur Lessons mit Status PLANNED, TAUGHT oder PAID werden gezählt (CANCELLED nicht)
+- **Integration**: Quota-Konflikte werden automatisch in `LessonConflictService.check_conflicts()` geprüft und als Konflikttyp `quota` zurückgegeben
+- **UI-Anzeige**: Quota-Konflikte werden in der Lesson-Detailansicht mit speziellem Warnhinweis angezeigt
 
 ### Einnahmenberechnung (Phase 3)
 1. System sammelt alle Lessons für einen Monat/Jahr (filterbar nach Status)

@@ -3,6 +3,7 @@ URL-Konfiguration für BlockedTime-App.
 """
 from django.urls import path
 from apps.blocked_times import views
+from apps.blocked_times import recurring_views
 
 app_name = 'blocked_times'
 
@@ -12,5 +13,12 @@ urlpatterns = [
     path('create/', views.BlockedTimeCreateView.as_view(), name='create'),
     path('<int:pk>/update/', views.BlockedTimeUpdateView.as_view(), name='update'),
     path('<int:pk>/delete/', views.BlockedTimeDeleteView.as_view(), name='delete'),
+    # Recurring BlockedTime URLs
+    path('recurring/', recurring_views.RecurringBlockedTimeListView.as_view(), name='recurring_list'),
+    path('recurring/<int:pk>/', recurring_views.RecurringBlockedTimeDetailView.as_view(), name='recurring_detail'),
+    path('recurring/create/', recurring_views.RecurringBlockedTimeCreateView.as_view(), name='recurring_create'),
+    path('recurring/<int:pk>/update/', recurring_views.RecurringBlockedTimeUpdateView.as_view(), name='recurring_update'),
+    path('recurring/<int:pk>/delete/', recurring_views.RecurringBlockedTimeDeleteView.as_view(), name='recurring_delete'),
+    path('recurring/<int:pk>/generate/', recurring_views.RecurringBlockedTimeGenerateView.as_view(), name='recurring_generate'),
 ]
 
