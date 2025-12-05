@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 16:31+0100\n"
+"POT-Creation-Date: 2025-12-05 16:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,9 +23,22 @@ msgstr ""
 msgid "Lesson plan for {date}"
 msgstr ""
 
-#: apps/ai/views.py:42
+#: apps/ai/views.py:27
+msgid "This function is only available for premium users."
+msgstr ""
+
+#: apps/ai/views.py:37
+#, python-brace-format
+msgid "Lesson plan successfully generated! Model: {model}"
+msgstr ""
+
+#: apps/ai/views.py:44
 #, python-brace-format
 msgid "The lesson plan could not be generated: {error}"
+msgstr ""
+
+#: apps/ai/views.py:49
+msgid "An unexpected error occurred. Please try again later."
 msgstr ""
 
 #: apps/billing/models.py:16

@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from django.utils.translation import gettext as _
 from apps.lessons.models import Lesson
 from apps.core.utils import is_premium_user
 from apps.ai.services import LessonPlanService, LessonPlanGenerationError
@@ -23,7 +24,7 @@ def generate_lesson_plan(request, lesson_id):
     if not is_premium_user(request.user):
         messages.error(
             request,
-            "Diese Funktion ist nur für Premium-User verfügbar."
+            _("This function is only available for premium users.")
         )
         return redirect('lessons:detail', pk=lesson_id)
     
@@ -33,8 +34,9 @@ def generate_lesson_plan(request, lesson_id):
         lesson_plan = service.generate_lesson_plan(lesson)
         messages.success(
             request,
-            f"Unterrichtsplan erfolgreich generiert! "
-            f"Modell: {lesson_plan.llm_model or 'N/A'}"
+            _("Lesson plan successfully generated! Model: {model}").format(
+                model=lesson_plan.llm_model or 'N/A'
+            )
         )
     except LessonPlanGenerationError as e:
             messages.error(
@@ -44,7 +46,7 @@ def generate_lesson_plan(request, lesson_id):
     except Exception as e:
         messages.error(
             request,
-            "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
+            _("An unexpected error occurred. Please try again later.")
         )
     
     return redirect('lessons:detail', pk=lesson_id)
