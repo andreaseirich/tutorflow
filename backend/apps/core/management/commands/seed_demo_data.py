@@ -25,6 +25,8 @@ from apps.lessons.recurring_service import RecurringLessonService
 from apps.blocked_times.models import BlockedTime
 from apps.core.models import UserProfile
 from apps.lesson_plans.models import LessonPlan
+from apps.billing.models import Invoice, InvoiceItem
+from apps.billing.services import InvoiceService
 
 
 class Command(BaseCommand):
@@ -184,12 +186,13 @@ class Command(BaseCommand):
             notes="Physik: Mechanik"
         )
         
+        # Lesson4: Wird als "taught" erstellt und dann in eine Rechnung aufgenommen (wird automatisch "paid")
         lesson4 = Lesson.objects.create(
             contract=contract3,
             date=today - timedelta(days=2),
             start_time=time(15, 0),
             duration_minutes=60,
-            status='paid',
+            status='taught',  # Zuerst als "taught" erstellen
             notes="Mathe: Analysis"
         )
         
