@@ -72,8 +72,10 @@ class LessonConflictService:
                 conflicts.append({
                     'type': 'lesson',
                     'object': other_lesson,
-                    'message': f"Überschneidung mit Stunde für {other_lesson.contract.student} "
-                              f"({other_lesson.start_time.strftime('%H:%M')})",
+                    'message': _("Overlap with lesson for {student} ({time})").format(
+                        student=other_lesson.contract.student,
+                        time=other_lesson.start_time.strftime('%H:%M')
+                    ),
                     'start': other_start,
                     'end': other_end,
                 })
@@ -88,7 +90,7 @@ class LessonConflictService:
             conflicts.append({
                 'type': 'blocked_time',
                 'object': blocked_time,
-                'message': f"Überschneidung mit Blockzeit: {blocked_time.title}",
+                'message': _("Overlap with blocked time: {title}").format(title=blocked_time.title),
                 'start': blocked_time.start_datetime,
                 'end': blocked_time.end_datetime,
             })
