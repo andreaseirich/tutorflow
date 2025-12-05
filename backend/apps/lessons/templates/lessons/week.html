@@ -1,0 +1,275 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Wochenansicht - TutorFlow{% endblock %}
+
+{% block content %}
+<h1>Wochenansicht</h1>
+
+<div class="btn-group">
+    <a href="{% url 'lessons:week' %}?year={{ prev_week.year }}&month={{ prev_week.month }}&day={{ prev_week.day }}" class="btn">← Vorige Woche</a>
+    <a href="{% url 'lessons:week' %}?year={{ next_week.year }}&month={{ next_week.month }}&day={{ next_week.day }}" class="btn">Nächste Woche →</a>
+    <a href="{% url 'lessons:recurring_create' %}" class="btn btn-success">➕ Serientermin anlegen</a>
+    <a href="{% url 'blocked_times:recurring_create' %}" class="btn btn-warning">🚫 Serien-Blockzeit erstellen</a>
+</div>
+
+<p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+    <strong>Hinweis:</strong> Ziehen Sie einen Zeitbereich im Kalender, um einen neuen Termin anzulegen.
+    Klicken Sie auf einen bestehenden Termin, um ihn zu bearbeiten.
+</p>
+
+<div id="week-calendar" style="margin-top: 20px; position: relative; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+        <thead>
+            <tr>
+                <th style="width: 80px; border: 1px solid #ddd; padding: 8px; background: #f5f5f5; text-align: center;">Zeit</th>
+                {% for weekday in weekdays %}
+                <th style="border: 1px solid #ddd; padding: 8px; background: #f5f5f5; text-align: center; {% if weekday.date == today %}background: #e3f2fd;{% endif %}">
+                    {{ weekday.name_short }}<br>
+                    <small style="font-weight: normal;">{{ weekday.date.day }}.{{ weekday.date.month }}.</small>
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for hour in hours %}
+            <tr data-hour="{{ hour }}" style="height: 60px;">
+                <td style="border: 1px solid #ddd; padding: 4px; text-align: center; background: #f9f9f9; font-size: 0.85em;">
+                    {{ hour }}:00
+                </td>
+                {% for weekday in weekdays %}
+                <td class="time-slot" 
+                    data-date="{{ weekday.date|date:'Y-m-d' }}" 
+                    data-hour="{{ hour }}"
+                    style="border: 1px solid #ddd; padding: 0; position: relative; vertical-align: top; cursor: crosshair;"
+                    onmousedown="startDrag(event, this)"
+                    onmousemove="handleDrag(event, this)"
+                    onmouseup="endDrag(event, this)"
+                    onmouseleave="cancelDrag(event)">
+                    <div class="slot-content" style="position: relative; height: 100%; width: 100%;">
+                        {% for lesson in weekday.lessons %}
+                            {% if lesson.start_time.hour|add:0 == hour|add:0 %}
+                            <div class="lesson-block {% if lesson.id in conflicts_by_lesson %}has-conflict{% endif %}" 
+                                 data-lesson-id="{{ lesson.id }}"
+                                 data-start-hour="{{ lesson.start_time.hour }}"
+                                 data-start-minute="{{ lesson.start_time.minute }}"
+                                 data-duration="{{ lesson.duration_minutes }}"
+                                 style="position: absolute; 
+                                        top: {{ lesson.start_time.minute }}px; 
+                                        height: {{ lesson.duration_minutes }}px; 
+                                        left: 0; 
+                                        right: 0; 
+                                        background: #2196f3; 
+                                        color: white; 
+                                        padding: 2px 4px; 
+                                        font-size: 0.75em; 
+                                        border-radius: 3px;
+                                        cursor: pointer;
+                                        z-index: 10;
+                                        overflow: hidden;
+                                        {% if lesson.id in conflicts_by_lesson %}border: 2px solid #dc3545;{% endif %}"
+                                 onclick="event.stopPropagation(); window.location.href='{% url 'lessons:update' lesson.pk %}?year={{ weekday.date.year }}&month={{ weekday.date.month }}&day={{ weekday.date.day }}'"
+                                 title="{{ lesson.contract.student.full_name }} - {{ lesson.start_time|time:'H:i' }} ({{ lesson.duration_minutes }} Min.)">
+                                <strong>{{ lesson.contract.student.first_name }}</strong><br>
+                                <small>{{ lesson.start_time|time:'H:i' }} - {{ lesson.duration_minutes }} Min.</small>
+                                {% if lesson.id in conflicts_by_lesson %}<span style="color: #ffeb3b;">⚠️</span>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% for blocked_time in weekday.blocked_times %}
+                            {% if blocked_time.start_datetime.hour|add:0 == hour|add:0 %}
+                            {% with duration_minutes=blocked_time.end_datetime|timesince:blocked_time.start_datetime %}
+                            <div class="blocked-time-block" 
+                                 data-blocked-time-id="{{ blocked_time.id }}"
+                                 data-start-hour="{{ blocked_time.start_datetime.hour }}"
+                                 data-start-minute="{{ blocked_time.start_datetime.minute }}"
+                                 data-end-hour="{{ blocked_time.end_datetime.hour }}"
+                                 data-end-minute="{{ blocked_time.end_datetime.minute }}"
+                                 style="position: absolute; 
+                                        top: {{ blocked_time.start_datetime.minute }}px; 
+                                        height: {% if blocked_time.start_datetime.hour == blocked_time.end_datetime.hour %}{{ blocked_time.end_datetime.minute|add:"-"|add:blocked_time.start_datetime.minute }}{% else %}60{% endif %}px; 
+                                        left: 0; 
+                                        right: 0; 
+                                        background: #ff9800; 
+                                        color: white; 
+                                        padding: 2px 4px; 
+                                        font-size: 0.75em; 
+                                        border-radius: 3px;
+                                        cursor: pointer;
+                                        z-index: 10;
+                                        overflow: hidden;"
+                                 onclick="event.stopPropagation(); window.location.href='{% url 'blocked_times:update' blocked_time.pk %}?year={{ weekday.date.year }}&month={{ weekday.date.month }}&day={{ weekday.date.day }}'"
+                                 title="{{ blocked_time.title }} - {{ blocked_time.start_datetime|time:'H:i' }} bis {{ blocked_time.end_datetime|time:'H:i' }}">
+                                <strong>🚫 {{ blocked_time.title }}</strong><br>
+                                <small>{{ blocked_time.start_datetime|time:'H:i' }} - {{ blocked_time.end_datetime|time:'H:i' }}</small>
+                            </div>
+                            {% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Dialog für Termin-Erstellung -->
+<div id="create-dialog" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000; min-width: 400px;">
+    <h3 style="margin-top: 0;">Neuen Termin erstellen</h3>
+    <p id="dialog-time-info" style="margin-bottom: 15px; color: #666;"></p>
+    <div style="margin-bottom: 15px;">
+        <label>
+            <input type="radio" name="event-type" value="lesson" checked> Nachhilfeunterricht
+        </label><br>
+        <label>
+            <input type="radio" name="event-type" value="blocked_time"> Blockzeit/anderer Termin
+        </label>
+    </div>
+    <div class="btn-group">
+        <button onclick="confirmCreate()" class="btn btn-success">Erstellen</button>
+        <button onclick="cancelCreate()" class="btn btn-secondary">Abbrechen</button>
+    </div>
+</div>
+
+<div id="dialog-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+
+<style>
+.time-slot:hover {
+    background: #f0f0f0;
+}
+.time-slot.dragging {
+    background: #e3f2fd;
+}
+.lesson-block.has-conflict {
+    border: 2px solid #dc3545 !important;
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
+}
+</style>
+
+<script>
+let dragState = {
+    isDragging: false,
+    startCell: null,
+    endCell: null,
+    startTime: null,
+    endTime: null
+};
+
+function startDrag(event, cell) {
+    if (event.button !== 0) return; // Nur linke Maustaste
+    event.preventDefault();
+    dragState.isDragging = true;
+    dragState.startCell = cell;
+    dragState.startTime = getTimeFromCell(cell);
+    cell.classList.add('dragging');
+}
+
+function handleDrag(event, cell) {
+    if (!dragState.isDragging) return;
+    if (cell.dataset.date !== dragState.startCell.dataset.date) return; // Nur gleicher Tag
+    
+    dragState.endCell = cell;
+    dragState.endTime = getTimeFromCell(cell);
+    
+    // Markiere alle Zellen zwischen start und end
+    document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.classList.remove('dragging');
+        if (slot.dataset.date === dragState.startCell.dataset.date) {
+            const slotHour = parseInt(slot.dataset.hour);
+            const startHour = parseInt(dragState.startCell.dataset.hour);
+            const endHour = parseInt(cell.dataset.hour);
+            if (slotHour >= Math.min(startHour, endHour) && slotHour <= Math.max(startHour, endHour)) {
+                slot.classList.add('dragging');
+            }
+        }
+    });
+}
+
+function endDrag(event, cell) {
+    if (!dragState.isDragging) return;
+    
+    dragState.isDragging = false;
+    dragState.endCell = cell;
+    dragState.endTime = getTimeFromCell(cell);
+    
+    // Berechne Start- und Endzeit
+    const startHour = parseInt(dragState.startCell.dataset.hour);
+    const endHour = parseInt(dragState.endCell.dataset.hour);
+    const date = dragState.startCell.dataset.date;
+    
+    // Normalisiere (start sollte vor end sein)
+    const actualStartHour = Math.min(startHour, endHour);
+    const actualEndHour = Math.max(startHour, endHour) + 1; // +1 für volle Stunde
+    
+    const startDateTime = new Date(date + 'T' + String(actualStartHour).padStart(2, '0') + ':00:00');
+    const endDateTime = new Date(date + 'T' + String(actualEndHour).padStart(2, '0') + ':00:00');
+    
+    // Zeige Dialog
+    showCreateDialog(startDateTime, endDateTime, date);
+    
+    // Entferne Markierungen
+    document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.classList.remove('dragging');
+    });
+}
+
+function cancelDrag(event) {
+    if (dragState.isDragging) {
+        dragState.isDragging = false;
+        document.querySelectorAll('.time-slot').forEach(slot => {
+            slot.classList.remove('dragging');
+        });
+    }
+}
+
+function getTimeFromCell(cell) {
+    return {
+        hour: parseInt(cell.dataset.hour),
+        date: cell.dataset.date
+    };
+}
+
+function showCreateDialog(startDateTime, endDateTime, date) {
+    const dialog = document.getElementById('create-dialog');
+    const overlay = document.getElementById('dialog-overlay');
+    const timeInfo = document.getElementById('dialog-time-info');
+    
+    const startStr = startDateTime.toISOString().slice(0, 16);
+    const endStr = endDateTime.toISOString().slice(0, 16);
+    
+    timeInfo.textContent = `Von: ${startDateTime.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})} bis ${endDateTime.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})} am ${new Date(date).toLocaleDateString('de-DE')}`;
+    
+    dialog.dataset.start = startStr;
+    dialog.dataset.end = endStr;
+    dialog.dataset.date = date;
+    
+    dialog.style.display = 'block';
+    overlay.style.display = 'block';
+}
+
+function confirmCreate() {
+    const dialog = document.getElementById('create-dialog');
+    const eventType = document.querySelector('input[name="event-type"]:checked').value;
+    const start = dialog.dataset.start;
+    const end = dialog.dataset.end;
+    
+    let url;
+    if (eventType === 'lesson') {
+        url = '{% url "lessons:create" %}?start=' + encodeURIComponent(start) + '&end=' + encodeURIComponent(end);
+    } else {
+        url = '{% url "blocked_times:create" %}?start=' + encodeURIComponent(start) + '&end=' + encodeURIComponent(end);
+    }
+    
+    window.location.href = url;
+}
+
+function cancelCreate() {
+    document.getElementById('create-dialog').style.display = 'none';
+    document.getElementById('dialog-overlay').style.display = 'none';
+}
+
+// Schließe Dialog bei Klick auf Overlay
+document.getElementById('dialog-overlay').addEventListener('click', cancelCreate);
+</script>
+{% endblock %}

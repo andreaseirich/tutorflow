@@ -15,6 +15,7 @@ urlpatterns = [
     path('<int:pk>/update/', views.LessonUpdateView.as_view(), name='update'),
     path('<int:pk>/delete/', views.LessonDeleteView.as_view(), name='delete'),
     path('month/<int:year>/<int:month>/', views.LessonMonthView.as_view(), name='month'),
+    path('week/', views.WeekView.as_view(), name='week'),
     path('calendar/', views.CalendarView.as_view(), name='calendar'),
     # Recurring Lessons
     path('recurring/', recurring_views.RecurringLessonListView.as_view(), name='recurring_list'),
