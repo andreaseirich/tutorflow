@@ -12,7 +12,58 @@ from apps.billing.models import InvoiceItem
 
 
 class IncomeSelector:
-    """Selector für Einnahmenberechnungen und -auswertungen."""
+    """
+    Selector für Einnahmenberechnungen und -auswertungen.
+    
+    Verwendet die gleiche Berechnungslogik wie das Abrechnungssystem:
+    - units = lesson_duration_minutes / contract_unit_duration_minutes
+    - amount = units * hourly_rate
+    
+    Für Lessons, die in Rechnungen enthalten sind, werden die Beträge
+    aus den InvoiceItems genommen (Single Source of Truth).
+    """
+    
+    @staticmethod
+    def _calculate_lesson_amount(lesson: Lesson) -> Decimal:
+        """
+        Berechnet den Betrag für eine Lesson mit der gleichen Logik wie InvoiceService.
+        
+        Args:
+            lesson: Lesson-Instanz
+            
+        Returns:
+            Betrag als Decimal
+        """
+        contract = lesson.contract
+        unit_duration = Decimal(str(contract.unit_duration_minutes))
+        lesson_duration = Decimal(str(lesson.duration_minutes))
+        units = lesson_duration / unit_duration
+        rate_per_unit = contract.hourly_rate
+        amount = units * rate_per_unit
+        return amount
+    
+    @staticmethod
+    def _get_lesson_amount(lesson: Lesson) -> Decimal:
+        """
+        Gibt den Betrag für eine Lesson zurück.
+        
+        Wenn die Lesson in einer Rechnung ist, wird der Betrag aus dem InvoiceItem genommen.
+        Sonst wird der Betrag mit der gleichen Logik wie InvoiceService berechnet.
+        
+        Args:
+            lesson: Lesson-Instanz
+            
+        Returns:
+            Betrag als Decimal
+        """
+        # Prüfe, ob Lesson in einer Rechnung ist
+        invoice_item = InvoiceItem.objects.filter(lesson=lesson).first()
+        if invoice_item:
+            # Verwende Betrag aus InvoiceItem (Single Source of Truth)
+            return invoice_item.amount
+        else:
+            # Berechne Betrag mit gleicher Logik wie InvoiceService
+            return IncomeSelector._calculate_lesson_amount(lesson)
 
     @staticmethod
     def get_monthly_income(year: int, month: int, status: str = 'paid') -> dict:
@@ -44,10 +95,8 @@ class IncomeSelector:
         contract_details = {}
         
         for lesson in lessons:
-            hourly_rate = lesson.contract.hourly_rate
-            # Berechnung basierend auf Dauer (in Stunden)
-            hours = Decimal(lesson.duration_minutes) / Decimal('60')
-            lesson_income = hourly_rate * hours
+            # Verwende zentrale Berechnungsmethode (gleiche Logik wie InvoiceService)
+            lesson_income = IncomeSelector._get_lesson_amount(lesson)
             total_income += lesson_income
             lesson_count += 1
             
@@ -108,9 +157,8 @@ class IncomeSelector:
         actual_amount = Decimal('0.00')
         
         for lesson in lessons:
-            hourly_rate = lesson.contract.hourly_rate
-            hours = Decimal(lesson.duration_minutes) / Decimal('60')
-            actual_amount += hourly_rate * hours
+            # Verwende zentrale Berechnungsmethode (gleiche Logik wie InvoiceService)
+            actual_amount += IncomeSelector._calculate_lesson_amount(lesson)
         
         return {
             'year': year,
@@ -184,9 +232,8 @@ class IncomeSelector:
             lesson_count = status_lessons.count()
             
             for lesson in status_lessons:
-                hourly_rate = lesson.contract.hourly_rate
-                hours = Decimal(lesson.duration_minutes) / Decimal('60')
-                total_income += hourly_rate * hours
+                # Verwende zentrale Berechnungsmethode (gleiche Logik wie InvoiceService)
+                total_income += IncomeSelector._get_lesson_amount(lesson)
             
             status_breakdown[status_code] = {
                 'name': status_name,
@@ -201,6 +248,9 @@ class IncomeSelector:
         """
         Gibt Informationen über abgerechnete vs. nicht abgerechnete Lessons zurück.
         
+        Abgerechnet = Lessons mit InvoiceItem (unabhängig vom Status).
+        Nicht abgerechnet = Lessons mit Status TAUGHT ohne InvoiceItem.
+        
         Args:
             year: Optional - Jahr
             month: Optional - Monat
@@ -208,7 +258,8 @@ class IncomeSelector:
         Returns:
             Dict mit 'invoiced' und 'not_invoiced' Informationen
         """
-        query = Q(status='taught')  # Nur unterrichtete Lessons
+        # Basis-Query für Zeitraum
+        query = Q()
         if year and month:
             start_date = date(year, month, 1)
             if month == 12:
@@ -219,29 +270,34 @@ class IncomeSelector:
         elif year:
             query &= Q(date__year=year)
         
-        all_taught_lessons = Lesson.objects.filter(query).select_related('contract')
-        
-        # Lessons mit InvoiceItem (abgerechnet)
+        # Lessons mit InvoiceItem (abgerechnet) - unabhängig vom Status
         invoiced_lesson_ids = InvoiceItem.objects.filter(
             lesson__isnull=False
         ).values_list('lesson_id', flat=True)
-        invoiced_lessons = all_taught_lessons.filter(id__in=invoiced_lesson_ids)
+        invoiced_lessons = Lesson.objects.filter(
+            query & Q(id__in=invoiced_lesson_ids)
+        ).select_related('contract')
         
-        # Lessons ohne InvoiceItem (nicht abgerechnet)
-        not_invoiced_lessons = all_taught_lessons.exclude(id__in=invoiced_lesson_ids)
+        # Lessons ohne InvoiceItem mit Status TAUGHT (nicht abgerechnet, aber unterrichtet)
+        not_invoiced_lessons = Lesson.objects.filter(
+            query & Q(status='taught')
+        ).exclude(id__in=invoiced_lesson_ids).select_related('contract')
         
         # Berechne Einnahmen
+        # Für abgerechnete Lessons: Beträge aus InvoiceItems (Single Source of Truth)
         invoiced_income = Decimal('0.00')
         for lesson in invoiced_lessons:
-            hourly_rate = lesson.contract.hourly_rate
-            hours = Decimal(lesson.duration_minutes) / Decimal('60')
-            invoiced_income += hourly_rate * hours
+            invoice_item = InvoiceItem.objects.filter(lesson=lesson).first()
+            if invoice_item:
+                invoiced_income += invoice_item.amount
+            else:
+                # Fallback: Berechne mit gleicher Logik
+                invoiced_income += IncomeSelector._calculate_lesson_amount(lesson)
         
+        # Für nicht abgerechnete Lessons: Berechne mit gleicher Logik wie InvoiceService
         not_invoiced_income = Decimal('0.00')
         for lesson in not_invoiced_lessons:
-            hourly_rate = lesson.contract.hourly_rate
-            hours = Decimal(lesson.duration_minutes) / Decimal('60')
-            not_invoiced_income += hourly_rate * hours
+            not_invoiced_income += IncomeSelector._calculate_lesson_amount(lesson)
         
         return {
             'invoiced': {
