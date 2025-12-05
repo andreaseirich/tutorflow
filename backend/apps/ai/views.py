@@ -37,10 +37,10 @@ def generate_lesson_plan(request, lesson_id):
             f"Modell: {lesson_plan.llm_model or 'N/A'}"
         )
     except LessonPlanGenerationError as e:
-        messages.error(
-            request,
-            f"Die Unterrichtsplanung konnte nicht generiert werden: {str(e)}"
-        )
+            messages.error(
+                request,
+                _("The lesson plan could not be generated: {error}").format(error=str(e))
+            )
     except Exception as e:
         messages.error(
             request,

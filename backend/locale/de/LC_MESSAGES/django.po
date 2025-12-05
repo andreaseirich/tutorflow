@@ -18,6 +18,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: apps/ai/services.py:92
+#, python-brace-format
+msgid "Lesson plan for {date}"
+msgstr ""
+
+#: apps/ai/views.py:42
+#, python-brace-format
+msgid "The lesson plan could not be generated: {error}"
+msgstr ""
+
 #: apps/billing/models.py:16
 msgid "Draft"
 msgstr "Entwurf"
