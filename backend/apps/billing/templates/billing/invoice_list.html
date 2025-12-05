@@ -1,25 +1,26 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Rechnungen - TutorFlow{% endblock %}
+{% block title %}{% trans "Invoices" %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Rechnungen</h1>
+<h1>{% trans "Invoices" %}</h1>
 
 <div class="btn-group">
-    <a href="{% url 'billing:invoice_create' %}" class="btn btn-success">➕ Neue Rechnung erstellen</a>
+    <a href="{% url 'billing:invoice_create' %}" class="btn btn-success">➕ {% trans "Create New Invoice" %}</a>
 </div>
 
 {% if invoices %}
 <table>
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Zahlungspflichtiger</th>
-            <th>Zeitraum</th>
-            <th>Betrag</th>
-            <th>Status</th>
-            <th>Erstellt</th>
-            <th>Aktionen</th>
+            <th>{% trans "ID" %}</th>
+            <th>{% trans "Payer" %}</th>
+            <th>{% trans "Period" %}</th>
+            <th>{% trans "Amount" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Created" %}</th>
+            <th>{% trans "Actions" %}</th>
         </tr>
     </thead>
     <tbody>
@@ -32,7 +33,7 @@
             <td>{{ invoice.get_status_display }}</td>
             <td>{{ invoice.created_at|date:"d.m.Y H:i" }}</td>
             <td>
-                <a href="{% url 'billing:invoice_detail' invoice.pk %}">Details</a>
+                <a href="{% url 'billing:invoice_detail' invoice.pk %}">{% trans "Details" %}</a>
             </td>
         </tr>
         {% endfor %}
@@ -40,8 +41,7 @@
 </table>
 {% else %}
 <div class="empty-state">
-    <p>Keine Rechnungen vorhanden.</p>
+    <p>{% trans "No invoices available." %}</p>
 </div>
 {% endif %}
 {% endblock %}
-

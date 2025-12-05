@@ -1,16 +1,17 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Blockzeit löschen - TutorFlow{% endblock %}
+{% block title %}{% trans "Delete Blocked Time" %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Blockzeit löschen</h1>
-<p>Sind Sie sicher, dass Sie die Blockzeit "{{ object.title }}" ({{ object.start_datetime|date:"d.m.Y H:i" }}) löschen möchten?</p>
+<h1>{% trans "Delete Blocked Time" %}</h1>
+<p>{% blocktrans with title=object.title datetime=object.start_datetime|date:"d.m.Y H:i" %}Are you sure you want to delete the blocked time "{{ title }}" ({{ datetime }})?{% endblocktrans %}</p>
 
 <form method="post">
     {% csrf_token %}
     <div class="btn-group">
-        <button type="submit" class="btn btn-danger">Löschen bestätigen</button>
-        <a href="{% url 'blocked_times:detail' object.pk %}" class="btn btn-secondary">Abbrechen</a>
+        <button type="submit" class="btn btn-danger">{% trans "Confirm Delete" %}</button>
+        <a href="{% url 'blocked_times:detail' object.pk %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
     </div>
 </form>
 {% endblock %}

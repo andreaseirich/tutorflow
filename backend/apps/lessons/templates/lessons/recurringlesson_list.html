@@ -1,20 +1,21 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Serientermine - TutorFlow{% endblock %}
+{% block title %}{% trans "Recurring Lessons" %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Serientermine</h1>
-<a href="{% url 'lessons:recurring_create' %}" class="btn">Neuer Serientermin</a>
+<h1>{% trans "Recurring Lessons" %}</h1>
+<a href="{% url 'lessons:recurring_create' %}" class="btn">{% trans "New Recurring Lesson" %}</a>
 
 <table>
     <thead>
         <tr>
-            <th>Schüler</th>
-            <th>Wochentage</th>
-            <th>Zeit</th>
-            <th>Startdatum</th>
-            <th>Status</th>
-            <th>Aktionen</th>
+            <th>{% trans "Student" %}</th>
+            <th>{% trans "Weekdays" %}</th>
+            <th>{% trans "Time" %}</th>
+            <th>{% trans "Start Date" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Actions" %}</th>
         </tr>
     </thead>
     <tbody>
@@ -24,16 +25,15 @@
             <td>{{ recurring.get_active_weekdays_display }}</td>
             <td>{{ recurring.start_time }}</td>
             <td>{{ recurring.start_date }}</td>
-            <td>{% if recurring.is_active %}<span style="color: #28a745;">Aktiv</span>{% else %}<span style="color: #6c757d;">Inaktiv</span>{% endif %}</td>
+            <td>{% if recurring.is_active %}<span style="color: #28a745;">{% trans "Active" %}</span>{% else %}<span style="color: #6c757d;">{% trans "Inactive" %}</span>{% endif %}</td>
             <td>
-                <a href="{% url 'lessons:recurring_detail' recurring.pk %}">Details</a> |
-                <a href="{% url 'lessons:recurring_update' recurring.pk %}">Bearbeiten</a>
+                <a href="{% url 'lessons:recurring_detail' recurring.pk %}">{% trans "Details" %}</a> |
+                <a href="{% url 'lessons:recurring_update' recurring.pk %}">{% trans "Edit" %}</a>
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="6">Keine Serientermine vorhanden.</td></tr>
+        <tr><td colspan="6">{% trans "No recurring lessons available." %}</td></tr>
         {% endfor %}
     </tbody>
 </table>
 {% endblock %}
-

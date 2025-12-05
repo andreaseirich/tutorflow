@@ -14,7 +14,8 @@ TutorFlow is fully internationalized with English as the default language and Ge
 - **Models**: All model fields, choices, and verbose names use `gettext_lazy()` for translation
 - **Language Switching**: Available via dropdown in the navigation bar
 - **Translation Files**: Located in `backend/locale/` with separate `.po` files for each language
-- **Status**: All templates are fully translated with English as the source language
+- **Status**: All templates including billing, blocked time, and recurring scheduling views are fully internationalized with English as the source language
+- **Coverage**: No hard-coded German or English text remains in templates - all UI strings are properly wrapped in translation tags
 
 ## Technische Architektur
 
