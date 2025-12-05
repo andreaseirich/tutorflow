@@ -7,7 +7,6 @@ from decimal import Decimal
 from django.utils import timezone
 from apps.students.models import Student
 from apps.contracts.models import Contract
-from apps.locations.models import Location
 from apps.lessons.models import Lesson
 from apps.lessons.views import LessonDetailView, ConflictDetailView, CalendarView
 from apps.lessons.calendar_service import CalendarService
@@ -44,10 +43,6 @@ class ConflictDetailTest(TestCase):
             end_date=date(2025, 12, 31),
             is_active=True
         )
-        self.location = Location.objects.create(
-            name="Test-Ort",
-            address="Test-Straße 1"
-        )
         self.factory = RequestFactory()
     
     def test_conflict_detail_view_shows_conflicting_lessons(self):
@@ -58,14 +53,12 @@ class ConflictDetailTest(TestCase):
             date=date(2025, 8, 15),
             start_time=time(14, 0),
             duration_minutes=60,
-            location=self.location
         )
         lesson2 = Lesson.objects.create(
             contract=self.contract2,
             date=date(2025, 8, 15),
             start_time=time(14, 30),  # Überschneidung
             duration_minutes=60,
-            location=self.location
         )
         
         # Verwende Client für echten Request
@@ -84,14 +77,12 @@ class ConflictDetailTest(TestCase):
             date=date(2025, 8, 15),
             start_time=time(14, 0),
             duration_minutes=60,
-            location=self.location
         )
         lesson2 = Lesson.objects.create(
             contract=self.contract2,
             date=date(2025, 8, 15),
             start_time=time(14, 30),
             duration_minutes=60,
-            location=self.location
         )
         
         # Verwende Client für echten Request

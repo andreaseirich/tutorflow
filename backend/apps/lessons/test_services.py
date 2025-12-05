@@ -5,7 +5,6 @@ from django.test import TestCase
 from decimal import Decimal
 from datetime import date, time, datetime, timedelta
 from django.utils import timezone
-from apps.locations.models import Location
 from apps.students.models import Student
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
@@ -18,10 +17,6 @@ class LessonConflictServiceTest(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.location = Location.objects.create(
-            name="Zuhause",
-            address="Musterstraße 1"
-        )
         self.student1 = Student.objects.create(
             first_name="Max",
             last_name="Mustermann"
@@ -152,10 +147,6 @@ class LessonQueryServiceTest(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.location = Location.objects.create(
-            name="Zuhause",
-            address="Musterstraße 1"
-        )
         self.student = Student.objects.create(
             first_name="Max",
             last_name="Mustermann"

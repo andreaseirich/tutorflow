@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from unittest.mock import Mock, patch
 from decimal import Decimal
 from datetime import date, time
-from apps.locations.models import Location
 from apps.students.models import Student
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
@@ -62,10 +61,6 @@ class PromptBuildingTest(TestCase):
     
     def setUp(self):
         """Set up test data."""
-        self.location = Location.objects.create(
-            name="Zuhause",
-            address="Musterstraße 1"
-        )
         self.student = Student.objects.create(
             first_name="Max",
             last_name="Mustermann",
@@ -113,10 +108,6 @@ class LessonPlanServiceTest(TestCase):
     
     def setUp(self):
         """Set up test data."""
-        self.location = Location.objects.create(
-            name="Zuhause",
-            address="Musterstraße 1"
-        )
         self.student = Student.objects.create(
             first_name="Max",
             last_name="Mustermann",

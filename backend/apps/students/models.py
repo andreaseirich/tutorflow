@@ -1,9 +1,8 @@
 from django.db import models
-from apps.locations.models import Location
 
 
 class Student(models.Model):
-    """Schüler mit Kontaktdaten, Schule/Klasse, Fächern und Standard-Unterrichtsort."""
+    """Schüler mit Kontaktdaten, Schule/Klasse und Fächern."""
     
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -26,14 +25,6 @@ class Student(models.Model):
         blank=True,
         null=True,
         help_text="Fächer (kommagetrennt, z. B. 'Mathe, Deutsch, Englisch')"
-    )
-    default_location = models.ForeignKey(
-        Location,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='students',
-        help_text="Standard-Unterrichtsort"
     )
     notes = models.TextField(
         blank=True,

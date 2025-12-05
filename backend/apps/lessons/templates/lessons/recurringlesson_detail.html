@@ -19,9 +19,6 @@
     <tr><th>Enddatum</th><td>{{ recurring_lesson.end_date|default:"Bis Vertragsende" }}</td></tr>
     <tr><th>Zeit</th><td>{{ recurring_lesson.start_time }}</td></tr>
     <tr><th>Dauer</th><td>{{ recurring_lesson.duration_minutes }} Minuten</td></tr>
-    {% if recurring_lesson.location %}
-    <tr><th>Ort</th><td>{{ recurring_lesson.location }}</td></tr>
-    {% endif %}
     <tr><th>Status</th><td>{% if recurring_lesson.is_active %}<span style="color: #28a745;">Aktiv</span>{% else %}<span style="color: #6c757d;">Inaktiv</span>{% endif %}</td></tr>
     {% if recurring_lesson.notes %}
     <tr><th>Notizen</th><td>{{ recurring_lesson.notes }}</td></tr>

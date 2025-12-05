@@ -3,18 +3,10 @@ Views für BlockedTime-CRUD-Operationen.
 """
 from django.shortcuts import render
 from django.contrib import messages
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from apps.blocked_times.models import BlockedTime
 from apps.blocked_times.forms import BlockedTimeForm
-
-
-class BlockedTimeListView(ListView):
-    """Liste aller Blockzeiten."""
-    model = BlockedTime
-    template_name = 'blocked_times/blockedtime_list.html'
-    context_object_name = 'blocked_times'
-    paginate_by = 30
 
 
 class BlockedTimeDetailView(DetailView):
@@ -29,7 +21,6 @@ class BlockedTimeCreateView(CreateView):
     model = BlockedTime
     form_class = BlockedTimeForm
     template_name = 'blocked_times/blockedtime_form.html'
-    success_url = reverse_lazy('blocked_times:list')
 
     def get_initial(self):
         """Setzt initiale Werte, z. B. Datum aus Query-Parameter."""
@@ -68,7 +59,6 @@ class BlockedTimeUpdateView(UpdateView):
     model = BlockedTime
     form_class = BlockedTimeForm
     template_name = 'blocked_times/blockedtime_form.html'
-    success_url = reverse_lazy('blocked_times:list')
 
     def get_success_url(self):
         """Weiterleitung zurück zum Kalender mit Jahr/Monat."""
@@ -89,7 +79,6 @@ class BlockedTimeDeleteView(DeleteView):
     """Blockzeit löschen."""
     model = BlockedTime
     template_name = 'blocked_times/blockedtime_confirm_delete.html'
-    success_url = reverse_lazy('blocked_times:list')
 
     def get_success_url(self):
         """Weiterleitung zurück zum Kalender mit Jahr/Monat."""

@@ -26,7 +26,6 @@ backend/
 │   ├── students/       # Schülerverwaltung
 │   ├── contracts/      # Vertragsverwaltung
 │   ├── lessons/        # Unterrichtsplanung
-│   ├── locations/      # Ortsverwaltung
 │   ├── blocked_times/  # Blockzeiten-Verwaltung
 │   ├── lesson_plans/   # KI-generierte Unterrichtspläne
 │   └── core/           # Kernfunktionalität (User-Erweiterung, Income-Selector)
@@ -38,14 +37,9 @@ backend/
 
 Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Models implementiert:
 
-#### Location (apps.locations)
-- **Felder**: name, address, latitude, longitude (optional)
-- **Beziehungen**: One-to-Many zu Student (default_location)
-- **Zweck**: Verwaltung von Unterrichtsorten mit optionalen Koordinaten
-
 #### Student (apps.students)
-- **Felder**: first_name, last_name, email, phone, school, grade, subjects, default_location (FK), notes
-- **Beziehungen**: Many-to-One zu Location, One-to-Many zu Contract
+- **Felder**: first_name, last_name, email, phone, school, grade, subjects, notes
+- **Beziehungen**: One-to-Many zu Contract
 - **Zweck**: Zentrale Verwaltung von Schülern mit Kontaktdaten und Schulinformationen
 
 #### Contract (apps.contracts)
@@ -62,14 +56,14 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Wichtig**: Monthly Plans werden stets für den gesamten Vertragszeitraum (start_date bis end_date) erzeugt, unabhängig vom aktuellen Datum. Dies ermöglicht die Planung für zukünftige Verträge sowie die Erfassung von Plänen für vergangene Zeiträume.
 
 #### Lesson (apps.lessons)
-- **Felder**: contract (FK), date, start_time, duration_minutes, status (choices), location (FK), travel_time_before_minutes, travel_time_after_minutes, notes
+- **Felder**: contract (FK), date, start_time, duration_minutes, status (choices), travel_time_before_minutes, travel_time_after_minutes, notes
 - **Status**: 'planned', 'taught', 'cancelled', 'paid'
-- **Beziehungen**: Many-to-One zu Contract und Location
+- **Beziehungen**: Many-to-One zu Contract
 - **Zweck**: Planung und Verwaltung von Unterrichtsstunden mit Status-Tracking
 
 #### RecurringLesson (apps.lessons.recurring_models)
-- **Felder**: contract (FK), location (FK, optional), start_date, end_date, start_time, duration_minutes, travel_time_before_minutes, travel_time_after_minutes, recurrence_type (weekly/biweekly/monthly), monday-sunday (Boolean), is_active, notes
-- **Beziehungen**: Many-to-One zu Contract und Location
+- **Felder**: contract (FK), start_date, end_date, start_time, duration_minutes, travel_time_before_minutes, travel_time_after_minutes, recurrence_type (weekly/biweekly/monthly), monday-sunday (Boolean), is_active, notes
+- **Beziehungen**: Many-to-One zu Contract
 - **Zweck**: Vorlage für wiederholende Unterrichtsstunden (Serientermine). Ermöglicht die Definition von Serien (z. B. "jeden Montag 14 Uhr") und automatische Generierung von Lessons über einen Zeitraum.
 - **Wiederholungsarten**:
   - `weekly`: Wöchentlich - jede Woche an den ausgewählten Wochentagen
@@ -81,7 +75,7 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Felder**: title, description, start_datetime, end_datetime, is_recurring, recurring_pattern
 - **Beziehungen**: Keine direkten Beziehungen
 - **Zweck**: Verwaltung eigener Termine/Blockzeiten (z. B. Uni, Job, Gemeinde)
-- **Kalender-Integration**: Blockzeiten werden direkt im Kalender angezeigt, erstellt und bearbeitet
+- **Kalender-Integration**: Blockzeiten werden ausschließlich über den Kalender verwaltet (Erstellen, Bearbeiten, Anzeigen). Es gibt keine Listenansicht mehr.
 - **Mehrtägige Blockzeiten**: Unterstützt durch start_datetime und end_datetime (z. B. Urlaub/Reise)
 - **Anzeige**: Optisch unterscheidbar von Lessons (gelbe Hintergrundfarbe) im Kalender
 
@@ -166,8 +160,9 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 ### Planung einer Unterrichtsstunde
 1. **Kalender als zentrale UI**: Benutzer öffnet Kalenderansicht
 2. **Anlegen**: Klick auf Tag im Kalender → Formular mit voreingestelltem Datum
-   - Benutzer wählt Schüler/Vertrag, Zeit, Ort, Fahrtzeiten
-3. **Bearbeiten**: Klick auf bestehende Lesson → Bearbeitungsformular
+   - Benutzer wählt Schüler/Vertrag, Zeit, Fahrtzeiten
+   - Blockzeiten können ebenfalls über Klick auf Tag erstellt werden (🚫-Symbol)
+3. **Bearbeiten**: Klick auf bestehende Lesson oder Blockzeit → Bearbeitungsformular
 4. **Serientermine**: Button "Serientermin anlegen" → RecurringLesson-Formular
    - Nach Speichern: Automatische Generierung aller Lessons im Zeitraum
 5. System prüft Konflikte (Blockzeiten, andere Lessons) inkl. Fahrtzeiten
@@ -308,10 +303,8 @@ Die Architektur ist darauf ausgelegt, einfach erweitert zu werden:
 ## Datenbank-Schema
 
 ### Beziehungen
-- **Location** ← (1:N) → **Student** (default_location)
 - **Student** ← (1:N) → **Contract**
 - **Contract** ← (1:N) → **Lesson**
-- **Location** ← (1:N) → **Lesson**
 - **Student** ← (1:N) → **LessonPlan**
 - **Lesson** ← (1:N) → **LessonPlan** (optional)
 - **User** ← (1:1) → **UserProfile**
@@ -319,6 +312,10 @@ Die Architektur ist darauf ausgelegt, einfach erweitert zu werden:
 ### Indizes
 - Lesson: Index auf (date, start_time) und status für performante Abfragen
 - BlockedTime: Index auf (start_datetime, end_datetime) für Konfliktprüfung
+
+### Entfernte Features
+- **Location-App**: Die gesamte Location-App wurde entfernt. Unterrichtsort-Felder wurden aus allen Modellen (Lesson, RecurringLesson, Student) entfernt.
+- **Blockzeiten-Listenansicht**: Blockzeiten werden ausschließlich über den Kalender verwaltet. Es gibt keine separate Listenansicht mehr.
 
 ## Status
 

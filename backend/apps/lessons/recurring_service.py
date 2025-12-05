@@ -262,7 +262,6 @@ class RecurringLessonService:
             date=lesson_date,
             start_time=recurring_lesson.start_time,
             duration_minutes=recurring_lesson.duration_minutes,
-            location=recurring_lesson.location,
             travel_time_before_minutes=recurring_lesson.travel_time_before_minutes,
             travel_time_after_minutes=recurring_lesson.travel_time_after_minutes,
             status='',  # Leer - wird automatisch gesetzt

@@ -6,9 +6,9 @@
 <h1>{{ blocked_time }}</h1>
 
 <div class="btn-group">
-    <a href="{% url 'blocked_times:update' blocked_time.pk %}" class="btn">Bearbeiten</a>
+    <a href="{% url 'blocked_times:update' blocked_time.pk %}?year={{ blocked_time.start_datetime.year }}&month={{ blocked_time.start_datetime.month }}" class="btn">Bearbeiten</a>
     <a href="{% url 'blocked_times:delete' blocked_time.pk %}" class="btn btn-danger">Löschen</a>
-    <a href="{% url 'blocked_times:list' %}" class="btn btn-secondary">Zurück zur Liste</a>
+    <a href="{% url 'lessons:calendar' %}?year={{ blocked_time.start_datetime.year }}&month={{ blocked_time.start_datetime.month }}" class="btn btn-secondary">← Zum Kalender</a>
 </div>
 
 <h2>Details</h2>

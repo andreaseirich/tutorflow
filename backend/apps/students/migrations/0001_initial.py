@@ -9,7 +9,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('locations', '0001_initial'),
     ]
 
     operations = [
@@ -27,7 +26,6 @@ class Migration(migrations.Migration):
                 ('notes', models.TextField(blank=True, help_text='Zusätzliche Notizen zum Schüler', null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('default_location', models.ForeignKey(blank=True, help_text='Standard-Unterrichtsort', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='students', to='locations.location')),
             ],
             options={
                 'verbose_name': 'Schüler',

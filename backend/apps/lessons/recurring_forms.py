@@ -4,7 +4,6 @@ Forms für RecurringLesson-Model.
 from django import forms
 from apps.lessons.recurring_models import RecurringLesson
 from apps.contracts.models import Contract
-from apps.locations.models import Location
 
 
 class RecurringLessonForm(forms.ModelForm):
@@ -13,7 +12,7 @@ class RecurringLessonForm(forms.ModelForm):
     class Meta:
         model = RecurringLesson
         fields = [
-            'contract', 'location', 'start_date', 'end_date', 'start_time',
+            'contract', 'start_date', 'end_date', 'start_time',
             'duration_minutes', 'travel_time_before_minutes', 'travel_time_after_minutes',
             'recurrence_type',
             'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
@@ -21,7 +20,6 @@ class RecurringLessonForm(forms.ModelForm):
         ]
         widgets = {
             'contract': forms.Select(attrs={'class': 'form-control'}),
-            'location': forms.Select(attrs={'class': 'form-control'}),
             'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'start_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
