@@ -6,6 +6,7 @@ import requests
 from typing import Optional, Dict, Any
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.translation import gettext_lazy as _
 
 
 class LLMClientError(Exception):
@@ -51,8 +52,7 @@ class LLMClient:
         """
         if not self.api_key:
             raise LLMClientError(
-                "LLM_API_KEY ist nicht konfiguriert. "
-                "Bitte setze die Umgebungsvariable LLM_API_KEY."
+                _("LLM_API_KEY is not configured. Please set the LLM_API_KEY environment variable.")
             )
         
         try:
@@ -88,12 +88,12 @@ class LLMClient:
             if "choices" in result and len(result["choices"]) > 0:
                 return result["choices"][0]["message"]["content"]
             else:
-                raise LLMClientError("Unerwartetes API-Response-Format")
+                raise LLMClientError(_("Unexpected API response format"))
         
         except requests.exceptions.Timeout:
-            raise LLMClientError(f"API-Timeout nach {self.timeout} Sekunden")
+            raise LLMClientError(_("API timeout after {seconds} seconds").format(seconds=self.timeout))
         except requests.exceptions.RequestException as e:
-            raise LLMClientError(f"API-Fehler: {str(e)}")
+            raise LLMClientError(_("API error: {error}").format(error=str(e)))
         except (KeyError, ValueError) as e:
-            raise LLMClientError(f"Fehler beim Parsen der API-Antwort: {str(e)}")
+            raise LLMClientError(_("Error parsing API response: {error}").format(error=str(e)))
 

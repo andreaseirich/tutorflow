@@ -3,6 +3,7 @@ High-Level-Service für LessonPlan-Generierung.
 """
 from typing import Optional, Dict, Any
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from apps.lessons.models import Lesson
 from apps.lesson_plans.models import LessonPlan
@@ -79,7 +80,7 @@ class LessonPlanService:
                 temperature=0.7
             )
         except LLMClientError as e:
-            raise LessonPlanGenerationError(f"LLM-Fehler: {str(e)}")
+            raise LessonPlanGenerationError(_("LLM error: {error}").format(error=str(e)))
         
         # Erstelle oder aktualisiere LessonPlan
         student = lesson.contract.student
