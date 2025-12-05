@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 15:55+0100\n"
+"POT-Creation-Date: 2025-12-05 16:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -980,29 +980,29 @@ msgstr ""
 msgid "Contracts"
 msgstr "Verträge"
 
-#: apps/contracts/models.py:68 apps/lessons/models.py:24
+#: apps/contracts/models.py:69 apps/lessons/models.py:24
 #: apps/lessons/recurring_models.py:17
 msgid "Associated contract"
 msgstr ""
 
-#: apps/contracts/models.py:70
+#: apps/contracts/models.py:71
 #: apps/contracts/templates/contracts/contract_form.html:21
 msgid "Year"
 msgstr ""
 
-#: apps/contracts/models.py:73
+#: apps/contracts/models.py:74
 msgid "Month (1-12)"
 msgstr ""
 
-#: apps/contracts/models.py:77
+#: apps/contracts/models.py:78
 msgid "Planned units for this month"
 msgstr ""
 
-#: apps/contracts/models.py:85
+#: apps/contracts/models.py:86
 msgid "Contract Monthly Plan"
 msgstr ""
 
-#: apps/contracts/models.py:86
+#: apps/contracts/models.py:87
 msgid "Contract Monthly Plans"
 msgstr ""
 
