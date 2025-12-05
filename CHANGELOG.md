@@ -5,6 +5,29 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.8.9] - 2025-12-04
+
+### Behoben
+- **Einnahmenberechnung konsistent mit Rechnungssystem**:
+  - IncomeSelector verwendet jetzt die gleiche Berechnungslogik wie InvoiceService
+  - Formel: `units = lesson_duration_minutes / contract_unit_duration_minutes`, `amount = units * hourly_rate`
+  - Für Lessons in Rechnungen: Beträge werden aus InvoiceItems genommen (Single Source of Truth)
+  - Alle Berechnungsmethoden aktualisiert: `get_monthly_income`, `get_income_by_status`, `get_billing_status`, `get_monthly_planned_vs_actual`
+- **Korrekte Euro-Formatierung**:
+  - Neuer Template-Filter `|euro` für Währungsformatierung
+  - Format: 2 Nachkommastellen, deutsche Schreibweise (Komma, Tausenderpunkte)
+  - Beispiel: `Decimal('90')` → "90,00 €", `Decimal('1234.56')` → "1.234,56 €"
+  - Alle Beträge in Einnahmenübersicht und Dashboard verwenden jetzt `|euro` Filter
+- **Abrechnungsstatus-Logik korrigiert**:
+  - `get_billing_status()`: Abgerechnete Lessons unabhängig vom Status (aus InvoiceItems)
+  - Nicht abgerechnet: Lessons mit Status TAUGHT ohne InvoiceItem
+
+### Tests
+- 8 neue Tests für Einnahmenberechnung und Formatierung
+- Tests verifizieren: Berechnung stimmt mit InvoiceService überein, Beträge aus InvoiceItems werden verwendet, Formatierung korrekt
+
+---
+
 ## [0.8.8] - 2025-12-04
 
 ### Behoben
