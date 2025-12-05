@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 15:37+0100\n"
+"POT-Creation-Date: 2025-12-05 15:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,10 +63,13 @@ msgid "Generated invoice document (HTML/PDF)"
 msgstr "Generiertes Rechnungsdokument (HTML/PDF)"
 
 #: apps/billing/models.py:63
+#: apps/billing/templates/billing/invoice_document.html:52
 msgid "Invoice"
 msgstr "Rechnung"
 
-#: apps/billing/models.py:64 apps/core/templates/core/base.html:51
+#: apps/billing/models.py:64 apps/billing/templates/billing/invoice_list.html:4
+#: apps/billing/templates/billing/invoice_list.html:7
+#: apps/core/templates/core/base.html:51
 msgid "Invoices"
 msgstr "Rechnungen"
 
@@ -99,8 +102,396 @@ msgid "Invoice Item"
 msgstr "Rechnungsposten"
 
 #: apps/billing/models.py:159
+#: apps/billing/templates/billing/invoice_detail.html:30
+#: apps/billing/templates/billing/invoice_document.html:69
 msgid "Invoice Items"
 msgstr "Rechnungsposten"
+
+#: apps/billing/templates/billing/invoice_confirm_delete.html:4
+#: apps/billing/templates/billing/invoice_confirm_delete.html:7
+#, fuzzy
+#| msgid "Invoice"
+msgid "Delete Invoice"
+msgstr "Rechnung"
+
+#: apps/billing/templates/billing/invoice_confirm_delete.html:10
+msgid "Warning"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_confirm_delete.html:11
+msgid "Do you really want to delete this invoice?"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_confirm_delete.html:12
+#, fuzzy
+#| msgid "Invoice"
+msgid "Invoice:"
+msgstr "Rechnung"
+
+#: apps/billing/templates/billing/invoice_confirm_delete.html:13
+msgid "Amount:"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_confirm_delete.html:14
+msgid "Number of Items:"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_confirm_delete.html:16
+#: apps/billing/templates/billing/invoice_create.html:10
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_confirm_delete.html:9
+#: apps/lessons/templates/lessons/calendar.html:17
+#: apps/lessons/templates/lessons/lesson_detail.html:112
+#: apps/lessons/templates/lessons/recurringlesson_confirm_delete.html:9
+#: apps/lessons/templates/lessons/week.html:17
+msgid "Note:"
+msgstr "Hinweis:"
+
+#: apps/billing/templates/billing/invoice_confirm_delete.html:16
+msgid ""
+"All lessons in this invoice will be reset to 'taught' if they are not "
+"included in other invoices."
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_confirm_delete.html:23
+msgid "Yes, delete"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_confirm_delete.html:24
+#: apps/billing/templates/billing/invoice_create.html:91
+#: apps/blocked_times/templates/blocked_times/blockedtime_confirm_delete.html:14
+#: apps/blocked_times/templates/blocked_times/blockedtime_form.html:15
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_confirm_delete.html:15
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:37
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_generate.html:21
+#: apps/contracts/templates/contracts/contract_confirm_delete.html:16
+#: apps/contracts/templates/contracts/contract_form.html:48
+#: apps/lessons/templates/lessons/lesson_confirm_delete.html:14
+#: apps/lessons/templates/lessons/lesson_form.html:15
+#: apps/lessons/templates/lessons/recurringlesson_confirm_delete.html:15
+#: apps/lessons/templates/lessons/recurringlesson_form.html:37
+#: apps/lessons/templates/lessons/week.html:131
+#: apps/students/templates/students/student_confirm_delete.html:16
+#: apps/students/templates/students/student_form.html:14
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: apps/billing/templates/billing/invoice_create.html:4
+#: apps/billing/templates/billing/invoice_create.html:7
+#: apps/billing/templates/billing/invoice_list.html:10
+#, fuzzy
+#| msgid "Create New Appointment"
+msgid "Create New Invoice"
+msgstr "Neuen Termin erstellen"
+
+#: apps/billing/templates/billing/invoice_create.html:12
+msgid ""
+"All taught lessons (status 'taught') in the specified period will be "
+"automatically included in the invoice. Lessons with status 'planned' or "
+"'paid' will not be considered. A lesson can only appear in one invoice - "
+"lessons that are already included in another invoice will be automatically "
+"excluded."
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:20
+#: apps/billing/templates/billing/invoice_document.html:58
+msgid "Period:"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:23
+msgid "to"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:35
+#, fuzzy
+#| msgid "Associated contract (optional)"
+msgid "Contract (optional):"
+msgstr "Zugehöriger Vertrag (optional)"
+
+#: apps/billing/templates/billing/invoice_create.html:37
+msgid "If selected, only lessons from this contract will be billed."
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:40
+msgid "Show Preview"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:43
+#, python-format
+msgid "Available Lesson (%(counter)s)"
+msgid_plural "Available Lessons (%(counter)s)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apps/billing/templates/billing/invoice_create.html:44
+msgid "These lessons will be automatically included in the invoice:"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:49
+#: apps/billing/templates/billing/invoice_detail.html:35
+#: apps/billing/templates/billing/invoice_document.html:73
+#: apps/contracts/templates/contracts/contract_detail.html:35
+#: apps/core/templates/core/dashboard.html:47
+#: apps/lessons/templates/lessons/conflict_detail.html:28
+#: apps/lessons/templates/lessons/lesson_detail.html:67
+#: apps/lessons/templates/lessons/lesson_list.html:14
+#: apps/lessons/templates/lessons/lesson_month.html:13
+msgid "Date"
+msgstr "Datum"
+
+#: apps/billing/templates/billing/invoice_create.html:50
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:24
+#: apps/contracts/templates/contracts/contract_detail.html:36
+#: apps/core/templates/core/dashboard.html:15
+#: apps/core/templates/core/dashboard.html:48
+#: apps/lessons/templates/lessons/conflict_detail.html:29
+#: apps/lessons/templates/lessons/lesson_detail.html:68
+#: apps/lessons/templates/lessons/lesson_list.html:15
+#: apps/lessons/templates/lessons/lesson_month.html:14
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:21
+#: apps/lessons/templates/lessons/recurringlesson_list.html:15
+#: apps/lessons/templates/lessons/week.html:24
+msgid "Time"
+msgstr "Zeit"
+
+#: apps/billing/templates/billing/invoice_create.html:51
+#: apps/contracts/templates/contracts/contract_detail.html:18
+#: apps/contracts/templates/contracts/contract_list.html:13
+#: apps/core/templates/core/dashboard.html:16
+#: apps/core/templates/core/dashboard.html:49
+#: apps/lessons/templates/lessons/conflict_detail.html:30
+#: apps/lessons/templates/lessons/lesson_detail.html:69
+#: apps/lessons/templates/lessons/lesson_list.html:16
+#: apps/lessons/templates/lessons/lesson_month.html:15
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:17
+#: apps/lessons/templates/lessons/recurringlesson_list.html:13
+#: apps/students/models.py:40
+msgid "Student"
+msgstr "Schüler"
+
+#: apps/billing/templates/billing/invoice_create.html:52
+#: apps/billing/templates/billing/invoice_detail.html:37
+#: apps/billing/templates/billing/invoice_document.html:75
+#: apps/contracts/templates/contracts/contract_list.html:16
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:22
+#: apps/students/templates/students/student_detail.html:34
+msgid "Duration"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:53
+#: apps/billing/templates/billing/invoice_detail.html:38
+#: apps/billing/templates/billing/invoice_document.html:76
+#: apps/billing/templates/billing/invoice_list.html:20
+msgid "Amount"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:62
+#: apps/billing/templates/billing/invoice_detail.html:46
+#: apps/billing/templates/billing/invoice_document.html:84
+#: apps/contracts/templates/contracts/contract_list.html:29
+#: apps/students/templates/students/student_detail.html:45
+#, python-format
+msgid "%(minutes)s Min."
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:76
+msgid "No billable lessons found in the specified period."
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:78
+msgid "Make sure that:"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:80
+msgid "There are lessons with status 'taught' in the period"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:81
+msgid "These lessons are not already included in another invoice"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_create.html:89
+#, fuzzy
+#| msgid "Invoice"
+msgid "Create Invoice"
+msgstr "Rechnung"
+
+#: apps/billing/templates/billing/invoice_create.html:102
+msgid "Please enter a period."
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_detail.html:4
+#: apps/billing/templates/billing/invoice_detail.html:7
+#: apps/billing/templates/billing/invoice_document.html:7
+#, fuzzy, python-format
+#| msgid "Invoices"
+msgid "Invoice %(id)s"
+msgstr "Rechnungen"
+
+#: apps/billing/templates/billing/invoice_detail.html:10
+#: apps/contracts/templates/contracts/contract_detail.html:13
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:12
+#: apps/students/templates/students/student_detail.html:12
+msgid "Back to List"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_detail.html:12
+msgid "Generate Document"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_detail.html:14
+msgid "View Document"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_detail.html:16
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:11
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:11
+#: apps/contracts/templates/contracts/contract_confirm_delete.html:15
+#: apps/contracts/templates/contracts/contract_detail.html:11
+#: apps/contracts/templates/contracts/contract_list.html:36
+#: apps/lessons/templates/lessons/lesson_detail.html:12
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:11
+#: apps/students/templates/students/student_confirm_delete.html:15
+#: apps/students/templates/students/student_detail.html:11
+#: apps/students/templates/students/student_list.html:28
+msgid "Delete"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_detail.html:19
+#: apps/billing/templates/billing/invoice_list.html:36
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:15
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:15
+#: apps/contracts/templates/contracts/contract_detail.html:16
+#: apps/contracts/templates/contracts/contract_detail.html:47
+#: apps/contracts/templates/contracts/contract_list.html:34
+#: apps/core/templates/core/income_overview.html:102
+#: apps/lessons/templates/lessons/calendar.html:62
+#: apps/lessons/templates/lessons/lesson_detail.html:16
+#: apps/lessons/templates/lessons/lesson_list.html:37
+#: apps/lessons/templates/lessons/lesson_month.html:36
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:15
+#: apps/lessons/templates/lessons/recurringlesson_list.html:30
+#: apps/students/templates/students/student_detail.html:15
+#: apps/students/templates/students/student_list.html:26
+msgid "Details"
+msgstr "Details"
+
+#: apps/billing/templates/billing/invoice_detail.html:21
+#: apps/billing/templates/billing/invoice_document.html:62
+#: apps/billing/templates/billing/invoice_list.html:18
+msgid "Payer"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_detail.html:22
+msgid "Address"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_detail.html:23
+#: apps/contracts/models.py:53
+msgid "Contract"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_detail.html:24
+#: apps/billing/templates/billing/invoice_list.html:19
+msgid "Period"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_detail.html:25
+#: apps/billing/templates/billing/invoice_list.html:21
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:26
+#: apps/contracts/templates/contracts/contract_detail.html:24
+#: apps/contracts/templates/contracts/contract_detail.html:37
+#: apps/contracts/templates/contracts/contract_list.html:19
+#: apps/core/templates/core/dashboard.html:17
+#: apps/core/templates/core/dashboard.html:50
+#: apps/core/templates/core/income_overview.html:62
+#: apps/core/templates/core/income_overview.html:86
+#: apps/core/templates/core/income_overview.html:135
+#: apps/lessons/templates/lessons/lesson_list.html:17
+#: apps/lessons/templates/lessons/lesson_month.html:16
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:23
+#: apps/lessons/templates/lessons/recurringlesson_list.html:17
+#: apps/students/templates/students/student_detail.html:37
+msgid "Status"
+msgstr "Status"
+
+#: apps/billing/templates/billing/invoice_detail.html:26
+#, fuzzy
+#| msgid "Total invoice amount"
+msgid "Total Amount"
+msgstr "Gesamtbetrag der Rechnung"
+
+#: apps/billing/templates/billing/invoice_detail.html:27
+#: apps/billing/templates/billing/invoice_list.html:22
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:27
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:27
+#: apps/contracts/templates/contracts/contract_detail.html:26
+#, fuzzy
+#| msgid "Create"
+msgid "Created"
+msgstr "Erstellen"
+
+#: apps/billing/templates/billing/invoice_detail.html:36
+#: apps/billing/templates/billing/invoice_document.html:74
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:19
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:19
+#, fuzzy
+#| msgid "Item description"
+msgid "Description"
+msgstr "Beschreibung des Postens"
+
+#: apps/billing/templates/billing/invoice_detail.html:51
+#: apps/core/templates/core/income_overview.html:109
+msgid "Total:"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_detail.html:58
+#, fuzzy
+#| msgid "No lessons available."
+msgid "No invoice items available."
+msgstr "Keine Stunden vorhanden."
+
+#: apps/billing/templates/billing/invoice_document.html:53
+#, python-format
+msgid "Invoice Number: %(id)s"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_document.html:57
+#, fuzzy
+#| msgid "Invoice Item"
+msgid "Invoice Date:"
+msgstr "Rechnungsposten"
+
+#: apps/billing/templates/billing/invoice_document.html:89
+#, fuzzy
+#| msgid "Total invoice amount"
+msgid "Total Amount:"
+msgstr "Gesamtbetrag der Rechnung"
+
+#: apps/billing/templates/billing/invoice_document.html:96
+msgid "Created with TutorFlow"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_list.html:17
+msgid "ID"
+msgstr ""
+
+#: apps/billing/templates/billing/invoice_list.html:23
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:42
+#: apps/contracts/templates/contracts/contract_detail.html:38
+#: apps/contracts/templates/contracts/contract_list.html:20
+#: apps/lessons/templates/lessons/lesson_list.html:19
+#: apps/lessons/templates/lessons/lesson_month.html:18
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:40
+#: apps/lessons/templates/lessons/recurringlesson_list.html:18
+#: apps/students/templates/students/student_list.html:16
+msgid "Actions"
+msgstr "Aktionen"
+
+#: apps/billing/templates/billing/invoice_list.html:44
+#, fuzzy
+#| msgid "No lessons available."
+msgid "No invoices available."
+msgstr "Keine Stunden vorhanden."
 
 #: apps/blocked_times/models.py:13 apps/blocked_times/recurring_models.py:13
 msgid "Title of the blocked time (e.g., 'University lecture', 'Community')"
@@ -213,6 +604,7 @@ msgid "Is the series active?"
 msgstr ""
 
 #: apps/blocked_times/recurring_models.py:57
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:7
 msgid "Recurring Blocked Time"
 msgstr ""
 
@@ -260,6 +652,294 @@ msgstr ""
 msgid "None"
 msgstr ""
 
+#: apps/blocked_times/templates/blocked_times/blockedtime_confirm_delete.html:4
+#: apps/blocked_times/templates/blocked_times/blockedtime_confirm_delete.html:7
+#, fuzzy
+#| msgid "Create Recurring Blocked Time"
+msgid "Delete Blocked Time"
+msgstr "Serien-Blockzeit erstellen"
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_confirm_delete.html:8
+#, python-format
+msgid ""
+"Are you sure you want to delete the blocked time "
+"\"%(title)s\" (%(datetime)s)?"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_confirm_delete.html:13
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_confirm_delete.html:14
+#: apps/lessons/templates/lessons/lesson_confirm_delete.html:13
+#: apps/lessons/templates/lessons/recurringlesson_confirm_delete.html:14
+msgid "Confirm Delete"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:10
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:10
+#: apps/contracts/templates/contracts/contract_detail.html:10
+#: apps/contracts/templates/contracts/contract_list.html:35
+#: apps/lessons/templates/lessons/conflict_detail.html:42
+#: apps/lessons/templates/lessons/lesson_detail.html:11
+#: apps/lessons/templates/lessons/lesson_detail.html:81
+#: apps/lessons/templates/lessons/lesson_list.html:38
+#: apps/lessons/templates/lessons/lesson_month.html:37
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:10
+#: apps/lessons/templates/lessons/recurringlesson_list.html:31
+#: apps/students/templates/students/student_detail.html:10
+#: apps/students/templates/students/student_list.html:27
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:12
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:12
+#: apps/lessons/templates/lessons/conflict_detail.html:11
+#: apps/lessons/templates/lessons/lesson_detail.html:10
+#: apps/lessons/templates/lessons/lesson_month.html:8
+#, fuzzy
+#| msgid "Calendar"
+msgid "Back to Calendar"
+msgstr "Kalender"
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:17
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:17
+msgid "Title"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:21
+msgid "Start"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:22
+msgid "End"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:23
+msgid "Recurring"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:23
+msgid "Yes"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:23
+msgid "No"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:25
+msgid "Recurrence Pattern"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_detail.html:28
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:28
+#: apps/contracts/templates/contracts/contract_detail.html:27
+msgid "Last updated"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_form.html:4
+#: apps/blocked_times/templates/blocked_times/blockedtime_form.html:7
+#, fuzzy
+#| msgid "Create Recurring Blocked Time"
+msgid "Edit Blocked Time"
+msgstr "Serien-Blockzeit erstellen"
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_form.html:4
+#: apps/blocked_times/templates/blocked_times/blockedtime_form.html:7
+#, fuzzy
+#| msgid "Create Recurring Blocked Time"
+msgid "New Blocked Time"
+msgstr "Serien-Blockzeit erstellen"
+
+#: apps/blocked_times/templates/blocked_times/blockedtime_form.html:14
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:36
+#: apps/contracts/templates/contracts/contract_form.html:47
+#: apps/lessons/templates/lessons/lesson_form.html:14
+#: apps/students/templates/students/student_form.html:13
+msgid "Save"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_confirm_delete.html:4
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_confirm_delete.html:7
+#, fuzzy
+#| msgid "Create Recurring Blocked Time"
+msgid "Delete Recurring Blocked Time"
+msgstr "Serien-Blockzeit erstellen"
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_confirm_delete.html:8
+#, python-format
+msgid ""
+"Are you sure you want to delete the recurring blocked time "
+"\"%(title)s\" (%(weekdays)s, %(time)s)?"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_confirm_delete.html:9
+msgid "Already generated blocked times will not be deleted."
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:21
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:18
+#: apps/lessons/templates/lessons/recurringlesson_list.html:14
+msgid "Weekdays"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:22
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:19
+#: apps/lessons/templates/lessons/recurringlesson_list.html:16
+msgid "Start Date"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:23
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:20
+#, fuzzy
+#| msgid "Date"
+msgid "End Date"
+msgstr "Datum"
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:23
+msgid "Not set"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:25
+msgid "Recurrence Type"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:26
+#: apps/contracts/templates/contracts/contract_detail.html:24
+#: apps/contracts/templates/contracts/contract_list.html:32
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:23
+#: apps/lessons/templates/lessons/recurringlesson_list.html:28
+#: apps/students/templates/students/student_detail.html:48
+#, fuzzy
+#| msgid "Actions"
+msgid "Active"
+msgstr "Aktionen"
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:26
+#: apps/contracts/templates/contracts/contract_detail.html:24
+#: apps/contracts/templates/contracts/contract_list.html:32
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:23
+#: apps/lessons/templates/lessons/recurringlesson_list.html:28
+#: apps/students/templates/students/student_detail.html:48
+msgid "Inactive"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:31
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:29
+#, fuzzy
+#| msgid "Previous Week"
+msgid "Preview"
+msgstr "Vorige Woche"
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:32
+#, python-format
+msgid "This series would generate <strong>%(counter)s</strong> blocked time."
+msgid_plural ""
+"This series would generate <strong>%(counter)s</strong> blocked times."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:34
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:32
+#, fuzzy
+#| msgid "Create New Appointment"
+msgid "First 10 appointments:"
+msgstr "Neuen Termin erstellen"
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:37
+#, python-format
+msgid "%(date)s from %(start)s to %(end)s - %(title)s"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:47
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_generate.html:15
+#, fuzzy
+#| msgid "No upcoming lessons."
+msgid "Check conflicts with lessons"
+msgstr "Keine kommenden Stunden."
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:50
+msgid "Generate blocked times from this series"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_detail.html:52
+msgid "Note: Existing blocked times will be skipped."
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:4
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:7
+#, fuzzy
+#| msgid "Create Recurring Blocked Time"
+msgid "Edit Recurring Blocked Time"
+msgstr "Serien-Blockzeit erstellen"
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:4
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:7
+#, fuzzy
+#| msgid "Create Recurring Blocked Time"
+msgid "New Recurring Blocked Time"
+msgstr "Serien-Blockzeit erstellen"
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:10
+#, fuzzy
+#| msgid "Create Recurring Blocked Time"
+msgid "What are recurring blocked times?"
+msgstr "Serien-Blockzeit erstellen"
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:12
+msgid ""
+"Recurring blocked times allow you to create repeating blocked times (e.g., "
+"'every Tuesday 6-8 PM'). After saving, you can generate the blocked times "
+"for the specified period."
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:27
+#: apps/lessons/templates/lessons/recurringlesson_form.html:27
+msgid "Weekly:"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:27
+#: apps/lessons/templates/lessons/recurringlesson_form.html:27
+msgid "Every week on the selected weekdays."
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:28
+#: apps/lessons/templates/lessons/recurringlesson_form.html:28
+msgid "Bi-weekly:"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:28
+#: apps/lessons/templates/lessons/recurringlesson_form.html:28
+msgid "Every second week on the selected weekdays."
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:29
+#: apps/lessons/templates/lessons/recurringlesson_form.html:29
+#, fuzzy
+#| msgid "Month View"
+msgid "Monthly:"
+msgstr "Monatsansicht"
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_form.html:29
+#: apps/lessons/templates/lessons/recurringlesson_form.html:29
+msgid ""
+"Every month on the same calendar day (e.g., every 15th of the month), if "
+"that day is a selected weekday."
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_generate.html:4
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_generate.html:20
+#, fuzzy
+#| msgid "Create Recurring Blocked Time"
+msgid "Generate Blocked Times"
+msgstr "Serien-Blockzeit erstellen"
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_generate.html:7
+msgid "Generate Blocked Times from Series"
+msgstr ""
+
+#: apps/blocked_times/templates/blocked_times/recurring_blockedtime_generate.html:9
+#, python-format
+msgid "Do you want to generate blocked times from the series \"%(title)s\"?"
+msgstr ""
+
 #: apps/contracts/models.py:15
 msgid "Student for whom the contract applies"
 msgstr ""
@@ -290,10 +970,6 @@ msgstr ""
 
 #: apps/contracts/models.py:46
 msgid "Additional notes about the contract"
-msgstr ""
-
-#: apps/contracts/models.py:53
-msgid "Contract"
 msgstr ""
 
 #: apps/contracts/models.py:54
@@ -349,65 +1025,11 @@ msgstr ""
 msgid "This action cannot be undone."
 msgstr ""
 
-#: apps/contracts/templates/contracts/contract_confirm_delete.html:15
-#: apps/contracts/templates/contracts/contract_detail.html:11
-#: apps/contracts/templates/contracts/contract_list.html:36
-#: apps/lessons/templates/lessons/lesson_detail.html:12
-#: apps/students/templates/students/student_confirm_delete.html:15
-#: apps/students/templates/students/student_detail.html:11
-#: apps/students/templates/students/student_list.html:28
-msgid "Delete"
-msgstr ""
-
-#: apps/contracts/templates/contracts/contract_confirm_delete.html:16
-#: apps/contracts/templates/contracts/contract_form.html:48
-#: apps/lessons/templates/lessons/lesson_confirm_delete.html:14
-#: apps/lessons/templates/lessons/lesson_form.html:15
-#: apps/lessons/templates/lessons/week.html:131
-#: apps/students/templates/students/student_confirm_delete.html:16
-#: apps/students/templates/students/student_form.html:14
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: apps/contracts/templates/contracts/contract_detail.html:10
-#: apps/contracts/templates/contracts/contract_list.html:35
-#: apps/lessons/templates/lessons/lesson_detail.html:11
-#: apps/lessons/templates/lessons/lesson_detail.html:81
-#: apps/lessons/templates/lessons/lesson_list.html:38
-#: apps/students/templates/students/student_detail.html:10
-#: apps/students/templates/students/student_list.html:27
-msgid "Edit"
-msgstr "Bearbeiten"
-
 #: apps/contracts/templates/contracts/contract_detail.html:12
+#: apps/lessons/templates/lessons/calendar.html:12
 #: apps/lessons/templates/lessons/week.html:12
 msgid "Create Recurring Lesson"
 msgstr "Serientermin anlegen"
-
-#: apps/contracts/templates/contracts/contract_detail.html:13
-#: apps/students/templates/students/student_detail.html:12
-msgid "Back to List"
-msgstr ""
-
-#: apps/contracts/templates/contracts/contract_detail.html:16
-#: apps/contracts/templates/contracts/contract_detail.html:47
-#: apps/contracts/templates/contracts/contract_list.html:34
-#: apps/lessons/templates/lessons/lesson_detail.html:16
-#: apps/lessons/templates/lessons/lesson_list.html:37
-#: apps/students/templates/students/student_detail.html:15
-#: apps/students/templates/students/student_list.html:26
-msgid "Details"
-msgstr "Details"
-
-#: apps/contracts/templates/contracts/contract_detail.html:18
-#: apps/contracts/templates/contracts/contract_list.html:13
-#: apps/core/templates/core/dashboard.html:16
-#: apps/core/templates/core/dashboard.html:49
-#: apps/lessons/templates/lessons/lesson_detail.html:69
-#: apps/lessons/templates/lessons/lesson_list.html:16
-#: apps/students/models.py:40
-msgid "Student"
-msgstr "Schüler"
 
 #: apps/contracts/templates/contracts/contract_detail.html:19
 #: apps/contracts/templates/contracts/contract_list.html:14
@@ -431,6 +1053,7 @@ msgid "Duration per unit"
 msgstr ""
 
 #: apps/contracts/templates/contracts/contract_detail.html:21
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:22
 #, python-format
 msgid "%(minutes)s minutes"
 msgstr ""
@@ -453,75 +1076,20 @@ msgstr "Verträge"
 msgid "unlimited"
 msgstr ""
 
-#: apps/contracts/templates/contracts/contract_detail.html:24
-#: apps/contracts/templates/contracts/contract_detail.html:37
-#: apps/contracts/templates/contracts/contract_list.html:19
-#: apps/core/templates/core/dashboard.html:17
-#: apps/core/templates/core/dashboard.html:50
-#: apps/lessons/templates/lessons/lesson_list.html:17
-#: apps/students/templates/students/student_detail.html:37
-msgid "Status"
-msgstr "Status"
-
-#: apps/contracts/templates/contracts/contract_detail.html:24
-#: apps/contracts/templates/contracts/contract_list.html:32
-#: apps/students/templates/students/student_detail.html:48
-#, fuzzy
-#| msgid "Actions"
-msgid "Active"
-msgstr "Aktionen"
-
-#: apps/contracts/templates/contracts/contract_detail.html:24
-#: apps/contracts/templates/contracts/contract_list.html:32
-#: apps/students/templates/students/student_detail.html:48
-msgid "Inactive"
-msgstr ""
-
 #: apps/contracts/templates/contracts/contract_detail.html:25
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:25
 #: apps/students/templates/students/student_detail.html:24
 #, fuzzy
 #| msgid "Note:"
 msgid "Notes"
 msgstr "Hinweis:"
 
-#: apps/contracts/templates/contracts/contract_detail.html:26
-#, fuzzy
-#| msgid "Create"
-msgid "Created"
-msgstr "Erstellen"
-
-#: apps/contracts/templates/contracts/contract_detail.html:27
-msgid "Last updated"
-msgstr ""
-
 #: apps/contracts/templates/contracts/contract_detail.html:30
-#: apps/lessons/models.py:57 apps/lessons/templates/lessons/lesson_list.html:4
+#: apps/core/templates/core/income_overview.html:116 apps/lessons/models.py:57
+#: apps/lessons/templates/lessons/lesson_list.html:4
 #: apps/lessons/templates/lessons/lesson_list.html:7
 msgid "Lessons"
 msgstr "Unterrichtsstunden"
-
-#: apps/contracts/templates/contracts/contract_detail.html:35
-#: apps/core/templates/core/dashboard.html:47
-#: apps/lessons/templates/lessons/lesson_detail.html:67
-#: apps/lessons/templates/lessons/lesson_list.html:14
-msgid "Date"
-msgstr "Datum"
-
-#: apps/contracts/templates/contracts/contract_detail.html:36
-#: apps/core/templates/core/dashboard.html:15
-#: apps/core/templates/core/dashboard.html:48
-#: apps/lessons/templates/lessons/lesson_detail.html:68
-#: apps/lessons/templates/lessons/lesson_list.html:15
-#: apps/lessons/templates/lessons/week.html:24
-msgid "Time"
-msgstr "Zeit"
-
-#: apps/contracts/templates/contracts/contract_detail.html:38
-#: apps/contracts/templates/contracts/contract_list.html:20
-#: apps/lessons/templates/lessons/lesson_list.html:19
-#: apps/students/templates/students/student_list.html:16
-msgid "Actions"
-msgstr "Aktionen"
 
 #: apps/contracts/templates/contracts/contract_detail.html:54
 #, fuzzy
@@ -553,6 +1121,7 @@ msgid "Enter the planned units for each month in the contract period."
 msgstr ""
 
 #: apps/contracts/templates/contracts/contract_form.html:22
+#: apps/core/templates/core/income_overview.html:115
 #, fuzzy
 #| msgid "Month View"
 msgid "Month"
@@ -564,17 +1133,6 @@ msgstr "Monatsansicht"
 msgid "Planned Units"
 msgstr "Geplant"
 
-#: apps/contracts/templates/contracts/contract_form.html:47
-#: apps/lessons/templates/lessons/lesson_form.html:14
-#: apps/students/templates/students/student_form.html:13
-msgid "Save"
-msgstr ""
-
-#: apps/contracts/templates/contracts/contract_list.html:16
-#: apps/students/templates/students/student_detail.html:34
-msgid "Duration"
-msgstr ""
-
 #: apps/contracts/templates/contracts/contract_list.html:17
 #: apps/students/templates/students/student_detail.html:35
 msgid "From"
@@ -583,12 +1141,6 @@ msgstr ""
 #: apps/contracts/templates/contracts/contract_list.html:18
 #: apps/students/templates/students/student_detail.html:36
 msgid "To"
-msgstr ""
-
-#: apps/contracts/templates/contracts/contract_list.html:29
-#: apps/students/templates/students/student_detail.html:45
-#, python-format
-msgid "%(minutes)s Min."
 msgstr ""
 
 #: apps/contracts/templates/contracts/contract_list.html:40
@@ -636,6 +1188,11 @@ msgstr "Kalender"
 
 #: apps/core/templates/core/base.html:52
 #: apps/core/templates/core/dashboard.html:76
+#: apps/core/templates/core/income_overview.html:40
+#: apps/core/templates/core/income_overview.html:64
+#: apps/core/templates/core/income_overview.html:88
+#: apps/core/templates/core/income_overview.html:117
+#: apps/core/templates/core/income_overview.html:137
 msgid "Income"
 msgstr "Einnahmen"
 
@@ -651,6 +1208,7 @@ msgstr "Heutige Stunden"
 #: apps/core/templates/core/dashboard.html:51
 #: apps/lessons/templates/lessons/lesson_detail.html:55
 #: apps/lessons/templates/lessons/lesson_list.html:18
+#: apps/lessons/templates/lessons/lesson_month.html:17
 msgid "Conflicts"
 msgstr "Konflikte"
 
@@ -680,10 +1238,13 @@ msgid "No upcoming lessons."
 msgstr "Keine kommenden Stunden."
 
 #: apps/core/templates/core/dashboard.html:77
+#: apps/core/templates/core/income_overview.html:103
 msgid "Paid:"
 msgstr "Ausgezahlt:"
 
 #: apps/core/templates/core/dashboard.html:77
+#: apps/core/templates/core/income_overview.html:103
+#: apps/core/templates/core/income_overview.html:109
 #, python-format
 msgid "(%(counter)s lesson)"
 msgid_plural "(%(counter)s lessons)"
@@ -696,6 +1257,94 @@ msgid "%(counter)s conflict in upcoming lessons!"
 msgid_plural "%(counter)s conflicts in upcoming lessons!"
 msgstr[0] ""
 msgstr[1] ""
+
+#: apps/core/templates/core/income_overview.html:5
+#: apps/core/templates/core/income_overview.html:8
+msgid "Income Overview"
+msgstr ""
+
+#: apps/core/templates/core/income_overview.html:14
+msgid "Planned vs. Actual"
+msgstr ""
+
+#: apps/core/templates/core/income_overview.html:18
+msgid "Category"
+msgstr ""
+
+#: apps/core/templates/core/income_overview.html:19 apps/lessons/models.py:14
+msgid "Planned"
+msgstr "Geplant"
+
+#: apps/core/templates/core/income_overview.html:20
+msgid "Actual"
+msgstr ""
+
+#: apps/core/templates/core/income_overview.html:21
+msgid "Difference"
+msgstr ""
+
+#: apps/core/templates/core/income_overview.html:26
+msgid "Units"
+msgstr ""
+
+#: apps/core/templates/core/income_overview.html:58
+#, fuzzy
+#| msgid "Billing period start"
+msgid "Billing Status"
+msgstr "Beginn des Abrechnungszeitraums"
+
+#: apps/core/templates/core/income_overview.html:63
+#: apps/core/templates/core/income_overview.html:87
+#: apps/core/templates/core/income_overview.html:136
+#, fuzzy
+#| msgid "New Lesson"
+msgid "Number of Lessons"
+msgstr "Neue Stunde"
+
+#: apps/core/templates/core/income_overview.html:69
+#, fuzzy
+#| msgid "Invoice"
+msgid "Invoiced"
+msgstr "Rechnung"
+
+#: apps/core/templates/core/income_overview.html:74
+#, fuzzy
+#| msgid "Invoice"
+msgid "Not Invoiced"
+msgstr "Rechnung"
+
+#: apps/core/templates/core/income_overview.html:82
+#: apps/core/templates/core/income_overview.html:131
+#, fuzzy
+#| msgid "Invoice status"
+msgid "Income by Status"
+msgstr "Status der Rechnung"
+
+#: apps/core/templates/core/income_overview.html:108
+msgid "Year Overview"
+msgstr ""
+
+#: apps/core/templates/core/income_overview.html:111
+msgid "Monthly Breakdown"
+msgstr ""
+
+#: apps/core/templates/core/income_overview.html:153
+#, fuzzy
+#| msgid "Previous Week"
+msgid "Previous Year"
+msgstr "Vorige Woche"
+
+#: apps/core/templates/core/income_overview.html:154
+#, fuzzy
+#| msgid "Next Week"
+msgid "Next Year"
+msgstr "Nächste Woche"
+
+#: apps/core/templates/core/income_overview.html:156
+#, fuzzy
+#| msgid "Week View"
+msgid "Year View"
+msgstr "Wochenansicht"
 
 #: apps/lesson_plans/models.py:14
 msgid "Student for whom the plan was created"
@@ -737,10 +1386,6 @@ msgstr ""
 msgid "Lesson Plans"
 msgstr ""
 
-#: apps/lessons/models.py:14
-msgid "Planned"
-msgstr "Geplant"
-
 #: apps/lessons/models.py:15
 msgid "Taught"
 msgstr "Unterrichtet"
@@ -774,6 +1419,7 @@ msgid "Notes for the lesson"
 msgstr ""
 
 #: apps/lessons/models.py:56
+#: apps/lessons/templates/lessons/conflict_detail.html:15
 #: apps/lessons/templates/lessons/lesson_detail.html:7
 msgid "Lesson"
 msgstr ""
@@ -787,12 +1433,175 @@ msgid "Notes for the series"
 msgstr ""
 
 #: apps/lessons/recurring_models.py:72
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:7
 msgid "Recurring Lesson"
 msgstr ""
 
 #: apps/lessons/recurring_models.py:73
+#: apps/lessons/templates/lessons/recurringlesson_list.html:4
+#: apps/lessons/templates/lessons/recurringlesson_list.html:7
 msgid "Recurring Lessons"
 msgstr ""
+
+#: apps/lessons/templates/lessons/calendar.html:4
+#: apps/lessons/templates/lessons/calendar.html:7
+#, python-format
+msgid "Calendar %(month)s %(year)s"
+msgstr ""
+
+#: apps/lessons/templates/lessons/calendar.html:10
+#, fuzzy
+#| msgid "Previous Week"
+msgid "Previous Month"
+msgstr "Vorige Woche"
+
+#: apps/lessons/templates/lessons/calendar.html:11
+#, fuzzy
+#| msgid "Month View"
+msgid "Next Month"
+msgstr "Monatsansicht"
+
+#: apps/lessons/templates/lessons/calendar.html:13
+#: apps/lessons/templates/lessons/week.html:13
+msgid "Create Recurring Blocked Time"
+msgstr "Serien-Blockzeit erstellen"
+
+#: apps/lessons/templates/lessons/calendar.html:17
+msgid ""
+"Click on a day to create a new lesson. Click on an existing lesson to edit "
+"it."
+msgstr ""
+
+#: apps/lessons/templates/lessons/calendar.html:37
+#, fuzzy
+#| msgid "Create Recurring Lesson"
+msgid "Create new lesson"
+msgstr "Serientermin anlegen"
+
+#: apps/lessons/templates/lessons/calendar.html:42
+msgid "Add blocked time"
+msgstr ""
+
+#: apps/lessons/templates/lessons/calendar.html:56
+#, fuzzy
+#| msgid "New Lesson"
+msgid "View lesson"
+msgstr "Neue Stunde"
+
+#: apps/lessons/templates/lessons/calendar.html:62
+#, fuzzy
+#| msgid "Conflicts"
+msgid "Show conflict details"
+msgstr "Konflikte"
+
+#: apps/lessons/templates/lessons/calendar.html:76
+msgid "View/edit blocked time"
+msgstr ""
+
+#: apps/lessons/templates/lessons/calendar.html:91
+msgid "Legend:"
+msgstr ""
+
+#: apps/lessons/templates/lessons/calendar.html:92
+msgid "Lesson (clickable to edit)"
+msgstr ""
+
+#: apps/lessons/templates/lessons/calendar.html:93
+#, fuzzy
+#| msgid "Conflicts"
+msgid "Conflict"
+msgstr "Konflikte"
+
+#: apps/lessons/templates/lessons/calendar.html:94
+msgid "Blocked Time (clickable to edit)"
+msgstr ""
+
+#: apps/lessons/templates/lessons/calendar.html:95
+msgid "Days (clickable to create)"
+msgstr ""
+
+#: apps/lessons/templates/lessons/conflict_detail.html:4
+#, fuzzy, python-format
+#| msgid "Conflicts"
+msgid "Conflicts - %(date)s"
+msgstr "Konflikte"
+
+#: apps/lessons/templates/lessons/conflict_detail.html:7
+#, fuzzy
+#| msgid "Tutoring Lesson"
+msgid "Conflicts for Lesson"
+msgstr "Nachhilfeunterricht"
+
+#: apps/lessons/templates/lessons/conflict_detail.html:10
+#, fuzzy
+#| msgid "Calendar"
+msgid "Back to Lesson"
+msgstr "Kalender"
+
+#: apps/lessons/templates/lessons/conflict_detail.html:16
+#: apps/lessons/templates/lessons/lesson_detail.html:19
+#, fuzzy
+#| msgid "Date"
+msgid "Date:"
+msgstr "Datum"
+
+#: apps/lessons/templates/lessons/conflict_detail.html:17
+#: apps/lessons/templates/lessons/lesson_detail.html:23
+#, fuzzy
+#| msgid "Time"
+msgid "Time:"
+msgstr "Zeit"
+
+#: apps/lessons/templates/lessons/conflict_detail.html:17
+#: apps/lessons/templates/lessons/lesson_detail.html:24
+#, python-format
+msgid "%(time)s (%(minutes)s Min.)"
+msgstr ""
+
+#: apps/lessons/templates/lessons/conflict_detail.html:18
+#: apps/lessons/templates/lessons/lesson_detail.html:27
+#, fuzzy
+#| msgid "Student"
+msgid "Student:"
+msgstr "Schüler"
+
+#: apps/lessons/templates/lessons/conflict_detail.html:23
+#: apps/lessons/templates/lessons/lesson_detail.html:62
+#, fuzzy, python-format
+#| msgid "Tutoring Lesson"
+msgid "Conflicting Lesson"
+msgid_plural "Conflicting Lessons (%(counter)s)"
+msgstr[0] "Nachhilfeunterricht"
+msgstr[1] "Nachhilfeunterricht"
+
+#: apps/lessons/templates/lessons/conflict_detail.html:31
+#: apps/lessons/templates/lessons/lesson_detail.html:70
+#, fuzzy
+#| msgid "Actions"
+msgid "Action"
+msgstr "Aktionen"
+
+#: apps/lessons/templates/lessons/conflict_detail.html:41
+#: apps/lessons/templates/lessons/lesson_detail.html:80
+#, fuzzy
+#| msgid "Week View"
+msgid "View"
+msgstr "Wochenansicht"
+
+#: apps/lessons/templates/lessons/conflict_detail.html:53
+#: apps/lessons/templates/lessons/lesson_detail.html:92
+#, fuzzy, python-format
+#| msgid "Create Recurring Blocked Time"
+msgid "Conflicting Blocked Time"
+msgid_plural "Conflicting Blocked Times (%(counter)s)"
+msgstr[0] "Serien-Blockzeit erstellen"
+msgstr[1] "Serien-Blockzeit erstellen"
+
+#: apps/lessons/templates/lessons/conflict_detail.html:70
+#, fuzzy
+#| msgid "No upcoming lessons."
+msgid "No conflicts found."
+msgstr "Keine kommenden Stunden."
 
 #: apps/lessons/templates/lessons/lesson_confirm_delete.html:4
 #: apps/lessons/templates/lessons/lesson_confirm_delete.html:7
@@ -808,43 +1617,10 @@ msgid ""
 "at %(time)s?"
 msgstr ""
 
-#: apps/lessons/templates/lessons/lesson_confirm_delete.html:13
-msgid "Confirm Delete"
-msgstr ""
-
 #: apps/lessons/templates/lessons/lesson_detail.html:4
 #, python-format
 msgid "Lesson %(date)s - %(student)s"
 msgstr ""
-
-#: apps/lessons/templates/lessons/lesson_detail.html:10
-#, fuzzy
-#| msgid "Calendar"
-msgid "Back to Calendar"
-msgstr "Kalender"
-
-#: apps/lessons/templates/lessons/lesson_detail.html:19
-#, fuzzy
-#| msgid "Date"
-msgid "Date:"
-msgstr "Datum"
-
-#: apps/lessons/templates/lessons/lesson_detail.html:23
-#, fuzzy
-#| msgid "Time"
-msgid "Time:"
-msgstr "Zeit"
-
-#: apps/lessons/templates/lessons/lesson_detail.html:24
-#, python-format
-msgid "%(time)s (%(minutes)s Min.)"
-msgstr ""
-
-#: apps/lessons/templates/lessons/lesson_detail.html:27
-#, fuzzy
-#| msgid "Student"
-msgid "Student:"
-msgstr "Schüler"
 
 #: apps/lessons/templates/lessons/lesson_detail.html:33
 #, fuzzy
@@ -873,39 +1649,11 @@ msgstr "Hinweis:"
 msgid "Show Conflict Details"
 msgstr "Konflikte"
 
-#: apps/lessons/templates/lessons/lesson_detail.html:62
-#, fuzzy, python-format
-#| msgid "Tutoring Lesson"
-msgid "Conflicting Lesson"
-msgid_plural "Conflicting Lessons (%(counter)s)"
-msgstr[0] "Nachhilfeunterricht"
-msgstr[1] "Nachhilfeunterricht"
-
-#: apps/lessons/templates/lessons/lesson_detail.html:70
-#, fuzzy
-#| msgid "Actions"
-msgid "Action"
-msgstr "Aktionen"
-
-#: apps/lessons/templates/lessons/lesson_detail.html:80
-#, fuzzy
-#| msgid "Week View"
-msgid "View"
-msgstr "Wochenansicht"
-
 #: apps/lessons/templates/lessons/lesson_detail.html:88
 #, fuzzy
 #| msgid "No upcoming lessons."
 msgid "No conflicting lessons."
 msgstr "Keine kommenden Stunden."
-
-#: apps/lessons/templates/lessons/lesson_detail.html:92
-#, fuzzy, python-format
-#| msgid "Create Recurring Blocked Time"
-msgid "Conflicting Blocked Time"
-msgid_plural "Conflicting Blocked Times (%(counter)s)"
-msgstr[0] "Serien-Blockzeit erstellen"
-msgstr[1] "Serien-Blockzeit erstellen"
 
 #: apps/lessons/templates/lessons/lesson_detail.html:101
 #, python-format
@@ -918,11 +1666,6 @@ msgstr[1] ""
 #, python-format
 msgid "Planned: %(planned)s units | Actual: %(actual)s hours"
 msgstr ""
-
-#: apps/lessons/templates/lessons/lesson_detail.html:112
-#: apps/lessons/templates/lessons/week.html:17
-msgid "Note:"
-msgstr "Hinweis:"
 
 #: apps/lessons/templates/lessons/lesson_detail.html:112
 #, python-format
@@ -952,6 +1695,100 @@ msgstr "Monatsansicht"
 msgid "No lessons available."
 msgstr "Keine Stunden vorhanden."
 
+#: apps/lessons/templates/lessons/lesson_month.html:4
+#: apps/lessons/templates/lessons/lesson_month.html:7
+#, python-format
+msgid "Lessons %(month)s/%(year)s"
+msgstr ""
+
+#: apps/lessons/templates/lessons/lesson_month.html:41
+#, fuzzy
+#| msgid "No lessons available."
+msgid "No lessons available for this month."
+msgstr "Keine Stunden vorhanden."
+
+#: apps/lessons/templates/lessons/recurringlesson_confirm_delete.html:4
+#: apps/lessons/templates/lessons/recurringlesson_confirm_delete.html:7
+#, fuzzy
+#| msgid "Create Recurring Lesson"
+msgid "Delete Recurring Lesson"
+msgstr "Serientermin anlegen"
+
+#: apps/lessons/templates/lessons/recurringlesson_confirm_delete.html:8
+#, python-format
+msgid ""
+"Are you sure you want to delete the recurring lesson for "
+"\"%(student)s\" (%(weekdays)s, %(time)s)?"
+msgstr ""
+
+#: apps/lessons/templates/lessons/recurringlesson_confirm_delete.html:9
+msgid "Already generated lessons will not be deleted."
+msgstr ""
+
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:20
+#, fuzzy
+#| msgid "Contracts"
+msgid "Until contract end"
+msgstr "Verträge"
+
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:30
+#, python-format
+msgid "This series would generate <strong>%(counter)s</strong> lesson."
+msgid_plural "This series would generate <strong>%(counter)s</strong> lessons."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:35
+#, python-format
+msgid "%(date)s at %(time)s - %(student)s"
+msgstr ""
+
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:43
+msgid "Generate lessons from this series"
+msgstr ""
+
+#: apps/lessons/templates/lessons/recurringlesson_detail.html:45
+msgid "Note: Existing lessons will be skipped."
+msgstr ""
+
+#: apps/lessons/templates/lessons/recurringlesson_form.html:4
+#: apps/lessons/templates/lessons/recurringlesson_form.html:7
+#, fuzzy
+#| msgid "Create Recurring Lesson"
+msgid "Edit Recurring Lesson"
+msgstr "Serientermin anlegen"
+
+#: apps/lessons/templates/lessons/recurringlesson_form.html:4
+#: apps/lessons/templates/lessons/recurringlesson_form.html:7
+#: apps/lessons/templates/lessons/recurringlesson_list.html:8
+#, fuzzy
+#| msgid "Create Recurring Lesson"
+msgid "New Recurring Lesson"
+msgstr "Serientermin anlegen"
+
+#: apps/lessons/templates/lessons/recurringlesson_form.html:10
+#, fuzzy
+#| msgid "Create Recurring Lesson"
+msgid "What are recurring lessons?"
+msgstr "Serientermin anlegen"
+
+#: apps/lessons/templates/lessons/recurringlesson_form.html:12
+msgid ""
+"Recurring lessons allow you to create repeating lessons (e.g., 'every Monday "
+"at 2 PM'). After saving, all lessons for the specified period will be "
+"automatically generated."
+msgstr ""
+
+#: apps/lessons/templates/lessons/recurringlesson_form.html:36
+msgid "Save and Generate Lessons"
+msgstr ""
+
+#: apps/lessons/templates/lessons/recurringlesson_list.html:35
+#, fuzzy
+#| msgid "No lessons available."
+msgid "No recurring lessons available."
+msgstr "Keine Stunden vorhanden."
+
 #: apps/lessons/templates/lessons/week.html:4
 #: apps/lessons/templates/lessons/week.html:7
 msgid "Week View"
@@ -964,10 +1801,6 @@ msgstr "Vorige Woche"
 #: apps/lessons/templates/lessons/week.html:11
 msgid "Next Week"
 msgstr "Nächste Woche"
-
-#: apps/lessons/templates/lessons/week.html:13
-msgid "Create Recurring Blocked Time"
-msgstr "Serien-Blockzeit erstellen"
 
 #: apps/lessons/templates/lessons/week.html:17
 msgid ""

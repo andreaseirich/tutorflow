@@ -1,46 +1,46 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
 {% block title %}{{ recurring_lesson }} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Serientermin</h1>
+<h1>{% trans "Recurring Lesson" %}</h1>
 
 <div class="btn-group">
-    <a href="{% url 'lessons:recurring_update' recurring_lesson.pk %}" class="btn">Bearbeiten</a>
-    <a href="{% url 'lessons:recurring_delete' recurring_lesson.pk %}" class="btn btn-danger">Löschen</a>
-    <a href="{% url 'lessons:recurring_list' %}" class="btn btn-secondary">Zurück zur Liste</a>
+    <a href="{% url 'lessons:recurring_update' recurring_lesson.pk %}" class="btn">{% trans "Edit" %}</a>
+    <a href="{% url 'lessons:recurring_delete' recurring_lesson.pk %}" class="btn btn-danger">{% trans "Delete" %}</a>
+    <a href="{% url 'lessons:recurring_list' %}" class="btn btn-secondary">{% trans "Back to List" %}</a>
 </div>
 
-<h2>Details</h2>
+<h2>{% trans "Details" %}</h2>
 <table>
-    <tr><th>Schüler</th><td><a href="{% url 'students:detail' recurring_lesson.contract.student.pk %}">{{ recurring_lesson.contract.student }}</a></td></tr>
-    <tr><th>Wochentage</th><td>{{ recurring_lesson.get_active_weekdays_display }}</td></tr>
-    <tr><th>Startdatum</th><td>{{ recurring_lesson.start_date }}</td></tr>
-    <tr><th>Enddatum</th><td>{{ recurring_lesson.end_date|default:"Bis Vertragsende" }}</td></tr>
-    <tr><th>Zeit</th><td>{{ recurring_lesson.start_time }}</td></tr>
-    <tr><th>Dauer</th><td>{{ recurring_lesson.duration_minutes }} Minuten</td></tr>
-    <tr><th>Status</th><td>{% if recurring_lesson.is_active %}<span style="color: #28a745;">Aktiv</span>{% else %}<span style="color: #6c757d;">Inaktiv</span>{% endif %}</td></tr>
+    <tr><th>{% trans "Student" %}</th><td><a href="{% url 'students:detail' recurring_lesson.contract.student.pk %}">{{ recurring_lesson.contract.student }}</a></td></tr>
+    <tr><th>{% trans "Weekdays" %}</th><td>{{ recurring_lesson.get_active_weekdays_display }}</td></tr>
+    <tr><th>{% trans "Start Date" %}</th><td>{{ recurring_lesson.start_date }}</td></tr>
+    <tr><th>{% trans "End Date" %}</th><td>{{ recurring_lesson.end_date|default:_("Until contract end") }}</td></tr>
+    <tr><th>{% trans "Time" %}</th><td>{{ recurring_lesson.start_time }}</td></tr>
+    <tr><th>{% trans "Duration" %}</th><td>{% blocktrans with minutes=recurring_lesson.duration_minutes %}{{ minutes }} minutes{% endblocktrans %}</td></tr>
+    <tr><th>{% trans "Status" %}</th><td>{% if recurring_lesson.is_active %}<span style="color: #28a745;">{% trans "Active" %}</span>{% else %}<span style="color: #6c757d;">{% trans "Inactive" %}</span>{% endif %}</td></tr>
     {% if recurring_lesson.notes %}
-    <tr><th>Notizen</th><td>{{ recurring_lesson.notes }}</td></tr>
+    <tr><th>{% trans "Notes" %}</th><td>{{ recurring_lesson.notes }}</td></tr>
     {% endif %}
 </table>
 
-<h2>Vorschau</h2>
-<p>Diese Serie würde <strong>{{ preview_count }}</strong> Unterrichtsstunde(n) erzeugen.</p>
+<h2>{% trans "Preview" %}</h2>
+<p>{% blocktrans count counter=preview_count %}This series would generate <strong>{{ counter }}</strong> lesson.{% plural %}This series would generate <strong>{{ counter }}</strong> lessons.{% endblocktrans %}</p>
 {% if preview %}
-<p>Erste 10 Termine:</p>
+<p>{% trans "First 10 appointments:" %}</p>
 <ul>
     {% for lesson in preview %}
-    <li>{{ lesson.date }} um {{ lesson.start_time }} - {{ lesson.contract.student }}</li>
+    <li>{% blocktrans with date=lesson.date time=lesson.start_time student=lesson.contract.student %}{{ date }} at {{ time }} - {{ student }}{% endblocktrans %}</li>
     {% endfor %}
 </ul>
 {% endif %}
 
-<h2>Aktionen</h2>
+<h2>{% trans "Actions" %}</h2>
 <form method="post" action="{% url 'lessons:recurring_generate' recurring_lesson.pk %}">
     {% csrf_token %}
-    <button type="submit" class="btn btn-success">Lessons aus dieser Serie generieren</button>
+    <button type="submit" class="btn btn-success">{% trans "Generate lessons from this series" %}</button>
 </form>
-<p><small>Hinweis: Bereits vorhandene Lessons werden übersprungen.</small></p>
+<p><small>{% trans "Note: Existing lessons will be skipped." %}</small></p>
 {% endblock %}
-

@@ -1,28 +1,27 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Rechnung löschen - TutorFlow{% endblock %}
+{% block title %}{% trans "Delete Invoice" %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Rechnung löschen</h1>
+<h1>{% trans "Delete Invoice" %}</h1>
 
 <div style="background: #fff3cd; padding: 20px; border-radius: 5px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
-    <h2 style="color: #dc3545; margin-top: 0;">⚠ Achtung</h2>
-    <p>Möchten Sie diese Rechnung wirklich löschen?</p>
-    <p><strong>Rechnung:</strong> {{ object.payer_name }} ({{ object.period_start }} - {{ object.period_end }})</p>
-    <p><strong>Betrag:</strong> {{ object.total_amount }}€</p>
-    <p><strong>Anzahl Posten:</strong> {{ object.items.count }}</p>
+    <h2 style="color: #dc3545; margin-top: 0;">⚠ {% trans "Warning" %}</h2>
+    <p>{% trans "Do you really want to delete this invoice?" %}</p>
+    <p><strong>{% trans "Invoice:" %}</strong> {{ object.payer_name }} ({{ object.period_start }} - {{ object.period_end }})</p>
+    <p><strong>{% trans "Amount:" %}</strong> {{ object.total_amount }}€</p>
+    <p><strong>{% trans "Number of Items:" %}</strong> {{ object.items.count }}</p>
     <p style="margin-top: 15px;">
-        <strong>Hinweis:</strong> Alle Unterrichtsstunden dieser Rechnung werden auf "unterrichtet" zurückgesetzt, 
-        falls sie nicht in anderen Rechnungen enthalten sind.
+        <strong>{% trans "Note:" %}</strong> {% trans "All lessons in this invoice will be reset to 'taught' if they are not included in other invoices." %}
     </p>
 </div>
 
 <form method="post">
     {% csrf_token %}
     <div class="btn-group">
-        <button type="submit" class="btn btn-danger">Ja, löschen</button>
-        <a href="{% url 'billing:invoice_detail' object.pk %}" class="btn btn-secondary">Abbrechen</a>
+        <button type="submit" class="btn btn-danger">{% trans "Yes, delete" %}</button>
+        <a href="{% url 'billing:invoice_detail' object.pk %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
     </div>
 </form>
 {% endblock %}
-

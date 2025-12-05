@@ -1,15 +1,15 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}{% if object %}Serien-Blockzeit bearbeiten{% else %}Neue Serien-Blockzeit{% endif %} - TutorFlow{% endblock %}
+{% block title %}{% if object %}{% trans "Edit Recurring Blocked Time" %}{% else %}{% trans "New Recurring Blocked Time" %}{% endif %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>{% if object %}Serien-Blockzeit bearbeiten{% else %}Neue Serien-Blockzeit{% endif %}</h1>
+<h1>{% if object %}{% trans "Edit Recurring Blocked Time" %}{% else %}{% trans "New Recurring Blocked Time" %}{% endif %}</h1>
 
 <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
-    <strong>💡 Was sind Serien-Blockzeiten?</strong>
+    <strong>💡 {% trans "What are recurring blocked times?" %}</strong>
     <p style="margin: 5px 0 0 0; font-size: 0.9em;">
-        Serien-Blockzeiten ermöglichen es, wiederholende Blockzeiten anzulegen (z. B. "jeden Dienstag 18–20 Uhr"). 
-        Nach dem Speichern können Sie die Blockzeiten für den angegebenen Zeitraum generieren.
+        {% trans "Recurring blocked times allow you to create repeating blocked times (e.g., 'every Tuesday 6-8 PM'). After saving, you can generate the blocked times for the specified period." %}
     </p>
 </div>
 
@@ -24,18 +24,17 @@
             {% endif %}
             {% if field.name == 'recurrence_type' %}
                 <small class="form-text text-muted">
-                    <strong>Wöchentlich:</strong> Jede Woche an den ausgewählten Wochentagen.<br>
-                    <strong>Alle 2 Wochen:</strong> Jede zweite Woche an den ausgewählten Wochentagen.<br>
-                    <strong>Monatlich:</strong> Jeden Monat am gleichen Kalendertag (z.B. jeden 15. des Monats), wenn dieser Tag ein ausgewählter Wochentag ist.
+                    <strong>{% trans "Weekly:" %}</strong> {% trans "Every week on the selected weekdays." %}<br>
+                    <strong>{% trans "Bi-weekly:" %}</strong> {% trans "Every second week on the selected weekdays." %}<br>
+                    <strong>{% trans "Monthly:" %}</strong> {% trans "Every month on the same calendar day (e.g., every 15th of the month), if that day is a selected weekday." %}
                 </small>
             {% endif %}
         </div>
     {% endfor %}
     
     <div class="btn-group">
-        <button type="submit" class="btn btn-success">Speichern</button>
-        <a href="{% url 'lessons:calendar' %}" class="btn btn-secondary">Abbrechen</a>
+        <button type="submit" class="btn btn-success">{% trans "Save" %}</button>
+        <a href="{% url 'lessons:calendar' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
     </div>
 </form>
 {% endblock %}
-

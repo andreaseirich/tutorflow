@@ -1,20 +1,20 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Kalender {{ month_label }} {{ year }} - TutorFlow{% endblock %}
+{% block title %}{% blocktrans with month=month_label year=year %}Calendar {{ month }} {{ year }}{% endblocktrans %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Kalender {{ month_label }} {{ year }}</h1>
+<h1>{% blocktrans with month=month_label year=year %}Calendar {{ month }} {{ year }}{% endblocktrans %}</h1>
 
 <div class="btn-group">
-    <a href="{% url 'lessons:calendar' %}?year={{ prev_year }}&month={{ prev_month }}" class="btn">← Vorheriger Monat</a>
-    <a href="{% url 'lessons:calendar' %}?year={{ next_year }}&month={{ next_month }}" class="btn">Nächster Monat →</a>
-    <a href="{% url 'lessons:recurring_create' %}" class="btn btn-success">➕ Serientermin anlegen</a>
-    <a href="{% url 'blocked_times:recurring_create' %}" class="btn btn-warning">🚫 Serien-Blockzeit erstellen</a>
+    <a href="{% url 'lessons:calendar' %}?year={{ prev_year }}&month={{ prev_month }}" class="btn">← {% trans "Previous Month" %}</a>
+    <a href="{% url 'lessons:calendar' %}?year={{ next_year }}&month={{ next_month }}" class="btn">{% trans "Next Month" %} →</a>
+    <a href="{% url 'lessons:recurring_create' %}" class="btn btn-success">➕ {% trans "Create Recurring Lesson" %}</a>
+    <a href="{% url 'blocked_times:recurring_create' %}" class="btn btn-warning">🚫 {% trans "Create Recurring Blocked Time" %}</a>
 </div>
 
 <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
-    <strong>Hinweis:</strong> Klicken Sie auf einen Tag, um eine neue Unterrichtsstunde anzulegen. 
-    Klicken Sie auf eine bestehende Stunde, um sie zu bearbeiten.
+    <strong>{% trans "Note:" %}</strong> {% trans "Click on a day to create a new lesson. Click on an existing lesson to edit it." %}
 </p>
 
 <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
@@ -34,12 +34,12 @@
                     {% if day.is_current_month %}
                     <a href="{% url 'lessons:create' %}?date={{ day.date|date:'Y-m-d' }}&year={{ year }}&month={{ month }}" 
                        style="color: #007bff; text-decoration: none; border-bottom: 1px dashed #007bff;"
-                       title="Neue Stunde anlegen">
+                       title="{% trans 'Create new lesson' %}">
                         {{ day.date.day }}
                     </a>
                     <a href="{% url 'blocked_times:create' %}?date={{ day.date|date:'Y-m-d' }}&year={{ year }}&month={{ month }}" 
                        style="color: #856404; text-decoration: none; margin-left: 5px; font-size: 0.8em;"
-                       title="Blockzeit hinzufügen">
+                       title="{% trans 'Add blocked time' %}">
                         🚫
                     </a>
                     {% else %}
@@ -53,13 +53,13 @@
                     <div style="display: block; background: {% if lesson.date < today %}#f5f5f5{% else %}#e3f2fd{% endif %}; padding: 3px; margin-bottom: 2px; font-size: 0.85em; border-left: 3px solid {% if lesson.id in conflicts_by_lesson %}#dc3545{% else %}#2196f3{% endif %}; {% if lesson.date < today %}opacity: 0.7;{% endif %}">
                         <a href="{% url 'lessons:detail' lesson.pk %}" 
                            style="text-decoration: none; color: #333; display: block;"
-                           title="Stunde anzeigen">
+                           title="{% trans 'View lesson' %}">
                             <strong>{{ lesson.start_time|time:"H:i" }}</strong> 
                             {{ lesson.contract.student.first_name }}
                             {% if lesson.id in conflicts_by_lesson %}
                             <a href="{% url 'lessons:conflicts' lesson.pk %}" 
                                style="color: #dc3545; text-decoration: none; margin-left: 5px;"
-                               title="Konflikt-Details anzeigen">⚠ Details</a>
+                               title="{% trans 'Show conflict details' %}">⚠ {% trans "Details" %}</a>
                             {% endif %}
                         </a>
                     </div>
@@ -73,7 +73,7 @@
                     <div style="background: #fff3cd; padding: 3px; margin-bottom: 2px; font-size: 0.85em; color: #856404; border-left: 3px solid #ffc107;">
                         <a href="{% url 'blocked_times:detail' blocked_time.pk %}?year={{ year }}&month={{ month }}" 
                            style="text-decoration: none; color: #856404; display: block;"
-                           title="Blockzeit anzeigen/bearbeiten">
+                           title="{% trans 'View/edit blocked time' %}">
                             🚫 <strong>{{ blocked_time.start_datetime|time:"H:i" }}</strong> {{ blocked_time.title }}
                         </a>
                     </div>
@@ -88,10 +88,10 @@
 </table>
 
 <div style="margin-top: 20px; padding: 10px; background: #f9f9f9; border-radius: 5px;">
-    <strong>Legende:</strong>
-    <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #e3f2fd; border-left: 3px solid #2196f3;">Unterrichtsstunde (klickbar zum Bearbeiten)</span>
-    <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #e3f2fd; border-left: 3px solid #dc3545;">⚠ Konflikt</span>
-    <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #fff3cd; border-left: 3px solid #ffc107;">🚫 Blockzeit (klickbar zum Bearbeiten)</span>
-    <span style="display: inline-block; margin-left: 10px; color: #007bff; border-bottom: 1px dashed #007bff;">Tage (klickbar zum Anlegen)</span>
+    <strong>{% trans "Legend:" %}</strong>
+    <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #e3f2fd; border-left: 3px solid #2196f3;">{% trans "Lesson (clickable to edit)" %}</span>
+    <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #e3f2fd; border-left: 3px solid #dc3545;">⚠ {% trans "Conflict" %}</span>
+    <span style="display: inline-block; margin-left: 10px; padding: 3px 8px; background: #fff3cd; border-left: 3px solid #ffc107;">🚫 {% trans "Blocked Time (clickable to edit)" %}</span>
+    <span style="display: inline-block; margin-left: 10px; color: #007bff; border-bottom: 1px dashed #007bff;">{% trans "Days (clickable to create)" %}</span>
 </div>
 {% endblock %}

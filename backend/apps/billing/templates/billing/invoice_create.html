@@ -1,16 +1,15 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Neue Rechnung erstellen - TutorFlow{% endblock %}
+{% block title %}{% trans "Create New Invoice" %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Neue Rechnung erstellen</h1>
+<h1>{% trans "Create New Invoice" %}</h1>
 
 <div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #2196f3;">
-    <strong>💡 Hinweis:</strong>
+    <strong>💡 {% trans "Note:" %}</strong>
     <p style="margin: 5px 0 0 0; font-size: 0.9em;">
-        Alle unterrichteten Stunden (Status "unterrichtet") im angegebenen Zeitraum werden <strong>automatisch</strong> in die Rechnung aufgenommen.
-        Stunden mit Status "geplant" oder "bezahlt" werden nicht berücksichtigt.
-        Eine Stunde kann nur in einer Rechnung vorkommen - Stunden, die bereits in einer anderen Rechnung enthalten sind, werden automatisch ausgeschlossen.
+        {% trans "All taught lessons (status 'taught') in the specified period will be automatically included in the invoice. Lessons with status 'planned' or 'paid' will not be considered. A lesson can only appear in one invoice - lessons that are already included in another invoice will be automatically excluded." %}
     </p>
 </div>
 
@@ -18,10 +17,10 @@
     {% csrf_token %}
     
     <div style="margin-bottom: 20px;">
-        <label for="{{ form.period_start.id_for_label }}">Zeitraum:</label>
+        <label for="{{ form.period_start.id_for_label }}">{% trans "Period:" %}</label>
         <div style="display: flex; gap: 10px; align-items: center;">
             {{ form.period_start }}
-            <span>bis</span>
+            <span>{% trans "to" %}</span>
             {{ form.period_end }}
         </div>
         {% if form.period_start.errors %}
@@ -33,25 +32,25 @@
     </div>
     
     <div style="margin-bottom: 20px;">
-        <label for="{{ form.contract.id_for_label }}">Vertrag (optional):</label>
+        <label for="{{ form.contract.id_for_label }}">{% trans "Contract (optional):" %}</label>
         {{ form.contract }}
-        <small class="form-text text-muted">Wenn ausgewählt, werden nur Stunden dieses Vertrags abgerechnet.</small>
+        <small class="form-text text-muted">{% trans "If selected, only lessons from this contract will be billed." %}</small>
     </div>
     
-    <button type="button" onclick="loadLessons()" class="btn">Vorschau anzeigen</button>
+    <button type="button" onclick="loadLessons()" class="btn">{% trans "Show Preview" %}</button>
     
     {% if billable_lessons %}
-    <h2>Verfügbare Unterrichtsstunden ({{ billable_lessons|length }})</h2>
-    <p>Diese Stunden werden automatisch in die Rechnung aufgenommen:</p>
+    <h2>{% blocktrans count counter=billable_lessons|length %}Available Lesson ({{ counter }}){% plural %}Available Lessons ({{ counter }}){% endblocktrans %}</h2>
+    <p>{% trans "These lessons will be automatically included in the invoice:" %}</p>
     
     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
         <thead>
             <tr style="background: #f5f5f5;">
-                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Datum</th>
-                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Zeit</th>
-                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Schüler</th>
-                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Dauer</th>
-                <th style="padding: 8px; text-align: right; border: 1px solid #ddd;">Betrag</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">{% trans "Date" %}</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">{% trans "Time" %}</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">{% trans "Student" %}</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">{% trans "Duration" %}</th>
+                <th style="padding: 8px; text-align: right; border: 1px solid #ddd;">{% trans "Amount" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -60,7 +59,7 @@
                 <td style="padding: 8px; border: 1px solid #ddd;">{{ lesson.date|date:"d.m.Y" }}</td>
                 <td style="padding: 8px; border: 1px solid #ddd;">{{ lesson.start_time|time:"H:i" }}</td>
                 <td style="padding: 8px; border: 1px solid #ddd;">{{ lesson.contract.student.full_name }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd;">{{ lesson.duration_minutes }} Min.</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{% blocktrans with minutes=lesson.duration_minutes %}{{ minutes }} Min.{% endblocktrans %}</td>
                 <td style="padding: 8px; text-align: right; border: 1px solid #ddd;">
                     {% with units=lesson.duration_minutes|floatformat:0 contract_unit=lesson.contract.unit_duration_minutes|floatformat:0 %}
                     {% widthratio lesson.duration_minutes contract_unit 1 as calculated_units %}
@@ -74,12 +73,12 @@
     </table>
     {% elif period_start and period_end %}
     <div style="background: #fff3cd; padding: 15px; border-radius: 5px; border-left: 4px solid #ffc107; margin-bottom: 20px;">
-        <p style="margin: 0;">Keine abrechenbaren Unterrichtsstunden im angegebenen Zeitraum gefunden.</p>
+        <p style="margin: 0;">{% trans "No billable lessons found in the specified period." %}</p>
         <p style="margin: 5px 0 0 0; font-size: 0.9em;">
-            Stellen Sie sicher, dass:
+            {% trans "Make sure that:" %}
             <ul style="margin: 5px 0 0 0; padding-left: 20px;">
-                <li>Es gibt Stunden mit Status "unterrichtet" im Zeitraum</li>
-                <li>Diese Stunden noch nicht in einer anderen Rechnung enthalten sind</li>
+                <li>{% trans "There are lessons with status 'taught' in the period" %}</li>
+                <li>{% trans "These lessons are not already included in another invoice" %}</li>
             </ul>
         </p>
     </div>
@@ -87,9 +86,9 @@
     
     <div class="btn-group" style="margin-top: 20px;">
         <button type="submit" class="btn btn-success" {% if not billable_lessons %}disabled{% endif %}>
-            Rechnung erstellen
+            {% trans "Create Invoice" %}
         </button>
-        <a href="{% url 'billing:invoice_list' %}" class="btn btn-secondary">Abbrechen</a>
+        <a href="{% url 'billing:invoice_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
     </div>
 </form>
 
@@ -100,7 +99,7 @@ function loadLessons() {
     const contract = document.getElementById('{{ form.contract.id_for_label }}').value;
     
     if (!periodStart || !periodEnd) {
-        alert('Bitte geben Sie einen Zeitraum ein.');
+        alert('{% trans "Please enter a period." %}');
         return;
     }
     
@@ -115,4 +114,3 @@ function loadLessons() {
 }
 </script>
 {% endblock %}
-

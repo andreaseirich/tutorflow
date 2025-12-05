@@ -1,44 +1,45 @@
 {% extends 'core/base.html' %}
+{% load i18n %}
 
-{% block title %}Konflikte - {{ lesson.date }} - TutorFlow{% endblock %}
+{% block title %}{% blocktrans with date=lesson.date %}Conflicts - {{ date }}{% endblocktrans %} - TutorFlow{% endblock %}
 
 {% block content %}
-<h1>Konflikte für Unterrichtsstunde</h1>
+<h1>{% trans "Conflicts for Lesson" %}</h1>
 
 <div style="margin-bottom: 20px;">
-    <a href="{% url 'lessons:detail' lesson.pk %}" class="btn">← Zurück zur Stunde</a>
-    <a href="{% url 'lessons:calendar' %}?year={{ lesson.date.year }}&month={{ lesson.date.month }}" class="btn">← Zurück zum Kalender</a>
+    <a href="{% url 'lessons:detail' lesson.pk %}" class="btn">← {% trans "Back to Lesson" %}</a>
+    <a href="{% url 'lessons:calendar' %}?year={{ lesson.date.year }}&month={{ lesson.date.month }}" class="btn">← {% trans "Back to Calendar" %}</a>
 </div>
 
 <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-    <h2>Stunde</h2>
-    <p><strong>Datum:</strong> {{ lesson.date|date:"d.m.Y" }}</p>
-    <p><strong>Uhrzeit:</strong> {{ lesson.start_time|time:"H:i" }} Uhr ({{ lesson.duration_minutes }} Min.)</p>
-    <p><strong>Schüler:</strong> {{ lesson.contract.student.full_name }}</p>
+    <h2>{% trans "Lesson" %}</h2>
+    <p><strong>{% trans "Date:" %}</strong> {{ lesson.date|date:"d.m.Y" }}</p>
+    <p><strong>{% trans "Time:" %}</strong> {% blocktrans with time=lesson.start_time|time:"H:i" minutes=lesson.duration_minutes %}{{ time }} ({{ minutes }} Min.){% endblocktrans %}</p>
+    <p><strong>{% trans "Student:" %}</strong> {{ lesson.contract.student.full_name }}</p>
 </div>
 
 {% if conflict_lessons %}
 <div style="background: #fff3cd; padding: 20px; border-radius: 5px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
-    <h2 style="color: #dc3545; margin-top: 0;">Kollidierende Unterrichtsstunden ({{ conflict_lessons|length }})</h2>
+    <h2 style="color: #dc3545; margin-top: 0;">{% blocktrans count counter=conflict_lessons|length %}Conflicting Lesson{% plural %}Conflicting Lessons ({{ counter }}){% endblocktrans %}</h2>
     
     <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
         <thead>
             <tr style="background: #f5f5f5;">
-                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Datum</th>
-                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Uhrzeit</th>
-                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Schüler</th>
-                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Aktion</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">{% trans "Date" %}</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">{% trans "Time" %}</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">{% trans "Student" %}</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">{% trans "Action" %}</th>
             </tr>
         </thead>
         <tbody>
             {% for conflict_lesson in conflict_lessons %}
             <tr>
                 <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.date|date:"d.m.Y" }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.start_time|time:"H:i" }} Uhr</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.start_time|time:"H:i" }}</td>
                 <td style="padding: 8px; border: 1px solid #ddd;">{{ conflict_lesson.contract.student.full_name }}</td>
                 <td style="padding: 8px; border: 1px solid #ddd;">
-                    <a href="{% url 'lessons:detail' conflict_lesson.pk %}" class="btn" style="font-size: 0.9em;">Anzeigen</a>
-                    <a href="{% url 'lessons:update' conflict_lesson.pk %}" class="btn btn-primary" style="font-size: 0.9em;">Bearbeiten</a>
+                    <a href="{% url 'lessons:detail' conflict_lesson.pk %}" class="btn" style="font-size: 0.9em;">{% trans "View" %}</a>
+                    <a href="{% url 'lessons:update' conflict_lesson.pk %}" class="btn btn-primary" style="font-size: 0.9em;">{% trans "Edit" %}</a>
                 </td>
             </tr>
             {% endfor %}
@@ -49,12 +50,12 @@
 
 {% if conflict_blocked_times %}
 <div style="background: #fff3cd; padding: 20px; border-radius: 5px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
-    <h2 style="color: #dc3545; margin-top: 0;">Kollidierende Blockzeiten ({{ conflict_blocked_times|length }})</h2>
+    <h2 style="color: #dc3545; margin-top: 0;">{% blocktrans count counter=conflict_blocked_times|length %}Conflicting Blocked Time{% plural %}Conflicting Blocked Times ({{ counter }}){% endblocktrans %}</h2>
     <ul>
         {% for blocked_time in conflict_blocked_times %}
         <li>
             <strong>{{ blocked_time.title }}</strong><br>
-            {{ blocked_time.start_datetime|date:"d.m.Y H:i" }} - {{ blocked_time.end_datetime|date:"H:i" }} Uhr
+            {{ blocked_time.start_datetime|date:"d.m.Y H:i" }} - {{ blocked_time.end_datetime|date:"H:i" }}
             {% if blocked_time.notes %}
             <br><em>{{ blocked_time.notes }}</em>
             {% endif %}
@@ -66,9 +67,8 @@
 
 {% if not conflict_lessons and not conflict_blocked_times %}
 <div style="background: #d4edda; padding: 20px; border-radius: 5px; border-left: 4px solid #28a745;">
-    <p style="margin: 0;">Keine Konflikte gefunden.</p>
+    <p style="margin: 0;">{% trans "No conflicts found." %}</p>
 </div>
 {% endif %}
 
 {% endblock %}
-
