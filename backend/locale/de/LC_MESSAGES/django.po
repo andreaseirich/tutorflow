@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 16:33+0100\n"
+"POT-Creation-Date: 2025-12-05 16:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -716,7 +716,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: apps/blocked_times/recurring_service.py:298
+#: apps/blocked_times/recurring_service.py:298 apps/lessons/services.py:75
 #, python-brace-format
 msgid "Overlap with lesson for {student} ({time})"
 msgstr ""
@@ -1600,6 +1600,11 @@ msgid_plural ""
 "{count} lessons with conflicts detected. Please check the details."
 msgstr[0] ""
 msgstr[1] ""
+
+#: apps/lessons/services.py:93
+#, python-brace-format
+msgid "Overlap with blocked time: {title}"
+msgstr ""
 
 #: apps/lessons/templates/lessons/calendar.html:4
 #: apps/lessons/templates/lessons/calendar.html:7
