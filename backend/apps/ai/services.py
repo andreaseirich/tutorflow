@@ -89,7 +89,7 @@ class LessonPlanService:
             lesson=lesson,
             defaults={
                 'student': student,
-                'topic': f"Unterrichtsplan für {lesson.date}",
+                'topic': _("Lesson plan for {date}").format(date=lesson.date),
                 'subject': subject,
                 'content': generated_content,
                 'grade_level': student.grade or '',
