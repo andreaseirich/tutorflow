@@ -54,8 +54,9 @@ class Contract(models.Model):
         verbose_name_plural = _('Contracts')
 
     def __str__(self):
+        from django.utils.translation import gettext as _
         institute_str = f" ({self.institute})" if self.institute else ""
-        return f"{self.student} - {self.hourly_rate}€/Einheit{institute_str}"
+        return f"{self.student} - {self.hourly_rate}€/{_('unit')}{institute_str}"
 
 
 class ContractMonthlyPlan(models.Model):
@@ -86,4 +87,5 @@ class ContractMonthlyPlan(models.Model):
         verbose_name_plural = _('Contract Monthly Plans')
 
     def __str__(self):
-        return f"{self.contract} - {self.year}-{self.month:02d}: {self.planned_units} Einheiten"
+        from django.utils.translation import gettext as _
+        return f"{self.contract} - {self.year}-{self.month:02d}: {self.planned_units} {_('units')}"
