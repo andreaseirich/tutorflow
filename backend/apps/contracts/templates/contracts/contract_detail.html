@@ -9,7 +9,6 @@
 <div class="btn-group">
     <a href="{% url 'contracts:update' contract.pk %}" class="btn">{% trans "Edit" %}</a>
     <a href="{% url 'contracts:delete' contract.pk %}" class="btn btn-danger">{% trans "Delete" %}</a>
-    <a href="{% url 'lessons:recurring_create' %}?contract={{ contract.pk }}" class="btn btn-success">➕ {% trans "Create Recurring Lesson" %}</a>
     <a href="{% url 'contracts:list' %}" class="btn btn-secondary">{% trans "Back to List" %}</a>
 </div>
 

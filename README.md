@@ -134,11 +134,14 @@ TutorFlow provides a complete solution for managing tutoring activities:
 - **Contract Management**: Rates, duration, contract period, planned units
 - **Lesson Planning**: Planning with date, time, travel times
   - **Week View**: Interactive week view (Mon-Sun, 08:00-22:00) as central UI for appointment planning
+    - **Default calendar view**: Week view is the default calendar view
     - **Drag-to-Create**: Drag a time range to create a new appointment (tutoring or blocked time)
-    - **Appointment Display**: Lessons (blue), blocked times (orange), conflicts (red border)
+    - **Recurring option**: When creating a lesson, users can select "Repeat this lesson" with pattern (Weekly/Bi-weekly/Monthly) and weekday selection
+    - **Appointment Display**: Lessons (blue), blocked times (orange), conflicts (red border/icon)
     - **Click on Appointment**: Opens edit form
-  - **Month Calendar**: Alternative view for monthly overview
-  - **Recurring Lessons**: Recurring lessons (e.g., every Monday/Thursday) with automatic generation
+    - **Click on Conflict Icon**: Opens conflict detail view with reasons
+  - **Month Calendar**: Alternative view for monthly overview (legacy, redirects to week view)
+  - **Recurring Lessons**: Recurring lessons are created exclusively via the lesson creation form in week view (no separate button/page)
   - **Automatic Status Management**: Lesson status (planned/taught) is automatically set based on date
 - **Blocked Times**: Management of personal appointments (university, job, etc.)
   - **Calendar Integration**: Blocked times are managed exclusively via the calendar (create, edit, display)
@@ -147,11 +150,16 @@ TutorFlow provides a complete solution for managing tutoring activities:
 - **Conflict Detection**: Automatic detection of overlaps (including travel times)
   - **Scheduling**: Overlaps with other lessons and blocked times
   - **Contract Quota**: Detection of violations against agreed lesson quota (based on ContractMonthlyPlan)
+  - **Conflict Reasons**: Detailed conflict information with type, affected objects, and messages
+  - **Automatic Recalculation**: Conflicts are automatically recalculated after any lesson or blocked time change
 - **Income Overview**: Monthly and yearly evaluations by status (planned, taught, paid)
 - **Dashboard**: Overview of today's/upcoming lessons, conflicts, income
 
 ### Premium Features
 - **AI-powered Lesson Plans**: Automatic generation of detailed lesson plans via LLM API
+  - **UI Integration**: Prominent "Generate AI Lesson Plan" button in lesson detail view for premium users
+  - **Premium Badge**: Premium status is displayed in the dashboard
+  - **Non-Premium Notice**: Non-premium users see a disabled button with a notice about premium availability
 - **Human-in-the-Loop**: Generated plans can be adjusted and are accountable
 
 ## Tech Stack

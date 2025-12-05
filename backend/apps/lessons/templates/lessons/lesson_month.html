@@ -5,7 +5,7 @@
 
 {% block content %}
 <h1>{% blocktrans with month=month year=year %}Lessons {{ month }}/{{ year }}{% endblocktrans %}</h1>
-<a href="{% url 'lessons:calendar' %}" class="btn">{% trans "Back to Calendar" %}</a>
+<a href="{% url 'lessons:week' %}" class="btn">{% trans "Back to Calendar" %}</a>
 
 <table>
     <thead>

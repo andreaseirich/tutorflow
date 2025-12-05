@@ -8,7 +8,7 @@
 
 <div style="margin-bottom: 20px;">
     <a href="{% url 'lessons:detail' lesson.pk %}" class="btn">← {% trans "Back to Lesson" %}</a>
-    <a href="{% url 'lessons:calendar' %}?year={{ lesson.date.year }}&month={{ lesson.date.month }}" class="btn">← {% trans "Back to Calendar" %}</a>
+    <a href="{% url 'lessons:week' %}?year={{ lesson.date.year }}&month={{ lesson.date.month }}&day={{ lesson.date.day }}" class="btn">← {% trans "Back to Calendar" %}</a>
 </div>
 
 <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">

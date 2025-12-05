@@ -35,7 +35,7 @@ class RecurringBlockedTimeCreateView(CreateView):
         """Weiterleitung zurück zum Kalender."""
         from django.utils import timezone
         now = timezone.now()
-        return reverse_lazy('lessons:calendar') + f'?year={now.year}&month={now.month}'
+        return reverse_lazy('lessons:week') + f'?year={now.year}&month={now.month}&day={now.day}'
 
     def form_valid(self, form):
         messages.success(self.request, _('Recurring blocked time successfully created.'))
@@ -52,7 +52,7 @@ class RecurringBlockedTimeUpdateView(UpdateView):
         """Weiterleitung zurück zum Kalender."""
         from django.utils import timezone
         now = timezone.now()
-        return reverse_lazy('lessons:calendar') + f'?year={now.year}&month={now.month}'
+        return reverse_lazy('lessons:week') + f'?year={now.year}&month={now.month}&day={now.day}'
 
     def form_valid(self, form):
         messages.success(self.request, _('Recurring blocked time successfully updated.'))
@@ -68,7 +68,7 @@ class RecurringBlockedTimeDeleteView(DeleteView):
         """Weiterleitung zurück zum Kalender."""
         from django.utils import timezone
         now = timezone.now()
-        return reverse_lazy('lessons:calendar') + f'?year={now.year}&month={now.month}'
+        return reverse_lazy('lessons:week') + f'?year={now.year}&month={now.month}&day={now.day}'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, _('Recurring blocked time successfully deleted.'))
