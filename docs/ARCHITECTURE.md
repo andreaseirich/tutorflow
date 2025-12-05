@@ -419,6 +419,7 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
   - `biweekly`: Every 2 weeks - every second week on selected weekdays
   - `monthly`: Monthly - every month on the same calendar day, if that day is a selected weekday
 - **Service**: `RecurringLessonService` generates lessons from RecurringLesson templates based on `recurrence_type`, checks conflicts and skips already existing lessons.
+- **UI Integration**: Recurring lessons are created exclusively via the lesson creation form in the week view. There is no separate "Create recurring lesson" button or page. Users select "Repeat this lesson" in the lesson form and configure the recurrence pattern.
 
 #### BlockedTime (apps.blocked_times)
 - **Fields**: title, description, start_datetime, end_datetime, is_recurring, recurring_pattern
@@ -485,10 +486,12 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Purpose**: Provision of data for the interactive week view. Automatically determines the week range (Monday to Sunday) based on any given day.
 - **Important**: 
   - **Week view is the central UI for appointment planning** - Lessons and blocked times are primarily planned and edited via the week view.
-  - **Drag-to-Create**: Users can drag time ranges in the weekly grid to create new appointments.
+  - **Default calendar view**: Week view is the default calendar view. The old monthly calendar view (`/lessons/calendar/`) redirects to week view for backward compatibility.
+  - **Drag-to-Create**: Users can drag time ranges in the weekly grid to create new appointments (lessons or blocked times).
   - **Time axis**: 08:00-22:00 with hourly rows.
   - **Appointment display**: Lessons (blue), blocked times (orange), conflicts (red border/icon).
   - **Click on appointment**: Opens edit form.
+  - **Click on conflict icon**: Opens conflict detail view with reasons.
 
 ### Architecture Principles
 
@@ -561,19 +564,25 @@ This structure makes it easy to find related code: if you're working on scheduli
 ## Data Flow
 
 ### Planning a Lesson
-1. **Calendar as central UI**: User opens calendar view
-2. **Create**: Click on day in calendar → Form with pre-filled date
+1. **Week View as central UI**: User opens week view (default calendar view)
+2. **Create**: Drag time range in week view or click on time slot → Form with pre-filled date/time
    - User selects student/contract, time, travel times
-   - Blocked times can also be created via click on day (🚫 symbol)
+   - **Recurring option**: Checkbox "Repeat this lesson" with pattern selection (Weekly/Bi-weekly/Monthly) and weekday selection
+   - If recurring: Creates RecurringLesson and generates all lessons automatically
+   - If not recurring: Creates single lesson
+   - Blocked times can also be created via drag-to-create (🚫 symbol)
 3. **Edit**: Click on existing lesson or blocked time → Edit form
-4. **Recurring lessons**: Button "Create recurring lesson" → RecurringLesson form
+4. **Recurring lessons**: Recurring lessons are created exclusively via the lesson creation form in week view
+   - No separate "Create recurring lesson" button or page
    - After saving: Automatic generation of all lessons in the period
 5. System checks conflicts (blocked times, other lessons) including travel times
 6. **Conflict detection**: 
    - Calculation of total time block: `start = start_time - travel_before`, `end = start_time + duration + travel_after`
    - Check for overlap with other lessons (including their travel times)
    - Check for overlap with blocked times
-   - Conflicts are displayed as warnings
+   - Check for contract quota violations (planned vs. actual units)
+   - Conflicts are displayed with detailed reasons (type, affected objects, messages)
+   - **Conflict recalculation**: After any lesson or blocked time change, conflicts are automatically recalculated for all affected lessons
 7. Lesson is created (without manual status selection in form)
 8. **Automatic status setting**: `LessonStatusService.update_status_for_lesson()`
    - Past lessons → Status TAUGHT
@@ -581,15 +590,15 @@ This structure makes it easy to find related code: if you're working on scheduli
    - PAID/CANCELLED are not overwritten
    - Applied both for manual creation and Recurring Lessons
 9. On completion: Status changes to "taught" → "paid" (via billing system)
-10. **Calendar shows all lessons**: Past and future lessons are displayed in the calendar
+10. **Week view shows all lessons**: Past and future lessons are displayed in the week view
     - Past lessons are visually grayed out but clickable
     - All lessons are editable
-11. **Calendar date synchronization**: 
-    - CalendarView uses exclusively year/month from URL parameters (no 'today' for month calculation)
-    - Central variable `current_month_date = date(year, month, 1)` for all calculations
-    - Month name (month_label) is derived from current_month_date
-    - Default date in Create form corresponds to clicked day (date parameter) or year/month
-    - Redirect after Create/Update leads back to correct month (year/month from request)
+    - Conflict icons are clickable and link to conflict detail view
+11. **Week view date synchronization**: 
+    - WeekView uses year/month/day from URL parameters
+    - Default date in Create form corresponds to clicked day/time slot
+    - Redirect after Create/Update leads back to correct week (year/month/day from request)
+12. **Legacy calendar view**: The old `/lessons/calendar/` view redirects to week view for backward compatibility
 
 ### Billing Workflow
 1. **Select period**: User selects period (period_start, period_end) and optionally contract
@@ -625,7 +634,13 @@ This structure makes it easy to find related code: if you're working on scheduli
   - `blocked_time`: Overlap with blocked times
   - `quota`: Contract quota exceeded (see below)
 - **Conflict marking**: Lessons have `has_conflicts` property and `get_conflicts()` method
-- **UI display**: Conflicts are displayed as warnings in lists and detail views
+- **UI display**: Conflicts are displayed with detailed reasons (type, affected objects, messages) in lesson detail view
+  - Conflict icons in week view are clickable and link to conflict detail view
+  - Each conflict shows its type and affected lesson/blocked time with links to edit
+- **Conflict recalculation**: 
+  - After any lesson update: `recalculate_conflicts_for_affected_lessons()` is called to update conflicts for all lessons on the same date
+  - After any blocked time create/update/delete: `recalculate_conflicts_for_blocked_time()` is called to update conflicts for all affected lessons
+  - Conflicts are automatically recalculated when lessons or blocked times are changed via views
 
 ### Contract Quota & Quota Conflicts
 - **ContractQuotaService**: Service for checking contract quotas based on ContractMonthlyPlan
@@ -649,15 +664,19 @@ This structure makes it easy to find related code: if you're working on scheduli
 5. Display in IncomeOverview view with filtering by year/month
 
 ### AI Lesson Plan Generation (Premium) - Phase 4
-1. Premium user selects a lesson
+1. Premium user views a lesson detail page
 2. **Premium check**: System checks if user has premium access (`apps.core.utils.is_premium_user()`)
-3. **Context collection**: System collects relevant information:
+3. **UI visibility**: 
+   - Premium users see a prominent "Generate AI Lesson Plan" button in the lesson detail view
+   - Non-premium users see a disabled button with a notice that AI lesson plans are only available for premium users
+   - Premium badge is displayed in the dashboard for premium users
+4. **Context collection**: System collects relevant information:
    - Student: Name, grade, subject, notes
    - Lesson: Date, duration, status, notes
    - Previous lessons: Last 5 lessons for context
-4. **Prompt building**: `apps.ai.prompts.build_lesson_plan_prompt()` creates structured prompt
-5. **LLM call**: `apps.ai.client.LLMClient` communicates with LLM API (OpenAI-compatible)
-6. **Error handling**: Timeouts, network and API errors are handled cleanly
+5. **Prompt building**: `apps.ai.prompts.build_lesson_plan_prompt()` creates structured prompt
+6. **LLM call**: `apps.ai.client.LLMClient` communicates with LLM API (OpenAI-compatible)
+7. **Error handling**: Timeouts, network and API errors are handled cleanly
 7. **Storage**: Result is stored as `LessonPlan` with:
    - Link to Lesson and Student
    - Generated content (Markdown text)

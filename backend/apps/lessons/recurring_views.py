@@ -81,7 +81,7 @@ class RecurringLessonCreateView(CreateView):
         # Weiterleitung zum Kalender
         from django.utils import timezone
         today = timezone.localdate()
-        return reverse_lazy('lessons:calendar') + f'?year={today.year}&month={today.month}'
+        return reverse_lazy('lessons:week') + f'?year={today.year}&month={today.month}&day={today.day}'
 
     def form_valid(self, form):
         messages.success(self.request, _('Recurring lesson successfully created.'))
@@ -156,7 +156,7 @@ def generate_lessons_from_recurring(request, pk):
         from django.utils import timezone
         from django.urls import reverse
         today = timezone.localdate()
-        calendar_url = reverse('lessons:calendar') + f'?year={today.year}&month={today.month}'
+        calendar_url = reverse('lessons:week') + f'?year={today.year}&month={today.month}&day={today.day}'
         return redirect(calendar_url)
     
     return redirect('lessons:recurring_detail', pk=pk)

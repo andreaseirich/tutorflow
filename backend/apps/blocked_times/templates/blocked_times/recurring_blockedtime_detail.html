@@ -9,7 +9,7 @@
 <div class="btn-group">
     <a href="{% url 'blocked_times:recurring_update' recurring_blocked_time.pk %}" class="btn">{% trans "Edit" %}</a>
     <a href="{% url 'blocked_times:recurring_delete' recurring_blocked_time.pk %}" class="btn btn-danger">{% trans "Delete" %}</a>
-    <a href="{% url 'lessons:calendar' %}" class="btn btn-secondary">← {% trans "Back to Calendar" %}</a>
+    <a href="{% url 'lessons:week' %}" class="btn btn-secondary">← {% trans "Back to Calendar" %}</a>
 </div>
 
 <h2>{% trans "Details" %}</h2>

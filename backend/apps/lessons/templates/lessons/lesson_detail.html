@@ -7,7 +7,7 @@
 <h1>{% trans "Lesson" %}</h1>
 
 <div style="margin-bottom: 20px;">
-    <a href="{% url 'lessons:calendar' %}?year={{ lesson.date.year }}&month={{ lesson.date.month }}" class="btn">← {% trans "Back to Calendar" %}</a>
+    <a href="{% url 'lessons:week' %}?year={{ lesson.date.year }}&month={{ lesson.date.month }}&day={{ lesson.date.day }}" class="btn">← {% trans "Back to Calendar" %}</a>
     <a href="{% url 'lessons:update' lesson.pk %}" class="btn btn-primary">✏️ {% trans "Edit" %}</a>
     <a href="{% url 'lessons:delete' lesson.pk %}" class="btn btn-danger">🗑️ {% trans "Delete" %}</a>
 </div>
@@ -58,6 +58,32 @@
             {% trans "Show Conflict Details" %}
         </a>
     </p>
+    
+    <div style="margin-top: 15px;">
+        <h4>{% trans "Conflict Reasons:" %}</h4>
+        <ul>
+            {% for conflict in conflicts %}
+            <li style="margin-bottom: 8px;">
+                <strong>
+                    {% if conflict.type == 'lesson' %}
+                        ⚠️ {% trans "Time overlap with another lesson" %}
+                    {% elif conflict.type == 'blocked_time' %}
+                        🚫 {% trans "Time overlap with blocked time" %}
+                    {% elif conflict.type == 'quota' %}
+                        📊 {% trans "Contract quota exceeded" %}
+                    {% endif %}
+                </strong>
+                {% if conflict.type == 'lesson' and conflict.object %}
+                    <br><small>{% trans "Conflicting lesson:" %} <a href="{% url 'lessons:detail' conflict.object.pk %}">{{ conflict.object.contract.student.full_name }} - {{ conflict.object.date|date:"d.m.Y" }} {{ conflict.object.start_time|time:"H:i" }}</a></small>
+                {% elif conflict.type == 'blocked_time' and conflict.object %}
+                    <br><small>{% trans "Blocked time:" %} {{ conflict.object.title }} ({{ conflict.object.start_datetime|date:"d.m.Y H:i" }} - {{ conflict.object.end_datetime|date:"H:i" }})</small>
+                {% elif conflict.type == 'quota' %}
+                    <br><small>{{ conflict.message }}</small>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
     
     <h3>{% blocktrans count counter=conflict_lessons|length %}Conflicting Lesson{% plural %}Conflicting Lessons ({{ counter }}){% endblocktrans %}</h3>
     {% if conflict_lessons %}
@@ -113,6 +139,47 @@
         </p>
     </div>
     {% endif %}
+</div>
+{% endif %}
+
+{% if is_premium %}
+<div style="background: #e7f3ff; padding: 20px; border-radius: 5px; border-left: 4px solid #007bff; margin-bottom: 20px;">
+    <h2 style="color: #007bff; margin-top: 0;">🤖 {% trans "AI Lesson Plan" %}</h2>
+    {% if has_lesson_plan %}
+    <p>{% trans "A lesson plan has already been generated for this lesson." %}</p>
+    <div style="margin-top: 15px;">
+        <h4>{% trans "Latest Lesson Plan:" %}</h4>
+        <div style="background: white; padding: 15px; border-radius: 3px; margin-top: 10px;">
+            <p><strong>{% trans "Topic:" %}</strong> {{ latest_lesson_plan.topic }}</p>
+            <p><strong>{% trans "Subject:" %}</strong> {{ latest_lesson_plan.subject }}</p>
+            {% if latest_lesson_plan.grade_level %}
+            <p><strong>{% trans "Grade Level:" %}</strong> {{ latest_lesson_plan.grade_level }}</p>
+            {% endif %}
+            <div style="margin-top: 10px; white-space: pre-wrap;">{{ latest_lesson_plan.content }}</div>
+            {% if latest_lesson_plan.llm_model %}
+            <p style="margin-top: 10px; font-size: 0.9em; color: #666;"><em>{% blocktrans with model=latest_lesson_plan.llm_model %}Generated with {{ model }}{% endblocktrans %}</em></p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    <form method="post" action="{% url 'ai:generate_lesson_plan' lesson.pk %}" style="margin-top: 15px;">
+        {% csrf_token %}
+        <button type="submit" class="btn" style="background: #007bff; color: white;">
+            {% if has_lesson_plan %}
+                🔄 {% trans "Regenerate AI Lesson Plan" %}
+            {% else %}
+                ✨ {% trans "Generate AI Lesson Plan" %}
+            {% endif %}
+        </button>
+    </form>
+</div>
+{% else %}
+<div style="background: #f8f9fa; padding: 20px; border-radius: 5px; border-left: 4px solid #6c757d; margin-bottom: 20px;">
+    <h2 style="color: #6c757d; margin-top: 0;">🤖 {% trans "AI Lesson Plan" %} <span class="premium-badge">{% trans "Premium" %}</span></h2>
+    <p>{% trans "AI-powered lesson plan generation is only available for premium users." %}</p>
+    <button type="button" class="btn" style="background: #6c757d; color: white; cursor: not-allowed; opacity: 0.6;" disabled>
+        ✨ {% trans "Generate AI Lesson Plan" %}
+    </button>
 </div>
 {% endif %}
 

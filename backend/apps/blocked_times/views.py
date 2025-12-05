@@ -77,7 +77,15 @@ class BlockedTimeCreateView(CreateView):
         return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
 
     def form_valid(self, form):
-        messages.success(self.request, 'Blockzeit erfolgreich erstellt.')
+        from django.utils.translation import gettext_lazy as _
+        from apps.lessons.services import recalculate_conflicts_for_blocked_time
+        
+        blocked_time = form.save()
+        
+        # Recalculate conflicts for affected lessons
+        recalculate_conflicts_for_blocked_time(blocked_time)
+        
+        messages.success(self.request, _('Blocked time successfully created.'))
         return super().form_valid(form)
 
 
@@ -99,7 +107,15 @@ class BlockedTimeUpdateView(UpdateView):
         return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
 
     def form_valid(self, form):
-        messages.success(self.request, 'Blockzeit erfolgreich aktualisiert.')
+        from django.utils.translation import gettext_lazy as _
+        from apps.lessons.services import recalculate_conflicts_for_blocked_time
+        
+        blocked_time = form.save()
+        
+        # Recalculate conflicts for affected lessons
+        recalculate_conflicts_for_blocked_time(blocked_time)
+        
+        messages.success(self.request, _('Blocked time successfully updated.'))
         return super().form_valid(form)
 
 
@@ -117,5 +133,13 @@ class BlockedTimeDeleteView(DeleteView):
         return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Blockzeit erfolgreich gelöscht.')
+        from django.utils.translation import gettext_lazy as _
+        from apps.lessons.services import recalculate_conflicts_for_blocked_time
+        
+        blocked_time = self.get_object()
+        
+        # Recalculate conflicts before deleting (so we know which lessons to update)
+        recalculate_conflicts_for_blocked_time(blocked_time)
+        
+        messages.success(self.request, _('Blocked time successfully deleted.'))
         return super().delete(request, *args, **kwargs)

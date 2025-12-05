@@ -10,6 +10,56 @@ from apps.blocked_times.models import BlockedTime
 from apps.lessons.quota_service import ContractQuotaService
 
 
+def recalculate_conflicts_for_affected_lessons(lesson: Lesson):
+    """
+    Recalculates conflicts for a lesson and all potentially affected lessons.
+    
+    This should be called after a lesson is created, updated, or deleted
+    to ensure all conflict flags are up to date.
+    
+    Args:
+        lesson: The lesson that was changed
+    """
+    # Recalculate conflicts for the lesson itself (if it still exists)
+    if lesson.pk:
+        # This will be done when the lesson is accessed, but we can force it here
+        pass
+    
+    # Find all lessons on the same date that might be affected
+    affected_lessons = Lesson.objects.filter(
+        date=lesson.date
+    ).exclude(pk=lesson.pk if lesson.pk else None)
+    
+    # Recalculate conflicts for affected lessons
+    # (The conflicts will be recalculated on-demand when accessed)
+    # But we can trigger a check here to ensure consistency
+    for affected_lesson in affected_lessons:
+        # Force conflict check (this will be cached in the property)
+        affected_lesson.get_conflicts()
+
+
+def recalculate_conflicts_for_blocked_time(blocked_time: BlockedTime):
+    """
+    Recalculates conflicts for all lessons that might be affected by a blocked time change.
+    
+    Args:
+        blocked_time: The blocked time that was changed or deleted
+    """
+    # Find all lessons that might overlap with this blocked time
+    start_datetime = blocked_time.start_datetime
+    end_datetime = blocked_time.end_datetime
+    
+    # Find lessons on the same date
+    affected_lessons = Lesson.objects.filter(
+        date=start_datetime.date()
+    )
+    
+    # Check each lesson for conflicts with this blocked time
+    for lesson in affected_lessons:
+        # Force conflict check
+        lesson.get_conflicts()
+
+
 class LessonConflictService:
     """Service für Konfliktprüfung bei Lessons."""
 

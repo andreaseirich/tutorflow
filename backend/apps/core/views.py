@@ -42,6 +42,10 @@ class DashboardView(TemplateView):
             year=now.year, month=now.month
         )
         
+        # Premium status
+        from apps.core.utils import is_premium_user
+        context['is_premium'] = is_premium_user(self.request.user) if self.request.user.is_authenticated else False
+        
         context.update({
             'today_lessons': today_lessons,
             'upcoming_lessons': upcoming_lessons,

@@ -34,27 +34,6 @@ class LessonListView(ListView):
         return queryset
 
 
-class LessonDetailView(DetailView):
-    """Detailansicht einer Unterrichtsstunde."""
-    model = Lesson
-    template_name = 'lessons/lesson_detail.html'
-    context_object_name = 'lesson'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['conflicts'] = LessonConflictService.check_conflicts(self.object)
-        
-        # LessonPlan-Informationen
-        from apps.lesson_plans.models import LessonPlan
-        from apps.core.utils import is_premium_user
-        
-        lesson_plans = LessonPlan.objects.filter(lesson=self.object).order_by('-created_at')
-        context['lesson_plans'] = lesson_plans
-        context['has_lesson_plan'] = lesson_plans.exists()
-        context['latest_lesson_plan'] = lesson_plans.first() if lesson_plans.exists() else None
-        context['is_premium'] = is_premium_user(self.request.user) if self.request.user.is_authenticated else False
-        
-        return context
 
 
 class LessonCreateView(CreateView):
@@ -124,23 +103,101 @@ class LessonCreateView(CreateView):
 
     def get_success_url(self):
         """Weiterleitung zurück zur Wochenansicht."""
-        lesson = self.object
-        return reverse_lazy('lessons:week') + f'?year={lesson.date.year}&month={lesson.date.month}&day={lesson.date.day}'
+        if hasattr(self, 'object') and self.object:
+            lesson = self.object
+            return reverse_lazy('lessons:week') + f'?year={lesson.date.year}&month={lesson.date.month}&day={lesson.date.day}'
+        # Fallback
+        return reverse_lazy('lessons:week')
 
     def form_valid(self, form):
-        lesson = form.save()
+        from django.utils.translation import gettext_lazy as _
+        from apps.lessons.recurring_models import RecurringLesson
+        from apps.lessons.recurring_service import RecurringLessonService
         
-        # Automatische Status-Setzung
-        LessonStatusService.update_status_for_lesson(lesson)
+        is_recurring = form.cleaned_data.get('is_recurring', False)
         
-        conflicts = LessonConflictService.check_conflicts(lesson, exclude_self=False)
-        if conflicts:
-            messages.warning(
-                self.request,
-                f'Unterrichtsstunde erstellt, aber {len(conflicts)} Konflikt(e) erkannt!'
+        if is_recurring:
+            # Create RecurringLesson instead of single lesson
+            recurrence_type = form.cleaned_data.get('recurrence_type')
+            recurrence_end_date = form.cleaned_data.get('recurrence_end_date')
+            recurrence_weekdays = form.cleaned_data.get('recurrence_weekdays', [])
+            
+            if not recurrence_type or not recurrence_weekdays:
+                form.add_error('is_recurring', _('Please select a recurrence pattern and at least one weekday.'))
+                return self.form_invalid(form)
+            
+            # Create RecurringLesson
+            recurring_lesson = RecurringLesson.objects.create(
+                contract=form.cleaned_data['contract'],
+                start_date=form.cleaned_data['date'],
+                end_date=recurrence_end_date,
+                start_time=form.cleaned_data['start_time'],
+                duration_minutes=form.cleaned_data['duration_minutes'],
+                travel_time_before_minutes=form.cleaned_data.get('travel_time_before_minutes', 0),
+                travel_time_after_minutes=form.cleaned_data.get('travel_time_after_minutes', 0),
+                recurrence_type=recurrence_type,
+                notes=form.cleaned_data.get('notes', ''),
+                monday='0' in recurrence_weekdays,
+                tuesday='1' in recurrence_weekdays,
+                wednesday='2' in recurrence_weekdays,
+                thursday='3' in recurrence_weekdays,
+                friday='4' in recurrence_weekdays,
+                saturday='5' in recurrence_weekdays,
+                sunday='6' in recurrence_weekdays,
             )
+            
+            # Generate lessons from recurring lesson
+            result = RecurringLessonService.generate_lessons(
+                recurring_lesson,
+                check_conflicts=True,
+                dry_run=False
+            )
+            
+            # Set self.object to first generated lesson for redirect
+            generated_lessons = Lesson.objects.filter(
+                contract=form.cleaned_data['contract'],
+                date=form.cleaned_data['date'],
+                start_time=form.cleaned_data['start_time']
+            ).order_by('date', 'start_time')
+            
+            if generated_lessons.exists():
+                self.object = generated_lessons.first()
+            else:
+                # Fallback: create single lesson
+                self.object = form.save()
+                LessonStatusService.update_status_for_lesson(self.object)
+            
+            messages.success(
+                self.request,
+                _('Recurring lesson created and {count} lesson(s) generated.').format(
+                    count=result.get('created', 0)
+                )
+            )
+            
+            if result.get('conflicts'):
+                messages.warning(
+                    self.request,
+                    _('{count} conflict(s) detected in generated lessons.').format(
+                        count=len(result.get('conflicts', []))
+                    )
+                )
         else:
-            messages.success(self.request, 'Unterrichtsstunde erfolgreich erstellt.')
+            # Create single lesson as before
+            lesson = form.save()
+            self.object = lesson
+            
+            # Automatische Status-Setzung
+            LessonStatusService.update_status_for_lesson(lesson)
+            
+            conflicts = LessonConflictService.check_conflicts(lesson, exclude_self=False)
+            if conflicts:
+                messages.warning(
+                    self.request,
+                    _('Lesson created, but {count} conflict(s) detected!').format(count=len(conflicts))
+                )
+            else:
+                messages.success(self.request, _('Lesson successfully created.'))
+        
         return super().form_valid(form)
 
 
@@ -151,36 +208,39 @@ class LessonUpdateView(UpdateView):
     template_name = 'lessons/lesson_form.html'
 
     def get_success_url(self):
-        """Weiterleitung zurück zur Wochenansicht, falls day-Parameter vorhanden, sonst Kalender."""
+        """Weiterleitung zurück zur Wochenansicht."""
         lesson = self.object
         # Verwende year/month/day aus Request, falls vorhanden, sonst aus Lesson-Datum
         year = int(self.request.GET.get('year', lesson.date.year))
         month = int(self.request.GET.get('month', lesson.date.month))
-        day = self.request.GET.get('day')
-        if day:
-            return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
-        else:
-            return reverse_lazy('lessons:calendar') + f'?year={year}&month={month}'
+        day = self.request.GET.get('day', lesson.date.day)
+        return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
 
     def form_valid(self, form):
+        from django.utils.translation import gettext_lazy as _
+        from apps.lessons.services import recalculate_conflicts_for_affected_lessons
+        
         lesson = form.save()
         
         # Automatische Status-Setzung
         LessonStatusService.update_status_for_lesson(lesson)
         
+        # Recalculate conflicts for this lesson and affected lessons
+        recalculate_conflicts_for_affected_lessons(lesson)
+        
         conflicts = LessonConflictService.check_conflicts(lesson)
         if conflicts:
             messages.warning(
                 self.request,
-                f'Unterrichtsstunde aktualisiert, aber {len(conflicts)} Konflikt(e) erkannt!'
+                _('Lesson updated, but {count} conflict(s) detected!').format(count=len(conflicts))
             )
         else:
-            messages.success(self.request, 'Unterrichtsstunde erfolgreich aktualisiert.')
+            messages.success(self.request, _('Lesson successfully updated.'))
         return super().form_valid(form)
 
 
 class LessonDetailView(DetailView):
-    """Detailansicht einer Unterrichtsstunde mit Konfliktinformationen."""
+    """Detailansicht einer Unterrichtsstunde mit Konfliktinformationen und Premium-Features."""
     model = Lesson
     template_name = 'lessons/lesson_detail.html'
     context_object_name = 'lesson'
@@ -205,12 +265,22 @@ class LessonDetailView(DetailView):
             elif conflict['type'] == 'quota':
                 quota_conflicts.append(conflict)
         
+        # LessonPlan-Informationen
+        from apps.lesson_plans.models import LessonPlan
+        from apps.core.utils import is_premium_user
+        
+        lesson_plans = LessonPlan.objects.filter(lesson=lesson).order_by('-created_at')
+        
         context.update({
             'conflicts': conflicts,
             'conflict_lessons': conflict_lessons,
             'conflict_blocked_times': conflict_blocked_times,
             'quota_conflicts': quota_conflicts,
             'has_conflicts': len(conflicts) > 0,
+            'lesson_plans': lesson_plans,
+            'has_lesson_plan': lesson_plans.exists(),
+            'latest_lesson_plan': lesson_plans.first() if lesson_plans.exists() else None,
+            'is_premium': is_premium_user(self.request.user) if self.request.user.is_authenticated else False,
         })
         
         return context
@@ -254,15 +324,12 @@ class LessonDeleteView(DeleteView):
     template_name = 'lessons/lesson_confirm_delete.html'
 
     def get_success_url(self):
-        """Weiterleitung zurück zur Wochenansicht, falls day-Parameter vorhanden, sonst Kalender."""
+        """Weiterleitung zurück zur Wochenansicht."""
         lesson = self.object
-        day = self.request.GET.get('day')
-        if day:
-            year = int(self.request.GET.get('year', lesson.date.year))
-            month = int(self.request.GET.get('month', lesson.date.month))
-            return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
-        else:
-            return reverse_lazy('lessons:calendar') + f'?year={lesson.date.year}&month={lesson.date.month}'
+        year = int(self.request.GET.get('year', lesson.date.year))
+        month = int(self.request.GET.get('month', lesson.date.month))
+        day = self.request.GET.get('day', lesson.date.day)
+        return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Unterrichtsstunde erfolgreich gelöscht.')
@@ -362,90 +429,27 @@ class WeekView(TemplateView):
 
 
 class CalendarView(TemplateView):
-    """Monatskalender-Ansicht für Lessons und Blockzeiten."""
-    template_name = 'lessons/calendar.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    """Redirect to week view - legacy calendar view."""
+    
+    def get(self, request, *args, **kwargs):
+        """Redirect to week view with appropriate parameters."""
+        from django.http import HttpResponseRedirect
+        from django.urls import reverse
         
-        # Jahr und Monat ausschließlich aus URL-Parametern (Fallback: aktuelles Datum)
-        year_param = self.request.GET.get('year')
-        month_param = self.request.GET.get('month')
+        year_param = request.GET.get('year')
+        month_param = request.GET.get('month')
+        day_param = request.GET.get('day')
         
         if year_param and month_param:
             year = int(year_param)
             month = int(month_param)
+            day = int(day_param) if day_param else 1
         else:
-            # Fallback nur wenn Parameter fehlen
+            # Fallback to today
             now = timezone.now()
             year = now.year
             month = now.month
+            day = now.day
         
-        # Zentrale Variable: aktueller Monat
-        current_month_date = date(year, month, 1)
-        
-        # Lade Kalenderdaten
-        calendar_data = CalendarService.get_calendar_data(year, month)
-        
-        # Erstelle Kalender-Grid
-        last_day = date(year, month, monthrange(year, month)[1])
-        
-        # Erster Wochentag (0=Montag, 6=Sonntag)
-        first_weekday = current_month_date.weekday()
-        
-        # Erstelle Kalender-Wochen
-        weeks = []
-        current_date = current_month_date - timedelta(days=first_weekday)  # Starte am Montag der ersten Woche
-        
-        while current_date <= last_day or len(weeks) == 0 or current_date.weekday() != 0:
-            week = []
-            for day in range(7):
-                day_date = current_date + timedelta(days=day)
-                week.append({
-                    'date': day_date,
-                    'is_current_month': day_date.month == month,
-                    'lessons': calendar_data['lessons_by_date'].get(day_date, []),
-                    'blocked_times': calendar_data['blocked_times_by_date'].get(day_date, []),
-                })
-            weeks.append(week)
-            current_date += timedelta(days=7)
-            
-            # Stoppe, wenn wir über den Monat hinaus sind
-            if current_date > last_day and current_date.weekday() == 0:
-                break
-        
-        # Monatsname aus current_month_date ableiten
-        month_names = ['', 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-                      'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
-        month_label = month_names[month]
-        
-        # Navigation basierend auf current_month_date
-        if month == 1:
-            prev_year, prev_month = year - 1, 12
-        else:
-            prev_year, prev_month = year, month - 1
-        
-        if month == 12:
-            next_year, next_month = year + 1, 1
-        else:
-            next_year, next_month = year, month + 1
-        
-        # Heute für Template-Vergleich
-        today = timezone.localdate()
-        
-        context.update({
-            'year': year,
-            'month': month,
-            'month_label': month_label,
-            'weeks': weeks,
-            'conflicts_by_lesson': calendar_data['conflicts_by_lesson'],
-            'month_names': month_names,
-            'weekday_names': ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
-            'prev_year': prev_year,
-            'prev_month': prev_month,
-            'next_year': next_year,
-            'next_month': next_month,
-            'today': today,
-        })
-        
-        return context
+        url = reverse('lessons:week') + f'?year={year}&month={month}&day={day}'
+        return HttpResponseRedirect(url)
