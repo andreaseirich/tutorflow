@@ -81,6 +81,23 @@ class LLMClient:
                 timeout=self.timeout
             )
             
+            # Handle specific HTTP status codes
+            if response.status_code == 429:
+                # Rate limit exceeded
+                raise LLMClientError(
+                    _("API rate limit exceeded. Please try again in a few minutes.")
+                )
+            elif response.status_code == 401:
+                # Unauthorized - invalid API key
+                raise LLMClientError(
+                    _("Invalid API key. Please check your LLM_API_KEY configuration.")
+                )
+            elif response.status_code == 402:
+                # Payment required
+                raise LLMClientError(
+                    _("Payment required. Please check your API account balance.")
+                )
+            
             response.raise_for_status()
             result = response.json()
             
@@ -92,6 +109,13 @@ class LLMClient:
         
         except requests.exceptions.Timeout:
             raise LLMClientError(_("API timeout after {seconds} seconds").format(seconds=self.timeout))
+        except requests.exceptions.HTTPError as e:
+            # Handle other HTTP errors
+            if e.response.status_code == 429:
+                raise LLMClientError(
+                    _("API rate limit exceeded. Please try again in a few minutes.")
+                )
+            raise LLMClientError(_("API error: {error}").format(error=str(e)))
         except requests.exceptions.RequestException as e:
             raise LLMClientError(_("API error: {error}").format(error=str(e)))
         except (KeyError, ValueError) as e:

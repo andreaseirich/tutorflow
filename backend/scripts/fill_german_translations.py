@@ -81,6 +81,9 @@ TRANSLATIONS = {
     "API timeout after {seconds} seconds": "API-Timeout nach {seconds} Sekunden",
     "API error: {error}": "API-Fehler: {error}",
     "Error parsing API response: {error}": "Fehler beim Parsen der API-Antwort: {error}",
+    "API rate limit exceeded. Please try again in a few minutes.": "API-Rate-Limit überschritten. Bitte versuchen Sie es in ein paar Minuten erneut.",
+    "Invalid API key. Please check your LLM_API_KEY configuration.": "Ungültiger API-Schlüssel. Bitte überprüfen Sie Ihre LLM_API_KEY-Konfiguration.",
+    "Payment required. Please check your API account balance.": "Zahlung erforderlich. Bitte überprüfen Sie Ihr API-Kontoguthaben.",
     # Add more translations as needed
 }
 
