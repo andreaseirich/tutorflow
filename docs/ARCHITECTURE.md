@@ -124,18 +124,22 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
 - **Wichtig**: Status wird im normalen Lesson-Formular NICHT mehr manuell auswählbar - nur automatisch gesetzt
 
 #### CalendarService (apps.lessons.calendar_service)
-- **Kein Model**: Service-Layer für Kalenderansicht
+- **Kein Model**: Service-Layer für Monatskalender-Ansicht
 - **Methoden**:
   - `get_calendar_data(year, month)`: Lädt Lessons und Blockzeiten für einen Monat und gruppiert sie nach Tagen
 - **Zweck**: Bereitstellung von Daten für die Monatskalender-Ansicht. Gruppiert Lessons und Blockzeiten nach Datum und prüft Konflikte.
+
+#### WeekService (apps.lessons.week_service)
+- **Kein Model**: Service-Layer für Wochenansicht
+- **Methoden**:
+  - `get_week_data(year, month, day)`: Lädt Lessons und Blockzeiten für eine Woche (Montag bis Sonntag) und gruppiert sie nach Tagen
+- **Zweck**: Bereitstellung von Daten für die interaktive Wochenansicht. Bestimmt automatisch den Wochenbereich (Montag bis Sonntag) basierend auf einem beliebigen Tag.
 - **Wichtig**: 
-  - **Kalender ist die zentrale UI für Lesson-Verwaltung** - Lessons werden primär über die Kalenderansicht geplant und bearbeitet.
-  - **Lessons in der Vergangenheit werden im Kalender nicht mehr angezeigt** (nur zukünftige/aktuelle), sind aber weiterhin in der Finanzsicht vorhanden.
-  - **Blockzeiten in der Vergangenheit werden ebenfalls ausgeblendet** (nur ab heute).
-  - **RecurringLesson kann über Kalender/Contract ausgelöst werden** - Serientermine werden automatisch generiert und erscheinen im Kalender.
-  - **Blockzeiten im Kalender**: Blockzeiten werden direkt im Kalender angezeigt (optisch unterscheidbar von Lessons), können per Klick auf einen Tag erstellt und per Klick auf eine bestehende Blockzeit bearbeitet werden.
-  - **Mehrtägige Blockzeiten**: Werden an allen betroffenen Tagen im Kalender angezeigt.
-  - **Serien-Blockzeiten**: Button "Serien-Blockzeit erstellen" im Kalender ermöglicht Erstellung von RecurringBlockedTime-Vorlagen.
+  - **Wochenansicht ist die zentrale UI für Terminplanung** - Lessons und Blockzeiten werden primär über die Wochenansicht geplant und bearbeitet.
+  - **Drag-to-Create**: Nutzer können Zeitbereiche im Wochenraster ziehen, um neue Termine anzulegen.
+  - **Zeitachse**: 08:00-22:00 Uhr mit stündlichen Zeilen.
+  - **Termin-Anzeige**: Lessons (blau), Blockzeiten (orange), Konflikte (roter Rahmen/Icon).
+  - **Klick auf Termin**: Öffnet Bearbeitungsformular.
 
 ### Architekturprinzipien
 

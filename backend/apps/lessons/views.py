@@ -12,6 +12,7 @@ from apps.lessons.models import Lesson
 from apps.lessons.forms import LessonForm
 from apps.lessons.services import LessonQueryService, LessonConflictService
 from apps.lessons.calendar_service import CalendarService
+from apps.lessons.week_service import WeekService
 from apps.lessons.status_service import LessonStatusService
 
 
@@ -63,16 +64,43 @@ class LessonCreateView(CreateView):
     template_name = 'lessons/lesson_form.html'
 
     def get_initial(self):
-        """Setzt initiale Werte, z. B. Datum aus Query-Parameter."""
+        """Setzt initiale Werte, z. B. Datum und Zeiten aus Query-Parametern."""
         initial = super().get_initial()
+        
+        # Unterstützung für start/end aus Drag-to-Create
+        start_param = self.request.GET.get('start')
+        end_param = self.request.GET.get('end')
+        
+        if start_param and end_param:
+            try:
+                from datetime import datetime
+                start_dt = datetime.fromisoformat(start_param.replace('Z', '+00:00'))
+                end_dt = datetime.fromisoformat(end_param.replace('Z', '+00:00'))
+                
+                # Konvertiere zu timezone-aware, falls nötig
+                if timezone.is_naive(start_dt):
+                    start_dt = timezone.make_aware(start_dt)
+                if timezone.is_naive(end_dt):
+                    end_dt = timezone.make_aware(end_dt)
+                
+                initial['date'] = start_dt.date()
+                initial['start_time'] = start_dt.time()
+                
+                # Berechne Dauer in Minuten
+                duration = (end_dt - start_dt).total_seconds() / 60
+                initial['duration_minutes'] = int(duration)
+                
+                return initial
+            except (ValueError, TypeError):
+                pass
+        
+        # Fallback: Normale Datum-Parameter
         date_param = self.request.GET.get('date')
         if date_param:
             try:
-                # Validiere, dass das Datum ein gültiges Format hat
                 parsed_date = date.fromisoformat(date_param)
                 initial['date'] = parsed_date
             except (ValueError, TypeError):
-                # Falls ungültig, versuche year/month aus Request
                 year_param = self.request.GET.get('year')
                 month_param = self.request.GET.get('month')
                 if year_param and month_param:
@@ -83,24 +111,21 @@ class LessonCreateView(CreateView):
                 else:
                     initial['date'] = timezone.localdate()
         else:
-            # Kein Datum-Parameter: versuche year/month aus Request
             year_param = self.request.GET.get('year')
             month_param = self.request.GET.get('month')
             if year_param and month_param:
                 try:
-                    # Verwende ersten Tag des angegebenen Monats
                     initial['date'] = date(int(year_param), int(month_param), 1)
                 except (ValueError, TypeError):
                     initial['date'] = timezone.localdate()
             else:
-                # Keine Parameter: verwende aktuelles Datum als Fallback
                 initial['date'] = timezone.localdate()
         return initial
 
     def get_success_url(self):
-        """Weiterleitung zurück zum Kalender mit Jahr/Monat."""
+        """Weiterleitung zurück zur Wochenansicht."""
         lesson = self.object
-        return reverse_lazy('lessons:calendar') + f'?year={lesson.date.year}&month={lesson.date.month}'
+        return reverse_lazy('lessons:week') + f'?year={lesson.date.year}&month={lesson.date.month}&day={lesson.date.day}'
 
     def form_valid(self, form):
         lesson = form.save()
@@ -257,6 +282,72 @@ class LessonMonthView(ListView):
         
         context['year'] = year
         context['month'] = month
+        return context
+
+
+class WeekView(TemplateView):
+    """Wochenansicht für Lessons und Blockzeiten."""
+    template_name = 'lessons/week.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Jahr, Monat und Tag aus URL-Parametern (Fallback: aktuelles Datum)
+        year_param = self.request.GET.get('year')
+        month_param = self.request.GET.get('month')
+        day_param = self.request.GET.get('day')
+        
+        if year_param and month_param and day_param:
+            year = int(year_param)
+            month = int(month_param)
+            day = int(day_param)
+        else:
+            # Fallback: aktuelles Datum
+            now = timezone.now()
+            year = now.year
+            month = now.month
+            day = now.day
+        
+        # Lade Wochen-Daten
+        week_data = WeekService.get_week_data(year, month, day)
+        
+        # Navigation: Vorige/Nächste Woche
+        week_start = week_data['week_start']
+        prev_week = week_start - timedelta(days=7)
+        next_week = week_start + timedelta(days=7)
+        
+        # Erstelle Wochentage-Liste
+        weekdays = []
+        weekday_names = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
+        weekday_names_short = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+        
+        for i in range(7):
+            day_date = week_start + timedelta(days=i)
+            weekdays.append({
+                'date': day_date,
+                'name': weekday_names[i],
+                'name_short': weekday_names_short[i],
+                'lessons': week_data['lessons_by_date'].get(day_date, []),
+                'blocked_times': week_data['blocked_times_by_date'].get(day_date, []),
+            })
+        
+        # Heute für Template-Vergleich
+        today = timezone.localdate()
+        
+        # Stundenliste für Template (8-22)
+        hours = list(range(8, 23))
+        
+        context.update({
+            'week_start': week_start,
+            'week_end': week_data['week_end'],
+            'weekdays': weekdays,
+            'conflicts_by_lesson': week_data['conflicts_by_lesson'],
+            'prev_week': prev_week,
+            'next_week': next_week,
+            'today': today,
+            'hours': hours,
+        })
+        
         return context
 
 

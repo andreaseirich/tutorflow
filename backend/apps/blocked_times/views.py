@@ -23,8 +23,34 @@ class BlockedTimeCreateView(CreateView):
     template_name = 'blocked_times/blockedtime_form.html'
 
     def get_initial(self):
-        """Setzt initiale Werte, z. B. Datum aus Query-Parameter."""
+        """Setzt initiale Werte, z. B. Datum und Zeiten aus Query-Parametern."""
         initial = super().get_initial()
+        
+        # Unterstützung für start/end aus Drag-to-Create
+        start_param = self.request.GET.get('start')
+        end_param = self.request.GET.get('end')
+        
+        if start_param and end_param:
+            try:
+                from datetime import datetime
+                from django.utils import timezone
+                start_dt = datetime.fromisoformat(start_param.replace('Z', '+00:00'))
+                end_dt = datetime.fromisoformat(end_param.replace('Z', '+00:00'))
+                
+                # Konvertiere zu timezone-aware, falls nötig
+                if timezone.is_naive(start_dt):
+                    start_dt = timezone.make_aware(start_dt)
+                if timezone.is_naive(end_dt):
+                    end_dt = timezone.make_aware(end_dt)
+                
+                initial['start_datetime'] = start_dt
+                initial['end_datetime'] = end_dt
+                
+                return initial
+            except (ValueError, TypeError):
+                pass
+        
+        # Fallback: Normale Datum-Parameter
         date_param = self.request.GET.get('date')
         if date_param:
             from datetime import datetime
@@ -43,11 +69,12 @@ class BlockedTimeCreateView(CreateView):
         return initial
 
     def get_success_url(self):
-        """Weiterleitung zurück zum Kalender mit Jahr/Monat."""
+        """Weiterleitung zurück zur Wochenansicht."""
         blocked_time = self.object
         year = blocked_time.start_datetime.year
         month = blocked_time.start_datetime.month
-        return reverse_lazy('lessons:calendar') + f'?year={year}&month={month}'
+        day = blocked_time.start_datetime.day
+        return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
 
     def form_valid(self, form):
         messages.success(self.request, 'Blockzeit erfolgreich erstellt.')
@@ -65,10 +92,11 @@ class BlockedTimeUpdateView(UpdateView):
         blocked_time = self.object
         year = blocked_time.start_datetime.year
         month = blocked_time.start_datetime.month
-        # Verwende year/month aus Request, falls vorhanden, sonst aus BlockedTime-Datum
+        # Verwende year/month/day aus Request, falls vorhanden, sonst aus BlockedTime-Datum
         year = int(self.request.GET.get('year', year))
         month = int(self.request.GET.get('month', month))
-        return reverse_lazy('lessons:calendar') + f'?year={year}&month={month}'
+        day = int(self.request.GET.get('day', blocked_time.start_datetime.day))
+        return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
 
     def form_valid(self, form):
         messages.success(self.request, 'Blockzeit erfolgreich aktualisiert.')
@@ -81,11 +109,12 @@ class BlockedTimeDeleteView(DeleteView):
     template_name = 'blocked_times/blockedtime_confirm_delete.html'
 
     def get_success_url(self):
-        """Weiterleitung zurück zum Kalender mit Jahr/Monat."""
+        """Weiterleitung zurück zur Wochenansicht."""
         blocked_time = self.object
         year = blocked_time.start_datetime.year
         month = blocked_time.start_datetime.month
-        return reverse_lazy('lessons:calendar') + f'?year={year}&month={month}'
+        day = blocked_time.start_datetime.day
+        return reverse_lazy('lessons:week') + f'?year={year}&month={month}&day={day}'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Blockzeit erfolgreich gelöscht.')
