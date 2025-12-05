@@ -238,7 +238,14 @@ function showCreateDialog(startDateTime, endDateTime, date) {
     const startStr = startDateTime.toISOString().slice(0, 16);
     const endStr = endDateTime.toISOString().slice(0, 16);
     
-    timeInfo.textContent = `Von: ${startDateTime.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})} bis ${endDateTime.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'})} am ${new Date(date).toLocaleDateString('de-DE')}`;
+    // Get current language from HTML lang attribute or default to 'en'
+    const currentLang = document.documentElement.lang || 'en';
+    const locale = currentLang === 'de' ? 'de-DE' : 'en-US';
+    const fromText = currentLang === 'de' ? 'Von:' : 'From:';
+    const toText = currentLang === 'de' ? 'bis' : 'to';
+    const onText = currentLang === 'de' ? 'am' : 'on';
+    
+    timeInfo.textContent = `${fromText} ${startDateTime.toLocaleTimeString(locale, {hour: '2-digit', minute: '2-digit'})} ${toText} ${endDateTime.toLocaleTimeString(locale, {hour: '2-digit', minute: '2-digit'})} ${onText} ${new Date(date).toLocaleDateString(locale)}`;
     
     dialog.dataset.start = startStr;
     dialog.dataset.end = endStr;
