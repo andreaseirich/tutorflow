@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load currency %}
 
 {% block title %}Einnahmenübersicht - TutorFlow{% endblock %}
 
@@ -36,15 +37,15 @@
         </tr>
         <tr>
             <td>Einnahmen</td>
-            <td>{{ planned_vs_actual.planned_amount }}€</td>
-            <td>{{ planned_vs_actual.actual_amount }}€</td>
+            <td>{{ planned_vs_actual.planned_amount|euro }}</td>
+            <td>{{ planned_vs_actual.actual_amount|euro }}</td>
             <td>
                 {% if planned_vs_actual.difference_amount > 0 %}
-                <span style="color: #28a745;">+{{ planned_vs_actual.difference_amount }}€</span>
+                <span style="color: #28a745;">+{{ planned_vs_actual.difference_amount|euro }}</span>
                 {% elif planned_vs_actual.difference_amount < 0 %}
-                <span style="color: #dc3545;">{{ planned_vs_actual.difference_amount }}€</span>
+                <span style="color: #dc3545;">{{ planned_vs_actual.difference_amount|euro }}</span>
                 {% else %}
-                <span>0€</span>
+                <span>0,00 €</span>
                 {% endif %}
             </td>
         </tr>
@@ -66,12 +67,12 @@
         <tr>
             <td><strong>Abgerechnet</strong></td>
             <td>{{ billing_status.invoiced.lesson_count }}</td>
-            <td>{{ billing_status.invoiced.income }}€</td>
+            <td>{{ billing_status.invoiced.income|euro }}</td>
         </tr>
         <tr>
             <td><strong>Nicht abgerechnet</strong></td>
             <td>{{ billing_status.not_invoiced.lesson_count }}</td>
-            <td>{{ billing_status.not_invoiced.income }}€</td>
+            <td>{{ billing_status.not_invoiced.income|euro }}</td>
         </tr>
     </tbody>
 </table>
@@ -91,20 +92,20 @@
         <tr>
             <td>{{ status_data.name }}</td>
             <td>{{ status_data.lesson_count }}</td>
-            <td>{{ status_data.income }}€</td>
+            <td>{{ status_data.income|euro }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
 <h3>Details</h3>
-<p><strong>Ausgezahlt:</strong> {{ monthly_income.total_income }}€ ({{ monthly_income.lesson_count }} Stunden)</p>
+<p><strong>Ausgezahlt:</strong> {{ monthly_income.total_income|euro }} ({{ monthly_income.lesson_count }} Stunden)</p>
 
 {% else %}
 <h2>{{ year }}</h2>
 
 <h3>Jahresübersicht</h3>
-<p><strong>Gesamt:</strong> {{ yearly_income.total_income }}€ ({{ yearly_income.total_lessons }} Stunden)</p>
+<p><strong>Gesamt:</strong> {{ yearly_income.total_income|euro }} ({{ yearly_income.total_lessons }} Stunden)</p>
 
 <h3>Monatliche Aufschlüsselung</h3>
 <table>
@@ -120,7 +121,7 @@
         <tr>
             <td>{{ month_data.month }}/{{ month_data.year }}</td>
             <td>{{ month_data.lesson_count }}</td>
-            <td>{{ month_data.total_income }}€</td>
+            <td>{{ month_data.total_income|euro }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -140,7 +141,7 @@
         <tr>
             <td>{{ status_data.name }}</td>
             <td>{{ status_data.lesson_count }}</td>
-            <td>{{ status_data.income }}€</td>
+            <td>{{ status_data.income|euro }}</td>
         </tr>
         {% endfor %}
     </tbody>
