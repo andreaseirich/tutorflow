@@ -118,8 +118,11 @@ Dies erstellt:
 - 1 Premium-User mit generiertem Unterrichtsplan
 
 **Demo-Login:**
+- Login-URL: `http://127.0.0.1:8000/admin/`
 - Username: `demo_premium`
 - Password: `demo123`
+
+**Hinweis:** Die Anmeldung erfolgt über das Django Admin-Interface. Nach erfolgreichem Login können Sie über die Navigation auf die verschiedenen Bereiche der Anwendung zugreifen.
 
 **Demo-Szenario:**
 Die Demo-Daten zeigen ein realistisches Szenario mit:
