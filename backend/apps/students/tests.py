@@ -13,7 +13,7 @@ class StudentModelTest(TestCase):
             email="max@example.com",
             school="Gymnasium XY",
             grade="10. Klasse",
-            subjects="Mathe, Deutsch"
+            subjects="Mathe, Deutsch",
         )
         self.assertEqual(student.full_name, "Max Mustermann")
         self.assertEqual(str(student), "Max Mustermann")

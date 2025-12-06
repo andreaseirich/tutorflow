@@ -1,6 +1,7 @@
 """
 Tests für Kontingent-Konflikte (ContractQuotaService).
 """
+
 from django.test import TestCase
 from datetime import date, time
 from apps.lessons.models import Lesson
@@ -14,31 +15,22 @@ class ContractQuotaServiceTest(TestCase):
 
     def setUp(self):
         """Setzt Testdaten auf."""
-        self.student = Student.objects.create(
-            first_name="Max",
-            last_name="Mustermann"
-        )
-        
+        self.student = Student.objects.create(first_name="Max", last_name="Mustermann")
+
         self.contract = Contract.objects.create(
             student=self.student,
             hourly_rate=30.00,
             start_date=date(2025, 8, 1),
             end_date=date(2025, 9, 30),
-            is_active=True
+            is_active=True,
         )
-        
+
         # Erstelle monatliche Pläne
         ContractMonthlyPlan.objects.create(
-            contract=self.contract,
-            year=2025,
-            month=8,
-            planned_units=3
+            contract=self.contract, year=2025, month=8, planned_units=3
         )
         ContractMonthlyPlan.objects.create(
-            contract=self.contract,
-            year=2025,
-            month=9,
-            planned_units=5
+            contract=self.contract, year=2025, month=9, planned_units=5
         )
 
     def test_scenario_1_quota_exceeded(self):
@@ -55,9 +47,9 @@ class ContractQuotaServiceTest(TestCase):
                 date=date(2025, 8, 5 + i),
                 start_time=time(14, 0),
                 duration_minutes=60,
-                status='planned',
+                status="planned",
             )
-        
+
         # Erstelle 5 Lessons im September
         for i in range(5):
             Lesson.objects.create(
@@ -65,25 +57,25 @@ class ContractQuotaServiceTest(TestCase):
                 date=date(2025, 9, 5 + i),
                 start_time=time(14, 0),
                 duration_minutes=60,
-                status='planned',
+                status="planned",
             )
-        
+
         # Versuche eine weitere Lesson im September zu erstellen
         new_lesson = Lesson(
             contract=self.contract,
             date=date(2025, 9, 20),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='planned',
+            status="planned",
         )
-        
+
         # Prüfe Konflikt
         conflict = ContractQuotaService.check_quota_conflict(new_lesson, exclude_self=True)
-        
+
         self.assertIsNotNone(conflict)
-        self.assertEqual(conflict['type'], 'quota')
-        self.assertEqual(conflict['planned_total'], 8)  # 3 + 5
-        self.assertEqual(conflict['actual_total'], 9)  # 3 + 5 + 1
+        self.assertEqual(conflict["type"], "quota")
+        self.assertEqual(conflict["planned_total"], 8)  # 3 + 5
+        self.assertEqual(conflict["actual_total"], 9)  # 3 + 5 + 1
 
     def test_scenario_2_catch_up_allowed(self):
         """
@@ -98,9 +90,9 @@ class ContractQuotaServiceTest(TestCase):
             date=date(2025, 8, 5),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='planned',
+            status="planned",
         )
-        
+
         # Erstelle 5 Lessons im September
         for i in range(5):
             Lesson.objects.create(
@@ -108,21 +100,21 @@ class ContractQuotaServiceTest(TestCase):
                 date=date(2025, 9, 5 + i),
                 start_time=time(14, 0),
                 duration_minutes=60,
-                status='planned',
+                status="planned",
             )
-        
+
         # Versuche eine weitere Lesson im September zu erstellen
         new_lesson = Lesson(
             contract=self.contract,
             date=date(2025, 9, 20),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='planned',
+            status="planned",
         )
-        
+
         # Prüfe Konflikt
         conflict = ContractQuotaService.check_quota_conflict(new_lesson, exclude_self=True)
-        
+
         # Sollte kein Konflikt sein: 1 + 5 + 1 = 7 <= 8
         self.assertIsNone(conflict)
 
@@ -139,26 +131,26 @@ class ContractQuotaServiceTest(TestCase):
                 date=date(2025, 8, 5 + i),
                 start_time=time(14, 0),
                 duration_minutes=60,
-                status='planned',
+                status="planned",
             )
-        
+
         # Versuche eine 4. Lesson im August zu erstellen
         new_lesson = Lesson(
             contract=self.contract,
             date=date(2025, 8, 20),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='planned',
+            status="planned",
         )
-        
+
         # Prüfe Konflikt
         conflict = ContractQuotaService.check_quota_conflict(new_lesson, exclude_self=True)
-        
+
         # Sollte Konflikt sein: 4 > 3 (geplant für August)
         self.assertIsNotNone(conflict)
-        self.assertEqual(conflict['type'], 'quota')
-        self.assertEqual(conflict['planned_total'], 3)  # Nur August
-        self.assertEqual(conflict['actual_total'], 4)  # 3 + 1
+        self.assertEqual(conflict["type"], "quota")
+        self.assertEqual(conflict["planned_total"], 3)  # Nur August
+        self.assertEqual(conflict["actual_total"], 4)  # 3 + 1
 
     def test_cancelled_lessons_not_counted(self):
         """Test: CANCELLED Lessons werden nicht gezählt."""
@@ -169,30 +161,30 @@ class ContractQuotaServiceTest(TestCase):
                 date=date(2025, 8, 5 + i),
                 start_time=time(14, 0),
                 duration_minutes=60,
-                status='planned',
+                status="planned",
             )
-        
+
         # Erstelle eine stornierte Lesson
         Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 10),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='cancelled',  # Storniert
+            status="cancelled",  # Storniert
         )
-        
+
         # Versuche eine weitere Lesson im August zu erstellen
         new_lesson = Lesson(
             contract=self.contract,
             date=date(2025, 8, 20),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='planned',
+            status="planned",
         )
-        
+
         # Prüfe Konflikt
         conflict = ContractQuotaService.check_quota_conflict(new_lesson, exclude_self=True)
-        
+
         # Sollte Konflikt sein: 3 + 1 = 4 > 3 (stornierte wird nicht gezählt)
         self.assertIsNotNone(conflict)
 
@@ -204,28 +196,27 @@ class ContractQuotaServiceTest(TestCase):
             date=date(2025, 8, 5),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='taught',
+            status="taught",
         )
         Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 6),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='paid',
+            status="paid",
         )
-        
+
         # Versuche eine 3. Lesson im August zu erstellen
         new_lesson = Lesson(
             contract=self.contract,
             date=date(2025, 8, 7),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='planned',
+            status="planned",
         )
-        
+
         # Prüfe Konflikt
         conflict = ContractQuotaService.check_quota_conflict(new_lesson, exclude_self=True)
-        
+
         # Sollte kein Konflikt sein: 2 + 1 = 3 <= 3
         self.assertIsNone(conflict)
-

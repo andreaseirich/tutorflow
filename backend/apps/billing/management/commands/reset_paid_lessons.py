@@ -5,54 +5,53 @@ Verwendung:
     python manage.py reset_paid_lessons
     python manage.py reset_paid_lessons --delete-invoices
 """
+
 from django.core.management.base import BaseCommand
 from apps.lessons.models import Lesson
 from apps.billing.models import Invoice, InvoiceItem
 
 
 class Command(BaseCommand):
-    help = 'Setzt alle Lessons mit Status PAID auf TAUGHT zurück.'
+    help = "Setzt alle Lessons mit Status PAID auf TAUGHT zurück."
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--delete-invoices',
-            action='store_true',
-            help='Löscht auch die zugehörigen Rechnungen (und InvoiceItems)',
+            "--delete-invoices",
+            action="store_true",
+            help="Löscht auch die zugehörigen Rechnungen (und InvoiceItems)",
         )
         parser.add_argument(
-            '--dry-run',
-            action='store_true',
-            help='Zeigt nur an, was geändert würde, ohne Änderungen vorzunehmen',
+            "--dry-run",
+            action="store_true",
+            help="Zeigt nur an, was geändert würde, ohne Änderungen vorzunehmen",
         )
 
     def handle(self, *args, **options):
-        delete_invoices = options['delete_invoices']
-        dry_run = options['dry_run']
+        delete_invoices = options["delete_invoices"]
+        dry_run = options["dry_run"]
 
         # Finde alle Lessons mit Status PAID
-        paid_lessons = Lesson.objects.filter(status='paid')
+        paid_lessons = Lesson.objects.filter(status="paid")
 
         if not paid_lessons.exists():
-            self.stdout.write(
-                self.style.SUCCESS('Keine Lessons mit Status PAID gefunden.')
-            )
+            self.stdout.write(self.style.SUCCESS("Keine Lessons mit Status PAID gefunden."))
             return
 
         count = paid_lessons.count()
-        self.stdout.write(f'Gefunden: {count} Lesson(s) mit Status PAID')
+        self.stdout.write(f"Gefunden: {count} Lesson(s) mit Status PAID")
 
         if dry_run:
             self.stdout.write(
-                self.style.WARNING('DRY RUN: Es werden keine Änderungen vorgenommen.')
+                self.style.WARNING("DRY RUN: Es werden keine Änderungen vorgenommen.")
             )
             for lesson in paid_lessons[:10]:  # Zeige erste 10 als Beispiel
                 invoice_items = InvoiceItem.objects.filter(lesson=lesson)
                 self.stdout.write(
-                    f'  - Lesson {lesson.id}: {lesson.date} {lesson.start_time} '
-                    f'({invoice_items.count()} Rechnungsposten)'
+                    f"  - Lesson {lesson.id}: {lesson.date} {lesson.start_time} "
+                    f"({invoice_items.count()} Rechnungsposten)"
                 )
             if count > 10:
-                self.stdout.write(f'  ... und {count - 10} weitere')
+                self.stdout.write(f"  ... und {count - 10} weitere")
             return
 
         # Sammle betroffene Rechnungen (falls gelöscht werden sollen)
@@ -65,7 +64,7 @@ class Command(BaseCommand):
                         affected_invoices.add(item.invoice)
 
         # Setze Lessons auf TAUGHT zurück
-        updated_count = paid_lessons.update(status='taught')
+        updated_count = paid_lessons.update(status="taught")
 
         if delete_invoices:
             # Lösche Rechnungen (CASCADE löscht automatisch InvoiceItems)
@@ -74,27 +73,24 @@ class Command(BaseCommand):
                 invoice.delete()
             self.stdout.write(
                 self.style.SUCCESS(
-                    f'{updated_count} Lesson(s) auf TAUGHT zurückgesetzt. '
-                    f'{invoice_count} Rechnung(en) gelöscht.'
+                    f"{updated_count} Lesson(s) auf TAUGHT zurückgesetzt. "
+                    f"{invoice_count} Rechnung(en) gelöscht."
                 )
             )
         else:
             # Prüfe, ob es InvoiceItems gibt, die jetzt "orphaned" sind
-            orphaned_items = InvoiceItem.objects.filter(lesson__status='taught')
+            orphaned_items = InvoiceItem.objects.filter(lesson__status="taught")
             orphaned_count = orphaned_items.count()
-            
+
             if orphaned_count > 0:
                 self.stdout.write(
                     self.style.WARNING(
-                        f'{updated_count} Lesson(s) auf TAUGHT zurückgesetzt. '
-                        f'Hinweis: {orphaned_count} Rechnungsposten verweisen noch auf diese Lessons. '
-                        f'Verwenden Sie --delete-invoices, um auch die Rechnungen zu löschen.'
+                        f"{updated_count} Lesson(s) auf TAUGHT zurückgesetzt. "
+                        f"Hinweis: {orphaned_count} Rechnungsposten verweisen noch auf diese Lessons. "
+                        f"Verwenden Sie --delete-invoices, um auch die Rechnungen zu löschen."
                     )
                 )
             else:
                 self.stdout.write(
-                    self.style.SUCCESS(
-                        f'{updated_count} Lesson(s) auf TAUGHT zurückgesetzt.'
-                    )
+                    self.style.SUCCESS(f"{updated_count} Lesson(s) auf TAUGHT zurückgesetzt.")
                 )
-

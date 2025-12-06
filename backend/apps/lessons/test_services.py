@@ -1,6 +1,7 @@
 """
 Tests für Lesson-Services (Konfliktprüfung, Abfragen).
 """
+
 from django.test import TestCase
 from decimal import Decimal
 from datetime import date, time, datetime, timedelta
@@ -17,23 +18,13 @@ class LessonConflictServiceTest(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.student1 = Student.objects.create(
-            first_name="Max",
-            last_name="Mustermann"
-        )
-        self.student2 = Student.objects.create(
-            first_name="Anna",
-            last_name="Schmidt"
-        )
+        self.student1 = Student.objects.create(first_name="Max", last_name="Mustermann")
+        self.student2 = Student.objects.create(first_name="Anna", last_name="Schmidt")
         self.contract1 = Contract.objects.create(
-            student=self.student1,
-            hourly_rate=Decimal('25.00'),
-            start_date=date.today()
+            student=self.student1, hourly_rate=Decimal("25.00"), start_date=date.today()
         )
         self.contract2 = Contract.objects.create(
-            student=self.student2,
-            hourly_rate=Decimal('30.00'),
-            start_date=date.today()
+            student=self.student2, hourly_rate=Decimal("30.00"), start_date=date.today()
         )
 
     def test_calculate_time_block(self):
@@ -44,83 +35,66 @@ class LessonConflictServiceTest(TestCase):
             start_time=time(14, 0),
             duration_minutes=60,
             travel_time_before_minutes=15,
-            travel_time_after_minutes=20
+            travel_time_after_minutes=20,
         )
-        
+
         start, end = LessonConflictService.calculate_time_block(lesson)
-        
+
         # Start sollte 15 Minuten vor 14:00 sein
-        expected_start = timezone.make_aware(
-            datetime.combine(date.today(), time(13, 45))
-        )
+        expected_start = timezone.make_aware(datetime.combine(date.today(), time(13, 45)))
         # Ende sollte 14:00 + 60 + 20 = 15:20 sein
-        expected_end = timezone.make_aware(
-            datetime.combine(date.today(), time(15, 20))
-        )
-        
+        expected_end = timezone.make_aware(datetime.combine(date.today(), time(15, 20)))
+
         self.assertEqual(start, expected_start)
         self.assertEqual(end, expected_end)
 
     def test_no_conflicts(self):
         """Test: Keine Konflikte bei nicht überlappenden Lessons."""
         lesson1 = Lesson.objects.create(
-            contract=self.contract1,
-            date=date.today(),
-            start_time=time(14, 0),
-            duration_minutes=60
+            contract=self.contract1, date=date.today(), start_time=time(14, 0), duration_minutes=60
         )
         lesson2 = Lesson.objects.create(
             contract=self.contract2,
             date=date.today(),
             start_time=time(16, 0),  # 2 Stunden später, keine Überschneidung
-            duration_minutes=60
+            duration_minutes=60,
         )
-        
+
         conflicts = LessonConflictService.check_conflicts(lesson1)
         self.assertEqual(len(conflicts), 0)
 
     def test_lesson_conflict(self):
         """Test: Konflikt zwischen zwei Lessons."""
         lesson1 = Lesson.objects.create(
-            contract=self.contract1,
-            date=date.today(),
-            start_time=time(14, 0),
-            duration_minutes=60
+            contract=self.contract1, date=date.today(), start_time=time(14, 0), duration_minutes=60
         )
         lesson2 = Lesson.objects.create(
             contract=self.contract2,
             date=date.today(),
             start_time=time(14, 30),  # Überschneidung!
-            duration_minutes=60
+            duration_minutes=60,
         )
-        
+
         conflicts = LessonConflictService.check_conflicts(lesson1)
         self.assertEqual(len(conflicts), 1)
-        self.assertEqual(conflicts[0]['type'], 'lesson')
+        self.assertEqual(conflicts[0]["type"], "lesson")
 
     def test_blocked_time_conflict(self):
         """Test: Konflikt mit Blockzeit."""
         lesson = Lesson.objects.create(
-            contract=self.contract1,
-            date=date.today(),
-            start_time=time(14, 0),
-            duration_minutes=60
+            contract=self.contract1, date=date.today(), start_time=time(14, 0), duration_minutes=60
         )
-        
+
         # Blockzeit, die mit Lesson überlappt
         blocked_time = BlockedTime.objects.create(
             title="Uni-Vorlesung",
-            start_datetime=timezone.make_aware(
-                datetime.combine(date.today(), time(14, 30))
-            ),
-            end_datetime=timezone.make_aware(
-                datetime.combine(date.today(), time(16, 0))
-            )
+            start_datetime=timezone.make_aware(datetime.combine(date.today(), time(14, 30))),
+            end_datetime=timezone.make_aware(datetime.combine(date.today(), time(16, 0))),
         )
-        
+
         conflicts = LessonConflictService.check_conflicts(lesson)
         self.assertEqual(len(conflicts), 1)
-        self.assertEqual(conflicts[0]['type'], 'blocked_time')
+        self.assertEqual(conflicts[0]["type"], "blocked_time")
 
     def test_conflict_with_travel_time(self):
         """Test: Konflikt durch Fahrtzeiten."""
@@ -129,15 +103,15 @@ class LessonConflictServiceTest(TestCase):
             date=date.today(),
             start_time=time(14, 0),
             duration_minutes=60,
-            travel_time_after_minutes=30  # Endet um 15:30
+            travel_time_after_minutes=30,  # Endet um 15:30
         )
         lesson2 = Lesson.objects.create(
             contract=self.contract2,
             date=date.today(),
             start_time=time(15, 0),  # Startet um 15:00, Überschneidung!
-            duration_minutes=60
+            duration_minutes=60,
         )
-        
+
         conflicts = LessonConflictService.check_conflicts(lesson1)
         self.assertEqual(len(conflicts), 1)
 
@@ -147,14 +121,9 @@ class LessonQueryServiceTest(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.student = Student.objects.create(
-            first_name="Max",
-            last_name="Mustermann"
-        )
+        self.student = Student.objects.create(first_name="Max", last_name="Mustermann")
         self.contract = Contract.objects.create(
-            student=self.student,
-            hourly_rate=Decimal('25.00'),
-            start_date=date(2025, 12, 1)
+            student=self.student, hourly_rate=Decimal("25.00"), start_date=date(2025, 12, 1)
         )
 
     def test_get_lessons_for_month(self):
@@ -164,16 +133,16 @@ class LessonQueryServiceTest(TestCase):
             contract=self.contract,
             date=date(2025, 12, 5),
             start_time=time(14, 0),
-            duration_minutes=60
+            duration_minutes=60,
         )
         # Lesson im November 2025 (sollte nicht erscheinen)
         lesson2 = Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 11, 30),
             start_time=time(14, 0),
-            duration_minutes=60
+            duration_minutes=60,
         )
-        
+
         lessons = LessonQueryService.get_lessons_for_month(2025, 12)
         self.assertEqual(len(lessons), 1)
         self.assertEqual(lessons[0], lesson1)
@@ -182,12 +151,8 @@ class LessonQueryServiceTest(TestCase):
         """Test: Heutige Lessons abrufen."""
         today = timezone.now().date()
         lesson = Lesson.objects.create(
-            contract=self.contract,
-            date=today,
-            start_time=time(14, 0),
-            duration_minutes=60
+            contract=self.contract, date=today, start_time=time(14, 0), duration_minutes=60
         )
-        
+
         lessons = LessonQueryService.get_today_lessons()
         self.assertIn(lesson, lessons)
-

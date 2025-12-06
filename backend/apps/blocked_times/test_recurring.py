@@ -1,6 +1,7 @@
 """
 Tests für RecurringBlockedTime und RecurringBlockedTimeService.
 """
+
 from django.test import TestCase
 from datetime import date, time, datetime, timedelta
 from django.utils import timezone
@@ -21,9 +22,9 @@ class RecurringBlockedTimeModelTest(TestCase):
             end_time=time(12, 0),
             monday=True,
             wednesday=True,
-            friday=True
+            friday=True,
         )
-        
+
         weekdays = recurring.get_active_weekdays()
         self.assertEqual(weekdays, [0, 2, 4])  # Montag, Mittwoch, Freitag
 
@@ -35,9 +36,9 @@ class RecurringBlockedTimeModelTest(TestCase):
             start_time=time(10, 0),
             end_time=time(12, 0),
             monday=True,
-            tuesday=True
+            tuesday=True,
         )
-        
+
         display = recurring.get_active_weekdays_display()
         self.assertEqual(display, "Mo, Di")
 
@@ -53,19 +54,19 @@ class RecurringBlockedTimeServiceTest(TestCase):
             end_date=date(2025, 1, 20),  # 2 Wochen später
             start_time=time(10, 0),
             end_time=time(12, 0),
-            recurrence_type='weekly',
+            recurrence_type="weekly",
             monday=True,
-            is_active=True
+            is_active=True,
         )
-        
+
         result = RecurringBlockedTimeService.generate_blocked_times(
             recurring, check_conflicts=False, dry_run=False
         )
-        
+
         # Sollte 3 Blockzeiten erstellen (6.1, 13.1, 20.1 - alle Montage)
-        self.assertEqual(result['created'], 3)
-        self.assertEqual(result['skipped'], 0)
-        
+        self.assertEqual(result["created"], 3)
+        self.assertEqual(result["skipped"], 0)
+
         # Prüfe, dass Blockzeiten erstellt wurden
         blocked_times = BlockedTime.objects.filter(title="Uni-Vorlesung")
         self.assertEqual(blocked_times.count(), 3)
@@ -78,17 +79,17 @@ class RecurringBlockedTimeServiceTest(TestCase):
             end_date=date(2025, 1, 27),  # 3 Wochen später
             start_time=time(18, 0),
             end_time=time(20, 0),
-            recurrence_type='biweekly',
+            recurrence_type="biweekly",
             monday=True,
-            is_active=True
+            is_active=True,
         )
-        
+
         result = RecurringBlockedTimeService.generate_blocked_times(
             recurring, check_conflicts=False, dry_run=False
         )
-        
+
         # Sollte 2 Blockzeiten erstellen (6.1, 20.1 - jede 2. Woche)
-        self.assertEqual(result['created'], 2)
+        self.assertEqual(result["created"], 2)
 
     def test_generate_monthly_blocked_times(self):
         """Test: Monatliche Blockzeiten werden korrekt generiert."""
@@ -99,7 +100,7 @@ class RecurringBlockedTimeServiceTest(TestCase):
             end_date=date(2025, 3, 15),  # 15. März
             start_time=time(14, 0),
             end_time=time(16, 0),
-            recurrence_type='monthly',
+            recurrence_type="monthly",
             monday=False,
             tuesday=False,
             wednesday=True,  # Mittwoch
@@ -107,13 +108,13 @@ class RecurringBlockedTimeServiceTest(TestCase):
             friday=False,
             saturday=False,
             sunday=False,
-            is_active=True
+            is_active=True,
         )
-        
+
         result = RecurringBlockedTimeService.generate_blocked_times(
             recurring, check_conflicts=False, dry_run=False
         )
-        
+
         # Sollte 3 Blockzeiten erstellen (15.1, 15.2, 15.3 - alle Mittwoche)
         # Aber 15.2.2025 ist ein Samstag, 15.3.2025 ist ein Samstag
         # Die monatliche Logik prüft, ob der Tag ein aktiver Wochentag ist
@@ -121,7 +122,7 @@ class RecurringBlockedTimeServiceTest(TestCase):
         # Wir passen den Test an: verwende einen Tag, der in allen Monaten auf den gleichen Wochentag fällt
         # Oder wir testen mit einem anderen Ansatz
         # Für jetzt: prüfen wir, dass mindestens 1 erstellt wurde
-        self.assertGreaterEqual(result['created'], 1)
+        self.assertGreaterEqual(result["created"], 1)
 
     def test_preview_blocked_times(self):
         """Test: Vorschau funktioniert ohne Speicherung."""
@@ -131,16 +132,16 @@ class RecurringBlockedTimeServiceTest(TestCase):
             end_date=date(2025, 1, 13),
             start_time=time(10, 0),
             end_time=time(12, 0),
-            recurrence_type='weekly',
+            recurrence_type="weekly",
             monday=True,
-            is_active=True
+            is_active=True,
         )
-        
+
         preview = RecurringBlockedTimeService.preview_blocked_times(recurring)
-        
+
         # Sollte 2 Blockzeiten in der Vorschau sein (6.1, 13.1)
         self.assertEqual(len(preview), 2)
-        
+
         # Aber keine sollten gespeichert sein
         self.assertEqual(BlockedTime.objects.count(), 0)
 
@@ -152,31 +153,25 @@ class RecurringBlockedTimeServiceTest(TestCase):
             end_date=date(2025, 1, 13),
             start_time=time(10, 0),
             end_time=time(12, 0),
-            recurrence_type='weekly',
+            recurrence_type="weekly",
             monday=True,
-            is_active=True
+            is_active=True,
         )
-        
+
         # Erstelle bereits eine Blockzeit für den 6.1
-        start_datetime = timezone.make_aware(
-            datetime.combine(date(2025, 1, 6), time(10, 0))
-        )
-        end_datetime = timezone.make_aware(
-            datetime.combine(date(2025, 1, 6), time(12, 0))
-        )
+        start_datetime = timezone.make_aware(datetime.combine(date(2025, 1, 6), time(10, 0)))
+        end_datetime = timezone.make_aware(datetime.combine(date(2025, 1, 6), time(12, 0)))
         BlockedTime.objects.create(
-            title="Uni-Vorlesung",
-            start_datetime=start_datetime,
-            end_datetime=end_datetime
+            title="Uni-Vorlesung", start_datetime=start_datetime, end_datetime=end_datetime
         )
-        
+
         result = RecurringBlockedTimeService.generate_blocked_times(
             recurring, check_conflicts=False, dry_run=False
         )
-        
+
         # Sollte 1 erstellen (13.1) und 1 überspringen (6.1)
-        self.assertEqual(result['created'], 1)
-        self.assertEqual(result['skipped'], 1)
+        self.assertEqual(result["created"], 1)
+        self.assertEqual(result["skipped"], 1)
 
 
 class BlockedTimeCalendarIntegrationTest(TestCase):
@@ -184,49 +179,37 @@ class BlockedTimeCalendarIntegrationTest(TestCase):
 
     def test_single_day_blocked_time(self):
         """Test: Einzelne Blockzeit an einem Tag."""
-        start_datetime = timezone.make_aware(
-            datetime.combine(date(2025, 1, 15), time(10, 0))
-        )
-        end_datetime = timezone.make_aware(
-            datetime.combine(date(2025, 1, 15), time(12, 0))
-        )
-        
+        start_datetime = timezone.make_aware(datetime.combine(date(2025, 1, 15), time(10, 0)))
+        end_datetime = timezone.make_aware(datetime.combine(date(2025, 1, 15), time(12, 0)))
+
         blocked_time = BlockedTime.objects.create(
-            title="Uni-Vorlesung",
-            start_datetime=start_datetime,
-            end_datetime=end_datetime
+            title="Uni-Vorlesung", start_datetime=start_datetime, end_datetime=end_datetime
         )
-        
+
         # Prüfe, dass Blockzeit am richtigen Tag ist
         self.assertEqual(blocked_time.start_datetime.date(), date(2025, 1, 15))
 
     def test_multi_day_blocked_time(self):
         """Test: Mehrtägige Blockzeit (z. B. Urlaub)."""
-        start_datetime = timezone.make_aware(
-            datetime.combine(date(2025, 1, 15), time(0, 0))
-        )
-        end_datetime = timezone.make_aware(
-            datetime.combine(date(2025, 1, 17), time(23, 59))
-        )
-        
+        start_datetime = timezone.make_aware(datetime.combine(date(2025, 1, 15), time(0, 0)))
+        end_datetime = timezone.make_aware(datetime.combine(date(2025, 1, 17), time(23, 59)))
+
         blocked_time = BlockedTime.objects.create(
-            title="Urlaub",
-            start_datetime=start_datetime,
-            end_datetime=end_datetime
+            title="Urlaub", start_datetime=start_datetime, end_datetime=end_datetime
         )
-        
+
         # Prüfe, dass Blockzeit mehrere Tage umfasst
         self.assertEqual(blocked_time.start_datetime.date(), date(2025, 1, 15))
         self.assertEqual(blocked_time.end_datetime.date(), date(2025, 1, 17))
-        
+
         # Prüfe, dass alle betroffenen Tage erfasst werden können
         from datetime import timedelta
+
         current_date = blocked_time.start_datetime.date()
         end_date = blocked_time.end_datetime.date()
         days = []
         while current_date <= end_date:
             days.append(current_date)
             current_date += timedelta(days=1)
-        
-        self.assertEqual(len(days), 3)  # 15., 16., 17.
 
+        self.assertEqual(len(days), 3)  # 15., 16., 17.

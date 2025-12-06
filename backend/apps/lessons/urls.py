@@ -1,28 +1,48 @@
 """
 URL-Konfiguration für Lesson-App.
 """
+
 from django.urls import path
 from apps.lessons import views
 from apps.lessons import recurring_views
 
-app_name = 'lessons'
+app_name = "lessons"
 
 urlpatterns = [
-    path('', views.LessonListView.as_view(), name='list'),
-    path('create/', views.LessonCreateView.as_view(), name='create'),
-    path('<int:pk>/', views.LessonDetailView.as_view(), name='detail'),
-    path('<int:pk>/conflicts/', views.ConflictDetailView.as_view(), name='conflicts'),
-    path('<int:pk>/update/', views.LessonUpdateView.as_view(), name='update'),
-    path('<int:pk>/delete/', views.LessonDeleteView.as_view(), name='delete'),
-    path('month/<int:year>/<int:month>/', views.LessonMonthView.as_view(), name='month'),
-    path('week/', views.WeekView.as_view(), name='week'),
-    path('calendar/', views.CalendarView.as_view(), name='calendar'),
+    path("", views.LessonListView.as_view(), name="list"),
+    path("create/", views.LessonCreateView.as_view(), name="create"),
+    path("<int:pk>/", views.LessonDetailView.as_view(), name="detail"),
+    path("<int:pk>/conflicts/", views.ConflictDetailView.as_view(), name="conflicts"),
+    path("<int:pk>/update/", views.LessonUpdateView.as_view(), name="update"),
+    path("<int:pk>/delete/", views.LessonDeleteView.as_view(), name="delete"),
+    path("month/<int:year>/<int:month>/", views.LessonMonthView.as_view(), name="month"),
+    path("week/", views.WeekView.as_view(), name="week"),
+    path("calendar/", views.CalendarView.as_view(), name="calendar"),
     # Recurring Lessons
-    path('recurring/', recurring_views.RecurringLessonListView.as_view(), name='recurring_list'),
-    path('recurring/<int:pk>/', recurring_views.RecurringLessonDetailView.as_view(), name='recurring_detail'),
-    path('recurring/create/', recurring_views.RecurringLessonCreateView.as_view(), name='recurring_create'),
-    path('recurring/<int:pk>/update/', recurring_views.RecurringLessonUpdateView.as_view(), name='recurring_update'),
-    path('recurring/<int:pk>/delete/', recurring_views.RecurringLessonDeleteView.as_view(), name='recurring_delete'),
-    path('recurring/<int:pk>/generate/', recurring_views.generate_lessons_from_recurring, name='recurring_generate'),
+    path("recurring/", recurring_views.RecurringLessonListView.as_view(), name="recurring_list"),
+    path(
+        "recurring/<int:pk>/",
+        recurring_views.RecurringLessonDetailView.as_view(),
+        name="recurring_detail",
+    ),
+    path(
+        "recurring/create/",
+        recurring_views.RecurringLessonCreateView.as_view(),
+        name="recurring_create",
+    ),
+    path(
+        "recurring/<int:pk>/update/",
+        recurring_views.RecurringLessonUpdateView.as_view(),
+        name="recurring_update",
+    ),
+    path(
+        "recurring/<int:pk>/delete/",
+        recurring_views.RecurringLessonDeleteView.as_view(),
+        name="recurring_delete",
+    ),
+    path(
+        "recurring/<int:pk>/generate/",
+        recurring_views.generate_lessons_from_recurring,
+        name="recurring_generate",
+    ),
 ]
-
