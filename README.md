@@ -1,5 +1,11 @@
 # TutorFlow
 
+[![CI](https://github.com/andreaseirich/tutorflow/actions/workflows/ci.yml/badge.svg)](https://github.com/andreaseirich/tutorflow/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/Django-5.2.9-green.svg)](https://www.djangoproject.com/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](LICENSE)
+[![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
 ## Project Overview
 
 TutorFlow is a comprehensive web application designed for tutors to manage their tutoring business efficiently. It solves the challenge of organizing students, contracts, and lessons while avoiding scheduling conflicts and maintaining clear financial oversight. The application is built for tutors who need a structured, reliable tool to manage their teaching activities, track income, and generate invoices—all with intelligent conflict detection and AI-powered lesson planning support.
@@ -396,7 +402,7 @@ A GitHub Actions workflow runs checks and tests on each push/pull request:
 - Code formatting verification
 - Linting checks
 
-[![CI](https://github.com/andreaseirich/tutorflow/actions/workflows/ci.yml/badge.svg)](https://github.com/andreaseirich/tutorflow/actions/workflows/ci.yml)
+See the [CI badge](#tutorflow) at the top of this README for the current build status.
 
 ## Validation
 
