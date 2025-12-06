@@ -24,11 +24,6 @@ Instead, please use one of the following methods:
    - Create a private security advisory
    - This ensures that the issue is handled confidentially
 
-2. **Email (Alternative)**
-   - For security-related concerns, you can contact the maintainers
-   - Please use a descriptive subject line: `[SECURITY] Brief description`
-   - Note: This is a placeholder contact method. In a production environment, a dedicated security email address should be configured.
-
 ### Information to Include
 
 When reporting a vulnerability, please provide:
