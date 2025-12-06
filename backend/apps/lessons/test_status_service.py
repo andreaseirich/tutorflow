@@ -1,17 +1,17 @@
 """
-Tests für LessonStatusService.
+Tests für LessonStatusUpdater.
 """
 from django.test import TestCase
-from datetime import date, time, timedelta
+from datetime import date, time, timedelta, datetime
 from decimal import Decimal
 from django.utils import timezone
 from apps.students.models import Student
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
-from apps.lessons.status_service import LessonStatusService
+from apps.lessons.status_service import LessonStatusUpdater
 
 
-class LessonStatusServiceTest(TestCase):
+class LessonStatusUpdaterTest(TestCase):
     """Tests für LessonStatusService."""
     
     def setUp(self):
@@ -29,8 +29,9 @@ class LessonStatusServiceTest(TestCase):
             is_active=True
         )
     
-    def test_update_status_past_lesson_to_taught(self):
+    def test_update_past_lessons_to_taught(self):
         """Test: Vergangene Lesson mit Status PLANNED wird auf TAUGHT gesetzt."""
+        # Erstelle eine Lesson, die vor 5 Tagen endete
         past_date = timezone.localdate() - timedelta(days=5)
         past_time = time(14, 0)
         
@@ -42,14 +43,24 @@ class LessonStatusServiceTest(TestCase):
             status='planned'
         )
         
-        status_changed = LessonStatusService.update_status_for_lesson(lesson)
+        # Berechne end_datetime
+        start_datetime = timezone.make_aware(
+            datetime.combine(past_date, past_time)
+        )
+        end_datetime = start_datetime + timedelta(minutes=60)
         
-        self.assertTrue(status_changed)
+        # Stelle sicher, dass end_datetime in der Vergangenheit liegt
+        now = timezone.now()
+        self.assertLess(end_datetime, now, "Test-Lesson sollte in der Vergangenheit liegen")
+        
+        updated_count = LessonStatusUpdater.update_past_lessons_to_taught()
+        
+        self.assertEqual(updated_count, 1)
         lesson.refresh_from_db()
         self.assertEqual(lesson.status, 'taught')
     
-    def test_update_status_future_lesson_to_planned(self):
-        """Test: Zukünftige Lesson ohne Status wird auf PLANNED gesetzt."""
+    def test_update_past_lessons_future_lesson_not_updated(self):
+        """Test: Zukünftige Lesson mit Status PLANNED bleibt PLANNED."""
         future_date = timezone.localdate() + timedelta(days=5)
         future_time = time(14, 0)
         
@@ -58,17 +69,17 @@ class LessonStatusServiceTest(TestCase):
             date=future_date,
             start_time=future_time,
             duration_minutes=60,
-            status=''  # Leerer Status
+            status='planned'
         )
         
-        status_changed = LessonStatusService.update_status_for_lesson(lesson)
+        updated_count = LessonStatusUpdater.update_past_lessons_to_taught()
         
-        self.assertTrue(status_changed)
+        self.assertEqual(updated_count, 0)
         lesson.refresh_from_db()
         self.assertEqual(lesson.status, 'planned')
     
-    def test_update_status_paid_not_overwritten(self):
-        """Test: Status PAID wird nicht überschrieben."""
+    def test_update_past_lessons_paid_not_updated(self):
+        """Test: Lesson mit Status PAID wird nicht verändert, auch wenn in der Vergangenheit."""
         past_date = timezone.localdate() - timedelta(days=5)
         
         lesson = Lesson.objects.create(
@@ -79,14 +90,14 @@ class LessonStatusServiceTest(TestCase):
             status='paid'
         )
         
-        status_changed = LessonStatusService.update_status_for_lesson(lesson)
+        updated_count = LessonStatusUpdater.update_past_lessons_to_taught()
         
-        self.assertFalse(status_changed)
+        self.assertEqual(updated_count, 0)
         lesson.refresh_from_db()
         self.assertEqual(lesson.status, 'paid')
     
-    def test_update_status_cancelled_not_overwritten(self):
-        """Test: Status CANCELLED wird nicht überschrieben."""
+    def test_update_past_lessons_cancelled_not_updated(self):
+        """Test: Lesson mit Status CANCELLED wird nicht verändert, auch wenn in der Vergangenheit."""
         past_date = timezone.localdate() - timedelta(days=5)
         
         lesson = Lesson.objects.create(
@@ -97,31 +108,84 @@ class LessonStatusServiceTest(TestCase):
             status='cancelled'
         )
         
-        status_changed = LessonStatusService.update_status_for_lesson(lesson)
+        updated_count = LessonStatusUpdater.update_past_lessons_to_taught()
         
-        self.assertFalse(status_changed)
+        self.assertEqual(updated_count, 0)
         lesson.refresh_from_db()
         self.assertEqual(lesson.status, 'cancelled')
     
-    def test_bulk_update_past_lessons(self):
-        """Test: bulk_update_past_lessons aktualisiert mehrere Lessons."""
+    def test_update_past_lessons_bulk_update(self):
+        """Test: update_past_lessons_to_taught aktualisiert mehrere Lessons gleichzeitig."""
         past_date = timezone.localdate() - timedelta(days=10)
         
-        # Erstelle mehrere vergangene Lessons
+        # Erstelle mehrere vergangene Lessons mit Status PLANNED
+        past_lessons = []
         for i in range(3):
-            Lesson.objects.create(
+            lesson = Lesson.objects.create(
                 contract=self.contract,
                 date=past_date - timedelta(days=i),
                 start_time=time(14, 0),
                 duration_minutes=60,
                 status='planned'
             )
+            past_lessons.append(lesson)
         
-        updated_count = LessonStatusService.bulk_update_past_lessons()
+        # Erstelle eine zukünftige Lesson (sollte nicht aktualisiert werden)
+        future_lesson = Lesson.objects.create(
+            contract=self.contract,
+            date=timezone.localdate() + timedelta(days=5),
+            start_time=time(14, 0),
+            duration_minutes=60,
+            status='planned'
+        )
+        
+        # Erstelle eine vergangene Lesson mit Status PAID (sollte nicht aktualisiert werden)
+        paid_lesson = Lesson.objects.create(
+            contract=self.contract,
+            date=past_date - timedelta(days=5),
+            start_time=time(14, 0),
+            duration_minutes=60,
+            status='paid'
+        )
+        
+        updated_count = LessonStatusUpdater.update_past_lessons_to_taught()
         
         self.assertEqual(updated_count, 3)
         
-        # Prüfe, dass alle auf TAUGHT gesetzt wurden
-        lessons = Lesson.objects.filter(date__lte=past_date, status='taught')
-        self.assertEqual(lessons.count(), 3)
+        # Prüfe, dass alle vergangenen PLANNED Lessons auf TAUGHT gesetzt wurden
+        for lesson in past_lessons:
+            lesson.refresh_from_db()
+            self.assertEqual(lesson.status, 'taught')
+        
+        # Prüfe, dass zukünftige Lesson unverändert bleibt
+        future_lesson.refresh_from_db()
+        self.assertEqual(future_lesson.status, 'planned')
+        
+        # Prüfe, dass PAID Lesson unverändert bleibt
+        paid_lesson.refresh_from_db()
+        self.assertEqual(paid_lesson.status, 'paid')
+    
+    def test_update_past_lessons_with_custom_now(self):
+        """Test: update_past_lessons_to_taught funktioniert mit custom now-Parameter."""
+        # Erstelle eine Lesson, die in 1 Stunde endet
+        now = timezone.now()
+        lesson_date = timezone.localdate()
+        lesson_time = (timezone.localtime(now) + timedelta(hours=1)).time()
+        
+        lesson = Lesson.objects.create(
+            contract=self.contract,
+            date=lesson_date,
+            start_time=lesson_time,
+            duration_minutes=60,
+            status='planned'
+        )
+        
+        # Setze now auf 2 Stunden in der Zukunft
+        future_now = now + timedelta(hours=2)
+        
+        updated_count = LessonStatusUpdater.update_past_lessons_to_taught(now=future_now)
+        
+        self.assertEqual(updated_count, 1)
+        lesson.refresh_from_db()
+        self.assertEqual(lesson.status, 'taught')
 

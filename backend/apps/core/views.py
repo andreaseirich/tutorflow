@@ -7,6 +7,7 @@ from django.utils import timezone
 from datetime import date
 from apps.lessons.services import LessonQueryService
 from apps.lessons.services import LessonConflictService
+from apps.lessons.status_service import LessonStatusUpdater
 from apps.core.selectors import IncomeSelector
 
 
@@ -16,6 +17,10 @@ class DashboardView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # Automatische Status-Aktualisierung für vergangene Lessons
+        LessonStatusUpdater.update_past_lessons_to_taught()
+        
         now = timezone.now()
         
         # Heutige Stunden
@@ -65,6 +70,10 @@ class IncomeOverviewView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # Automatische Status-Aktualisierung für vergangene Lessons
+        LessonStatusUpdater.update_past_lessons_to_taught()
+        
         now = timezone.now()
         
         # Jahr und Monat aus URL-Parametern oder aktuelles Datum
