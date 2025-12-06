@@ -132,7 +132,7 @@ class CalendarPastLessonsTest(TestCase):
         for lessons_list in calendar_data["lessons_by_date"].values():
             all_lessons.extend(lessons_list)
 
-        lesson_dates = [l.date for l in all_lessons]
+        lesson_dates = [lesson.date for l in all_lessons]
 
         # Wenn past_date im aktuellen Monat liegt, sollte es enthalten sein
         if past_date.year == today.year and past_date.month == today.month:
@@ -168,5 +168,5 @@ class CalendarPastLessonsTest(TestCase):
             for day in week:
                 all_lessons.extend(day["lessons"])
 
-        lesson_ids = [l.id for l in all_lessons]
+        lesson_ids = [lesson.id for l in all_lessons]
         self.assertIn(lesson.id, lesson_ids)

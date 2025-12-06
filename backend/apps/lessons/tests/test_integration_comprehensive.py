@@ -422,8 +422,8 @@ class WeeklyCalendarIntegrationTest(TestCase):
         week_data = WeekService.get_week_data(2023, 1, 4)
 
         # Should have lessons on Monday and Wednesday
-        monday_lessons = [l for l in week_data["lessons"] if l.date.weekday() == 0]
-        wednesday_lessons = [l for l in week_data["lessons"] if l.date.weekday() == 2]
+        monday_lessons = [lesson for lesson in week_data["lessons"] if lesson.date.weekday() == 0]
+        wednesday_lessons = [lesson for lesson in week_data["lessons"] if lesson.date.weekday() == 2]
         self.assertGreater(len(monday_lessons), 0)
         self.assertGreater(len(wednesday_lessons), 0)
 
@@ -521,5 +521,5 @@ class WeeklyCalendarIntegrationTest(TestCase):
 
         # Verify week data includes the lesson
         week_data = WeekService.get_week_data(2023, 1, 31)
-        lesson_dates = [l.date for l in week_data["lessons"]]
+        lesson_dates = [lesson.date for l in week_data["lessons"]]
         self.assertIn(date(2023, 1, 31), lesson_dates)

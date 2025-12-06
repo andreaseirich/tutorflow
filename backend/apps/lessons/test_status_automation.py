@@ -103,8 +103,8 @@ class RecurringLessonStatusAutomationTest(TestCase):
 
         # Prüfe Status-Verteilung
         lessons = Lesson.objects.filter(contract=self.contract)
-        past_lessons = [l for l in lessons if l.date < today]
-        future_lessons = [l for l in lessons if l.date >= today]
+        past_lessons = [lesson for lesson in lessons if l.date < today]
+        future_lessons = [lesson for lesson in lessons if l.date >= today]
 
         # Vergangene sollten TAUGHT sein
         for lesson in past_lessons:

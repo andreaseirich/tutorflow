@@ -45,7 +45,7 @@ class ContractMonthlyPlanTest(TestCase):
             contract=self.contract, year=2025, month=1, planned_units=8
         )
         # Zweiter Eintrag für denselben Monat sollte fehlschlagen
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             ContractMonthlyPlan.objects.create(
                 contract=self.contract, year=2025, month=1, planned_units=10
             )

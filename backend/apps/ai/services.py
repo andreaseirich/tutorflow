@@ -78,7 +78,7 @@ class LessonPlanService:
                 prompt=user_prompt, system_prompt=system_prompt, max_tokens=1500, temperature=0.7
             )
         except LLMClientError as e:
-            raise LessonPlanGenerationError(_("LLM error: {error}").format(error=str(e)))
+            raise LessonPlanGenerationError(_("LLM error: {error}").format(error=str(e))) from e
 
         # Erstelle oder aktualisiere LessonPlan
         student = lesson.contract.student
