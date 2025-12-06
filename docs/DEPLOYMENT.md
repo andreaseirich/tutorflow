@@ -6,7 +6,7 @@ This guide provides instructions for deploying TutorFlow in a production environ
 
 ## Prerequisites
 
-- Python 3.11 or higher
+- Python 3.12 or higher
 - PostgreSQL (recommended) or another production-grade database
 - Web server (nginx, Apache) for reverse proxy
 - WSGI server (Gunicorn, uWSGI) for Django application
