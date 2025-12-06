@@ -1,8 +1,8 @@
 # TutorFlow
 
 [![CI](https://github.com/andreaseirich/tutorflow/actions/workflows/ci.yml/badge.svg)](https://github.com/andreaseirich/tutorflow/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Django](https://img.shields.io/badge/django-5.2.9-green.svg)](https://www.djangoproject.com/)
+[![Python](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![Django](https://img.shields.io/badge/django-6.0-green.svg)](https://www.djangoproject.com/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![i18n](https://img.shields.io/badge/i18n-English%20%7C%20German-lightgrey.svg)](docs/ARCHITECTURE.md#internationalization-i18n)
@@ -23,7 +23,7 @@ TutorFlow is a comprehensive web application designed for tutors to manage their
 ## Quick Start
 
 ### Prerequisites
-- Python 3.11 or higher
+- Python 3.12 or higher
 - pip
 
 ### Installation
@@ -211,7 +211,7 @@ TutorFlow provides a complete solution for managing tutoring activities:
 ### Backend
 - **Framework**: Django 5.2.9
 - **Database**: SQLite (development), PostgreSQL (optional for production)
-- **Python**: 3.11+
+- **Python**: 3.12+
 - **Dependencies**: Django, requests (see `requirements.txt`)
 - **Internationalization**: Full i18n support with English as default language and German translations
 
@@ -230,7 +230,7 @@ TutorFlow provides a complete solution for managing tutoring activities:
 ## Setup
 
 ### Prerequisites
-- Python 3.11 or higher
+- Python 3.12 or higher
 - pip
 
 ### Installation

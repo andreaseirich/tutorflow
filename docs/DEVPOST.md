@@ -57,7 +57,7 @@ TutorFlow solves these problems with a user-friendly, structured solution.
 ### Backend
 - **Framework**: Django 5.2.9
 - **Database**: SQLite (development), PostgreSQL (production)
-- **Python**: 3.11+
+- **Python**: 3.12+
 - **Timezone**: Europe/Berlin (consistent across all components)
 
 ### Premium Features (AI)
