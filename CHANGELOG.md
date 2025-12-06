@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.9.3] - 2025-12-04
 
+### Security
+- **urllib3 Security Update**: Upgraded urllib3 to >=2.6.0 to fix CVE (unbounded decompression chain vulnerability)
+  - Fixed security vulnerability in urllib3 2.5.0 that allowed malicious servers to cause high CPU usage and memory allocation
+  - Updated requirements.txt to require urllib3>=2.6.0
+
 ### Added
 - **Security Policy**: Added `SECURITY.md` with vulnerability reporting guidelines and security best practices
 - **Dependabot Configuration**: Configured Dependabot for automated dependency updates (Python packages and GitHub Actions)
