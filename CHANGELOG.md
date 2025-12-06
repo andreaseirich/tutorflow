@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2025-12-04
+
+### Changed
+- **Documentation**: All public-facing documentation (README, ARCHITECTURE, PHASES, CHECKPOINTS, ETHICS, DEPLOYMENT, DEVPOST) rewritten in English for jury-readiness
+- **README**: Enhanced screenshot section with placeholder structure and 2-minute demo tour
+- **ARCHITECTURE.md**: German section headers translated to English
+
+### Added
+- **Linting & Formatting**: Added `ruff` and `black` configuration in `pyproject.toml`
+- **Linting Script**: Created `scripts/lint.sh` for automated code quality checks
+- **CI/CD**: Added GitHub Actions workflow (`.github/workflows/ci.yml`) for automated testing and linting
+- **Screenshot Placeholders**: Created `docs/images/` directory structure for screenshots
+
+### Technical Debt
+- Code quality improvements: Linting configuration ensures consistent code style
+- CI pipeline: Automated quality checks on every push/pull request
+
 ## [0.8.9] - 2025-12-04
 
 ### Fixed

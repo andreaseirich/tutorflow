@@ -99,27 +99,35 @@ python manage.py seed_demo_data --clear
 3. **Income Overview** (`/income/`): Monthly/yearly financial tracking with planned vs. actual comparisons
 4. **Billing** (`/billing/invoices/`): Create invoices from taught lessons with HTML document generation
 
-## Screenshots / Demo
+## Screenshots & Demo
 
 ### Screenshots
 
-![Dashboard](docs/screenshots/dashboard.png)
+Screenshots are located in `docs/images/`. You can replace them with real screenshots if needed.
+
+![Dashboard](docs/images/dashboard.png)
 *Dashboard showing today's lessons, upcoming appointments, and conflicts*
 
-![Weekly Calendar](docs/screenshots/weekly_calendar.png)
+![Week Calendar](docs/images/week_calendar.png)
 *Interactive week view with drag-to-create functionality for lessons and blocked times*
 
-![Invoice Overview](docs/screenshots/invoice_overview.png)
+![Conflicts and Blocked Times](docs/images/conflicts_and_blocktimes.png)
+*Conflict detection and blocked time management in the week view*
+
+![Invoice Example](docs/images/invoice_example.png)
 *Invoice list and detail view with automatic generation from taught lessons*
 
-### Full Demo GIF
+### Quick Demo Tour (2 Minutes)
 
-> **TODO**: Add animated GIF showing complete workflow:
-> - Creating a student and contract
-> - Scheduling lessons via drag-to-create in week view
-> - Detecting and resolving conflicts
-> - Generating invoices from taught lessons
-> - Viewing income overview
+1. **Login**: Use demo credentials (`demo_premium` / `demo123`) to access the admin interface
+2. **Dashboard**: View today's lessons, upcoming appointments, and conflicts overview
+3. **Week Calendar**: Open `/lessons/week/` to see the interactive calendar
+   - Drag a time range to create a new lesson or blocked time
+   - Click on a lesson to view/edit details or generate an AI lesson plan
+   - Click on conflict icons to see detailed conflict information
+4. **Conflict Detection**: Inspect conflicts in the week view or lesson detail pages
+5. **AI Lesson Plans** (Premium): Click on a lesson and use "Generate AI Lesson Plan" button
+6. **Billing**: Navigate to `/billing/invoices/` to create invoices from taught lessons
 
 ### How It Works
 
@@ -357,6 +365,38 @@ tutorflow/
 ## Development
 
 The project is developed in phases. See `docs/PHASES.md` for details.
+
+## Code Style & Linting
+
+TutorFlow uses `ruff` for linting and code formatting. Configuration is in `pyproject.toml`.
+
+### Running Linting
+
+```bash
+# Run linting checks
+./scripts/lint.sh
+
+# Or manually:
+ruff format --check backend/apps backend/tutorflow
+ruff check backend/apps backend/tutorflow
+
+# Auto-fix issues:
+ruff format backend/apps backend/tutorflow
+ruff check --fix backend/apps backend/tutorflow
+```
+
+**Recommended**: Run linting before committing to ensure code quality.
+
+## CI & Quality
+
+A GitHub Actions workflow runs checks and tests on each push/pull request:
+
+- Django system check
+- Test suite execution
+- Code formatting verification
+- Linting checks
+
+[![CI](https://github.com/andreaseirich/tutorflow/actions/workflows/ci.yml/badge.svg)](https://github.com/andreaseirich/tutorflow/actions/workflows/ci.yml)
 
 ## Validation
 
