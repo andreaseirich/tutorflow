@@ -99,7 +99,7 @@ class Command(BaseCommand):
         )
 
         # Verträge
-        # Contract 1: Mit monatlichen Kontingenten (für Quota-Konflikte)
+        # Contract 1: With monthly quotas (for quota conflicts)
         contract1 = Contract.objects.create(
             student=student1,
             hourly_rate=Decimal("25.00"),
@@ -109,11 +109,11 @@ class Command(BaseCommand):
             notes="Wöchentlich 2x Mathe - mit monatlichen Kontingenten",
         )
 
-        # ContractMonthlyPlan für Quota-Konflikte
+        # ContractMonthlyPlan for quota conflicts
         ContractMonthlyPlan.objects.create(contract=contract1, year=2025, month=11, planned_units=3)
         ContractMonthlyPlan.objects.create(contract=contract1, year=2025, month=12, planned_units=5)
 
-        # Contract 2: Mit Recurring Lessons
+        # Contract 2: With recurring lessons
         contract2 = Contract.objects.create(
             student=student2,
             institute="Nachhilfe-Institut ABC",
@@ -134,7 +134,7 @@ class Command(BaseCommand):
             notes="Single lessons only",
         )
 
-        # Contract 4: Mit Recurring Lessons (Mo+Mi)
+        # Contract 4: With recurring lessons (Mon+Wed)
         contract4 = Contract.objects.create(
             student=student4,
             hourly_rate=Decimal("22.00"),
@@ -144,7 +144,7 @@ class Command(BaseCommand):
             notes="Recurring lessons Monday and Wednesday",
         )
 
-        # Lessons (mit Konflikt)
+        # Lessons (with conflicts)
         today = timezone.now().date()
 
         lesson1 = Lesson.objects.create(
@@ -312,8 +312,8 @@ class Command(BaseCommand):
         # Blocked time 3: Conflict with a lesson (intentional)
         conflict_date = today + timedelta(days=5)
         BlockedTime.objects.create(
-            title="Andere Tätigkeit",
-            description="Bewusst konflikt mit einer Lesson",
+            title="Other Activity",
+            description="Intentional conflict with a lesson",
             start_datetime=timezone.make_aware(
                 timezone.datetime.combine(conflict_date, time(14, 0))
             ),
@@ -323,18 +323,18 @@ class Command(BaseCommand):
             is_recurring=False,
         )
 
-        # Erstelle eine Lesson, die mit blocked_time3 kollidiert
+        # Create a lesson that conflicts with blocked_time3
         Lesson.objects.create(
             contract=contract3,
             date=conflict_date,
-            start_time=time(14, 30),  # Überschneidung mit blocked_time3
+            start_time=time(14, 30),  # Overlap with blocked_time3
             duration_minutes=60,
             status="planned",
             notes="Mathe: Analysis - CONFLICT WITH BLOCKED TIME",
         )
 
-        # Premium-User mit LessonPlan
-        # Prüfe, ob User bereits existiert, sonst erstelle ihn
+        # Premium user with lesson plan
+        # Check if user already exists, otherwise create it
         premium_user, created = User.objects.get_or_create(
             username="demo_premium",
             defaults={
@@ -376,7 +376,7 @@ class Command(BaseCommand):
         non_premium_user.is_active = True
         non_premium_user.save()
 
-        # Erstelle oder aktualisiere UserProfile (non-premium)
+        # Create or update UserProfile (non-premium)
         non_premium_profile, _ = UserProfile.objects.get_or_create(
             user=non_premium_user,
             defaults={
@@ -448,12 +448,12 @@ class Command(BaseCommand):
             invoice_period_start = lesson4.date
             invoice_period_end = lesson4.date
 
-            # Erstelle Invoice mit lesson4
+            # Create invoice with lesson4
             demo_invoice = InvoiceService.create_invoice_from_lessons(
                 period_start=invoice_period_start, period_end=invoice_period_end, contract=contract3
             )
 
-            # Setze Invoice-Status auf "sent" (als Beispiel)
+            # Set invoice status to "sent" (as example)
             demo_invoice.status = "sent"
             demo_invoice.save(update_fields=["status", "updated_at"])
 
