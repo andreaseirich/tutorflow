@@ -2,13 +2,12 @@
 Low-Level-Client für LLM-API-Kommunikation.
 """
 
-import json
-import time
 import logging
+import time
+from typing import Optional
+
 import requests
-from typing import Optional, Dict, Any
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger(__name__)
@@ -214,18 +213,18 @@ class LLMClient:
             else:
                 raise LLMClientError(_("Unexpected API response format"))
 
-        except requests.exceptions.Timeout:
+        except requests.exceptions.Timeout as e:
             raise LLMClientError(
                 _("API timeout after {seconds} seconds").format(seconds=self.timeout)
-            )
+            ) from e
         except requests.exceptions.HTTPError as e:
             # Handle other HTTP errors
             if e.response.status_code == 429:
                 raise LLMClientError(
                     _("API rate limit exceeded. Please try again in a few minutes.")
-                )
-            raise LLMClientError(_("API error: {error}").format(error=str(e)))
+                ) from e
+            raise LLMClientError(_("API error: {error}").format(error=str(e))) from e
         except requests.exceptions.RequestException as e:
-            raise LLMClientError(_("API error: {error}").format(error=str(e)))
+            raise LLMClientError(_("API error: {error}").format(error=str(e))) from e
         except (KeyError, ValueError) as e:
-            raise LLMClientError(_("Error parsing API response: {error}").format(error=str(e)))
+            raise LLMClientError(_("Error parsing API response: {error}").format(error=str(e))) from e

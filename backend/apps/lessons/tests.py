@@ -1,9 +1,10 @@
-from django.test import TestCase
-from decimal import Decimal
 from datetime import date, time
-from apps.students.models import Student
+from decimal import Decimal
+
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
+from apps.students.models import Student
+from django.test import TestCase
 
 
 class LessonModelTest(TestCase):

@@ -2,12 +2,13 @@
 Models for billing and invoices.
 """
 
-from django.db import models
-from django.core.validators import MinValueValidator
-from django.utils.translation import gettext_lazy as _
 from decimal import Decimal
+
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Invoice(models.Model):

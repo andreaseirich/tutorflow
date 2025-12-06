@@ -3,13 +3,13 @@ Selector-Layer für Einnahmenauswertungen.
 Abgeleitete Monats-/Jahresauswertungen ohne eigenes Model.
 """
 
+from datetime import date
 from decimal import Decimal
-from datetime import datetime, date
-from django.db.models import Sum, Count, Q
-from django.utils import timezone
-from apps.lessons.models import Lesson
-from apps.contracts.models import Contract, ContractMonthlyPlan
+
 from apps.billing.models import InvoiceItem
+from apps.contracts.models import ContractMonthlyPlan
+from apps.lessons.models import Lesson
+from django.db.models import Q
 
 
 class IncomeSelector:

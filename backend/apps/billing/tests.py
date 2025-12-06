@@ -2,15 +2,15 @@
 Tests für Billing-App.
 """
 
-from django.test import TestCase
-from datetime import date, time, timedelta
+from datetime import date, time
 from decimal import Decimal
-from django.utils import timezone
-from apps.students.models import Student
-from apps.contracts.models import Contract
-from apps.lessons.models import Lesson
+
 from apps.billing.models import Invoice, InvoiceItem
 from apps.billing.services import InvoiceService
+from apps.contracts.models import Contract
+from apps.lessons.models import Lesson
+from apps.students.models import Student
+from django.test import TestCase
 
 
 class InvoiceModelTest(TestCase):

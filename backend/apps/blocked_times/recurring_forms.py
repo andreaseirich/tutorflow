@@ -2,8 +2,8 @@
 Forms für RecurringBlockedTime-Model.
 """
 
-from django import forms
 from apps.blocked_times.recurring_models import RecurringBlockedTime
+from django import forms
 
 
 class RecurringBlockedTimeForm(forms.ModelForm):

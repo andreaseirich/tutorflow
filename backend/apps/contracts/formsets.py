@@ -2,11 +2,11 @@
 Formsets für ContractMonthlyPlan.
 """
 
+from datetime import date
+
+from apps.contracts.models import Contract, ContractMonthlyPlan
 from django import forms
 from django.forms import inlineformset_factory
-from apps.contracts.models import Contract, ContractMonthlyPlan
-from datetime import date
-from calendar import monthrange
 
 
 class ContractMonthlyPlanForm(forms.ModelForm):

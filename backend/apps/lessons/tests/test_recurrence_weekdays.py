@@ -2,15 +2,16 @@
 Tests for recurrence weekday selection functionality.
 """
 
-from django.test import TestCase, Client
-from django.contrib.auth.models import User
-from django.urls import reverse
-from datetime import date, time, timedelta
+from datetime import date, time
 from decimal import Decimal
-from apps.students.models import Student
-from apps.contracts.models import Contract, ContractMonthlyPlan
+
+from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
 from apps.lessons.recurring_models import RecurringLesson
+from apps.students.models import Student
+from django.contrib.auth.models import User
+from django.test import Client, TestCase
+from django.urls import reverse
 
 
 class RecurrenceWeekdaysTest(TestCase):

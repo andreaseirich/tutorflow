@@ -2,15 +2,16 @@
 Service für Wochenansicht - Gruppierung von Lessons und Blockzeiten nach Tagen und Zeiten.
 """
 
-from datetime import date, datetime, time, timedelta
-from typing import Dict, List
 from collections import defaultdict
-from django.utils import timezone
-from apps.lessons.models import Lesson
+from datetime import date, datetime, time, timedelta
+from typing import Dict
+
 from apps.blocked_times.models import BlockedTime
-from apps.lessons.services import LessonConflictService
 from apps.blocked_times.recurring_models import RecurringBlockedTime
 from apps.blocked_times.recurring_service import RecurringBlockedTimeService
+from apps.lessons.models import Lesson
+from apps.lessons.services import LessonConflictService
+from django.utils import timezone
 
 
 class WeekService:

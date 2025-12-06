@@ -2,14 +2,15 @@
 Tests für Rechnungsberechnung und Status-Übergänge.
 """
 
-from django.test import TestCase
 from datetime import date, time
 from decimal import Decimal
-from apps.students.models import Student
-from apps.contracts.models import Contract
-from apps.lessons.models import Lesson
+
 from apps.billing.models import Invoice, InvoiceItem
 from apps.billing.services import InvoiceService
+from apps.contracts.models import Contract
+from apps.lessons.models import Lesson
+from apps.students.models import Student
+from django.test import TestCase
 
 
 class InvoiceCalculationTest(TestCase):
@@ -32,7 +33,7 @@ class InvoiceCalculationTest(TestCase):
     def test_invoice_calculation_90_minutes_45_unit_12_rate(self):
         """Test: 90 Min bei 45 Min/Einheit und 12€/Einheit → 24€ pro Lesson."""
         # Erstelle Lesson mit 90 Minuten
-        lesson = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 15),
             start_time=time(14, 0),
@@ -53,21 +54,21 @@ class InvoiceCalculationTest(TestCase):
     def test_invoice_calculation_multiple_lessons(self):
         """Test: Mehrere Lessons → Gesamtsumme korrekt."""
         # Erstelle 3 Lessons: 90 Min, 45 Min, 60 Min
-        lesson1 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 15),
             start_time=time(14, 0),
             duration_minutes=90,
             status="taught",
         )
-        lesson2 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 16),
             start_time=time(15, 0),
             duration_minutes=45,
             status="taught",
         )
-        lesson3 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 17),
             start_time=time(16, 0),
@@ -127,7 +128,7 @@ class InvoiceStatusTransitionTest(TestCase):
         )
 
         # Erstelle Rechnung (automatisch alle Lessons im Zeitraum)
-        invoice = InvoiceService.create_invoice_from_lessons(
+        InvoiceService.create_invoice_from_lessons(
             date(2025, 8, 1), date(2025, 8, 31), self.contract
         )
 

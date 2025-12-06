@@ -2,8 +2,8 @@
 URL-Konfiguration für Core-App (Dashboard, Einnahmen).
 """
 
-from django.urls import path
 from apps.core import views
+from django.urls import path
 
 app_name = "core"
 

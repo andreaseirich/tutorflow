@@ -2,13 +2,14 @@
 Service für Kalenderansicht - Gruppierung von Lessons und Blockzeiten nach Tagen.
 """
 
-from datetime import date, datetime
-from typing import Dict, List
 from collections import defaultdict
-from django.utils import timezone
-from apps.lessons.models import Lesson
+from datetime import date, datetime
+from typing import Dict
+
 from apps.blocked_times.models import BlockedTime
+from apps.lessons.models import Lesson
 from apps.lessons.services import LessonConflictService
+from django.utils import timezone
 
 
 class CalendarService:

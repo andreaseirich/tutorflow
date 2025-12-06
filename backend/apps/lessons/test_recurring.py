@@ -2,15 +2,16 @@
 Tests für RecurringLesson und RecurringLessonService.
 """
 
-from django.test import TestCase
 from datetime import date, time, timedelta
 from decimal import Decimal
-from apps.students.models import Student
+
 from apps.contracts.models import Contract
+from apps.lessons.calendar_service import CalendarService
 from apps.lessons.models import Lesson
 from apps.lessons.recurring_models import RecurringLesson
 from apps.lessons.recurring_service import RecurringLessonService
-from apps.lessons.calendar_service import CalendarService
+from apps.students.models import Student
+from django.test import TestCase
 
 
 class RecurringLessonModelTest(TestCase):
@@ -306,5 +307,5 @@ class CalendarServiceTest(TestCase):
         self.assertGreater(total_lessons, 0)
 
         # Alle Lessons im Kalender sollten >= heute sein
-        for lesson_date, lessons in calendar_data["lessons_by_date"].items():
+        for lesson_date, _lessons in calendar_data["lessons_by_date"].items():
             self.assertGreaterEqual(lesson_date, today)

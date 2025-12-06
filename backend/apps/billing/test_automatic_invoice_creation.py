@@ -2,14 +2,15 @@
 Tests für automatische Rechnungserstellung und Lesson-Eindeutigkeit.
 """
 
-from django.test import TestCase
 from datetime import date, time
 from decimal import Decimal
-from apps.students.models import Student
+
+from apps.billing.models import InvoiceItem
+from apps.billing.services import InvoiceService
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
-from apps.billing.models import Invoice, InvoiceItem
-from apps.billing.services import InvoiceService
+from apps.students.models import Student
+from django.test import TestCase
 
 
 class AutomaticInvoiceCreationTest(TestCase):
@@ -157,7 +158,7 @@ class AutomaticInvoiceCreationTest(TestCase):
         )
 
         # Erstelle Rechnung
-        invoice = InvoiceService.create_invoice_from_lessons(
+        InvoiceService.create_invoice_from_lessons(
             date(2025, 8, 1), date(2025, 8, 31), self.contract
         )
 
@@ -194,14 +195,14 @@ class AutomaticInvoiceCreationTest(TestCase):
 
     def test_get_billable_lessons_excludes_already_invoiced(self):
         """Test: get_billable_lessons schließt Lessons aus, die bereits in einer Rechnung sind."""
-        lesson1 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 15),
             start_time=time(14, 0),
             duration_minutes=60,
             status="taught",
         )
-        lesson2 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 16),
             start_time=time(15, 0),

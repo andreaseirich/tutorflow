@@ -3,10 +3,11 @@ Service für Kontingent-Prüfung basierend auf ContractMonthlyPlan.
 """
 
 from datetime import date
-from typing import List, Optional
-from django.utils.translation import gettext as _
+from typing import Optional
+
+from apps.contracts.models import ContractMonthlyPlan
 from apps.lessons.models import Lesson
-from apps.contracts.models import Contract, ContractMonthlyPlan
+from django.utils.translation import gettext as _
 
 
 class ContractQuotaService:

@@ -2,8 +2,8 @@
 URL configuration for lesson plans app.
 """
 
-from django.urls import path
 from apps.lesson_plans import views
+from django.urls import path
 
 app_name = "lesson_plans"
 

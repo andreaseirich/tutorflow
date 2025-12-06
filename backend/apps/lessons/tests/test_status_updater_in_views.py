@@ -2,14 +2,15 @@
 Tests für automatische Status-Aktualisierung in Views.
 """
 
-from django.test import TestCase, Client
-from datetime import date, time, timedelta, datetime
+from datetime import date, time, timedelta
 from decimal import Decimal
-from django.utils import timezone
-from django.contrib.auth.models import User
-from apps.students.models import Student
+
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
+from apps.students.models import Student
+from django.contrib.auth.models import User
+from django.test import Client, TestCase
+from django.utils import timezone
 
 
 class StatusUpdaterInViewsTest(TestCase):

@@ -2,16 +2,18 @@
 Views für Billing-App.
 """
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.views.generic import ListView, DetailView, CreateView, DeleteView
-from django.urls import reverse_lazy
-from django.utils.translation import gettext as _, ngettext
 from datetime import date
-from apps.billing.models import Invoice, InvoiceItem
-from apps.billing.forms import InvoiceCreateForm, InvoiceForm
-from apps.billing.services import InvoiceService
+
 from apps.billing.document_service import InvoiceDocumentService
+from apps.billing.forms import InvoiceCreateForm
+from apps.billing.models import Invoice
+from apps.billing.services import InvoiceService
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
+from django.views.generic import CreateView, DeleteView, DetailView, ListView
 
 
 class InvoiceListView(ListView):
@@ -169,9 +171,9 @@ def generate_invoice_document(request, pk):
 
 def serve_invoice_document(request, pk):
     """Serviert das Rechnungsdokument für eine Invoice."""
-    from django.http import FileResponse, Http404
-    from django.conf import settings
     import os
+
+    from django.http import FileResponse, Http404
 
     invoice = get_object_or_404(Invoice, pk=pk)
 

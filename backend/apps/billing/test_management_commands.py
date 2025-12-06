@@ -2,16 +2,17 @@
 Tests für Management Commands der Billing-App.
 """
 
-from django.test import TestCase
-from django.core.management import call_command
-from io import StringIO
 from datetime import date, time
 from decimal import Decimal
-from apps.students.models import Student
-from apps.contracts.models import Contract
-from apps.lessons.models import Lesson
+from io import StringIO
+
 from apps.billing.models import Invoice, InvoiceItem
 from apps.billing.services import InvoiceService
+from apps.contracts.models import Contract
+from apps.lessons.models import Lesson
+from apps.students.models import Student
+from django.core.management import call_command
+from django.test import TestCase
 
 
 class ResetPaidLessonsCommandTest(TestCase):

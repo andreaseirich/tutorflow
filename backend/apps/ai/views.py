@@ -2,14 +2,14 @@
 Views für AI-Funktionen (LessonPlan-Generierung).
 """
 
-from django.shortcuts import get_object_or_404, redirect
+from apps.ai.services import LessonPlanGenerationError, LessonPlanService
+from apps.core.utils import is_premium_user
+from apps.lessons.models import Lesson
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import gettext as _
-from apps.lessons.models import Lesson
-from apps.core.utils import is_premium_user
-from apps.ai.services import LessonPlanService, LessonPlanGenerationError
+from django.views.decorators.http import require_POST
 
 
 @login_required

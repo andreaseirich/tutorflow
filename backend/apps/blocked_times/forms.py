@@ -2,8 +2,8 @@
 Forms für BlockedTime-Model.
 """
 
-from django import forms
 from apps.blocked_times.models import BlockedTime
+from django import forms
 
 
 class BlockedTimeForm(forms.ModelForm):

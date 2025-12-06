@@ -2,9 +2,9 @@
 Tests for internationalization (i18n) functionality.
 """
 
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.urls import reverse
-from django.utils.translation import activate, get_language
+from django.utils.translation import activate
 
 
 class I18nTestCase(TestCase):
@@ -83,7 +83,7 @@ class I18nTestCase(TestCase):
                         response.content,
                         f"View {view_name} should contain English text '{expected_text}'",
                     )
-            except Exception as e:
+            except Exception:
                 # Skip if view requires authentication or other setup
                 pass
 

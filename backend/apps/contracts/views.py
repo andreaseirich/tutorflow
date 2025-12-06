@@ -2,17 +2,17 @@
 Views für Contract-CRUD-Operationen.
 """
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from apps.contracts.models import Contract, ContractMonthlyPlan
 from apps.contracts.forms import ContractForm
 from apps.contracts.formsets import (
     ContractMonthlyPlanFormSet,
     generate_monthly_plans_for_contract,
     iter_contract_months,
 )
+from apps.contracts.models import Contract, ContractMonthlyPlan
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 
 class ContractListView(ListView):
@@ -89,7 +89,7 @@ class ContractUpdateView(UpdateView):
                 valid_months = set(
                     iter_contract_months(self.object.start_date, self.object.end_date)
                 )
-                plans_to_delete = ContractMonthlyPlan.objects.filter(contract=self.object).exclude(
+                ContractMonthlyPlan.objects.filter(contract=self.object).exclude(
                     year__in=[year for year, _ in valid_months]
                 )
 

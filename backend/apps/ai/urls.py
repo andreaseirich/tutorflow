@@ -2,8 +2,8 @@
 URL-Konfiguration für AI-App.
 """
 
-from django.urls import path
 from apps.ai import views
+from django.urls import path
 
 app_name = "ai"
 

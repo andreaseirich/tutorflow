@@ -2,14 +2,15 @@
 Views für RecurringBlockedTime-CRUD-Operationen.
 """
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from django.utils.translation import gettext as _, ngettext
-from apps.blocked_times.recurring_models import RecurringBlockedTime
 from apps.blocked_times.recurring_forms import RecurringBlockedTimeForm
+from apps.blocked_times.recurring_models import RecurringBlockedTime
 from apps.blocked_times.recurring_service import RecurringBlockedTimeService
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 
 
 class RecurringBlockedTimeDetailView(DetailView):

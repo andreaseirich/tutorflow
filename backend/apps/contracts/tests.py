@@ -1,8 +1,9 @@
-from django.test import TestCase
+from datetime import date
 from decimal import Decimal
-from datetime import date, timedelta
-from apps.students.models import Student
+
 from apps.contracts.models import Contract
+from apps.students.models import Student
+from django.test import TestCase
 
 
 class ContractModelTest(TestCase):

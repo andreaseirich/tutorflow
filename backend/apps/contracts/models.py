@@ -1,8 +1,9 @@
-from django.db import models
-from django.core.validators import MinValueValidator
-from django.utils.translation import gettext_lazy as _
 from decimal import Decimal
+
 from apps.students.models import Student
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Contract(models.Model):

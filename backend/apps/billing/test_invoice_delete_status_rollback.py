@@ -2,14 +2,15 @@
 Tests für Status-Rückstellung beim Löschen von Rechnungen.
 """
 
-from django.test import TestCase
 from datetime import date, time
 from decimal import Decimal
-from apps.students.models import Student
-from apps.contracts.models import Contract
-from apps.lessons.models import Lesson
+
 from apps.billing.models import Invoice, InvoiceItem
 from apps.billing.services import InvoiceService
+from apps.contracts.models import Contract
+from apps.lessons.models import Lesson
+from apps.students.models import Student
+from django.test import TestCase
 
 
 class InvoiceDeleteStatusRollbackTest(TestCase):
@@ -182,7 +183,7 @@ class InvoiceDeleteStatusRollbackTest(TestCase):
     def test_invoice_items_deleted_after_invoice_deletion(self):
         """Test: InvoiceItems werden nach Löschen der Rechnung entfernt."""
         # Erstelle Lesson und Rechnung
-        lesson = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 15),
             start_time=time(14, 0),

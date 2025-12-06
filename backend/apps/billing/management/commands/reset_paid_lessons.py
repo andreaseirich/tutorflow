@@ -6,9 +6,9 @@ Verwendung:
     python manage.py reset_paid_lessons --delete-invoices
 """
 
-from django.core.management.base import BaseCommand
+from apps.billing.models import InvoiceItem
 from apps.lessons.models import Lesson
-from apps.billing.models import Invoice, InvoiceItem
+from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):

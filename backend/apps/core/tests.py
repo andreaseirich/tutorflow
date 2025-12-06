@@ -1,12 +1,13 @@
-from django.test import TestCase
-from django.contrib.auth.models import User
+from datetime import date, time
+from decimal import Decimal
+
+from apps.contracts.models import Contract
 from apps.core.models import UserProfile
 from apps.core.selectors import IncomeSelector
-from decimal import Decimal
-from datetime import date, time
-from apps.students.models import Student
-from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
+from apps.students.models import Student
+from django.contrib.auth.models import User
+from django.test import TestCase
 
 
 class UserProfileModelTest(TestCase):

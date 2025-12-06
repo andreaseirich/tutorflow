@@ -2,10 +2,10 @@
 Models for recurring lessons (series appointments).
 """
 
-from django.db import models
-from django.core.validators import MinValueValidator
-from django.utils.translation import gettext_lazy as _
 from apps.contracts.models import Contract
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class RecurringLesson(models.Model):

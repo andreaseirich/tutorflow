@@ -3,7 +3,8 @@ Service für wiederholende Unterrichtsstunden (Recurring Lessons).
 """
 
 from datetime import date, timedelta
-from typing import List, Optional
+from typing import List
+
 from apps.lessons.models import Lesson
 from apps.lessons.recurring_models import RecurringLesson
 from apps.lessons.services import LessonConflictService
@@ -274,17 +275,6 @@ class RecurringLessonService:
                     result["conflicts"] = [
                         {"lesson": lesson, "date": lesson_date, "conflicts": lesson_conflicts}
                     ]
-
-        return result
-
-        result = {
-            "created": created,
-            "skipped": skipped,
-            "conflicts": conflicts,
-        }
-
-        if dry_run:
-            result["preview"] = preview
 
         return result
 

@@ -2,15 +2,16 @@
 Tests for blocked time overlap detection edge cases.
 """
 
-from django.test import TestCase
-from datetime import date, time, timedelta
+from datetime import date, time
 from decimal import Decimal
-from django.utils import timezone
-from apps.students.models import Student
+
+from apps.blocked_times.models import BlockedTime
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
-from apps.blocked_times.models import BlockedTime
 from apps.lessons.services import LessonConflictService
+from apps.students.models import Student
+from django.test import TestCase
+from django.utils import timezone
 
 
 class BlockedTimeOverlapTest(TestCase):
@@ -37,7 +38,7 @@ class BlockedTimeOverlapTest(TestCase):
         )
 
         # Blocked Time: "Urlaub" 15.12.2025 00:00 – 23:59
-        blocked_time = BlockedTime.objects.create(
+        BlockedTime.objects.create(
             title="Urlaub",
             description="Vacation",
             start_datetime=timezone.make_aware(
@@ -97,7 +98,7 @@ class BlockedTimeOverlapTest(TestCase):
     def test_no_overlap_exact_boundary(self):
         """Test: Lesson ends exactly when blocked time starts → NO conflict (boundary case)."""
         # Blocked Time: starts at 17:00
-        blocked_time = BlockedTime.objects.create(
+        BlockedTime.objects.create(
             title="Meeting",
             start_datetime=timezone.make_aware(
                 timezone.datetime.combine(date(2025, 12, 17), time(17, 0))
@@ -131,7 +132,7 @@ class BlockedTimeOverlapTest(TestCase):
     def test_overlap_partial(self):
         """Test: Lesson partially overlaps with blocked time → YES conflict."""
         # Blocked Time: 14:00-16:00
-        blocked_time = BlockedTime.objects.create(
+        BlockedTime.objects.create(
             title="Meeting",
             start_datetime=timezone.make_aware(
                 timezone.datetime.combine(date(2025, 12, 17), time(14, 0))

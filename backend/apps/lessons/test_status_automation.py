@@ -2,16 +2,17 @@
 Tests für automatische Status-Setzung bei Recurring Lessons und manueller Erstellung.
 """
 
-from django.test import TestCase
 from datetime import date, time, timedelta
 from decimal import Decimal
-from django.utils import timezone
-from apps.students.models import Student
+
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
 from apps.lessons.recurring_models import RecurringLesson
 from apps.lessons.recurring_service import RecurringLessonService
 from apps.lessons.status_service import LessonStatusService
+from apps.students.models import Student
+from django.test import TestCase
+from django.utils import timezone
 
 
 class RecurringLessonStatusAutomationTest(TestCase):

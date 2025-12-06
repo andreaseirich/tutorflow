@@ -2,26 +2,25 @@
 Views für Lesson-CRUD-Operationen und Planungsübersicht.
 """
 
-from django.shortcuts import get_object_or_404, redirect
+from datetime import date, timedelta
+
+from apps.lessons.forms import LessonForm
+from apps.lessons.models import Lesson
+from apps.lessons.services import LessonConflictService, LessonQueryService
+from apps.lessons.status_service import LessonStatusService, LessonStatusUpdater
+from apps.lessons.week_service import WeekService
 from django.contrib import messages
-from django.views.generic import (
-    ListView,
-    DetailView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-    TemplateView,
-)
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
-from datetime import date, timedelta
-from calendar import monthrange
-from apps.lessons.models import Lesson
-from apps.lessons.forms import LessonForm
-from apps.lessons.services import LessonQueryService, LessonConflictService
-from apps.lessons.calendar_service import CalendarService
-from apps.lessons.week_service import WeekService
-from apps.lessons.status_service import LessonStatusUpdater
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
 
 
 class LessonListView(ListView):
@@ -120,9 +119,9 @@ class LessonCreateView(CreateView):
         return reverse_lazy("lessons:week")
 
     def form_valid(self, form):
-        from django.utils.translation import gettext_lazy as _
         from apps.lessons.recurring_models import RecurringLesson
         from apps.lessons.recurring_service import RecurringLessonService
+        from django.utils.translation import gettext_lazy as _
 
         is_recurring = form.cleaned_data.get("is_recurring", False)
 
@@ -231,8 +230,8 @@ class LessonUpdateView(UpdateView):
         return reverse_lazy("lessons:week") + f"?year={year}&month={month}&day={day}"
 
     def form_valid(self, form):
-        from django.utils.translation import gettext_lazy as _
         from apps.lessons.services import recalculate_conflicts_for_affected_lessons
+        from django.utils.translation import gettext_lazy as _
 
         lesson = form.save()
 
@@ -281,8 +280,8 @@ class LessonDetailView(DetailView):
                 quota_conflicts.append(conflict)
 
         # LessonPlan-Informationen
-        from apps.lesson_plans.models import LessonPlan
         from apps.core.utils import is_premium_user
+        from apps.lesson_plans.models import LessonPlan
 
         lesson_plans = LessonPlan.objects.filter(lesson=lesson).order_by("-created_at")
 
@@ -400,7 +399,6 @@ class WeekView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         # Automatische Status-Aktualisierung für vergangene Lessons
-        from apps.lessons.status_service import LessonStatusUpdater
 
         LessonStatusUpdater.update_past_lessons_to_taught()
 

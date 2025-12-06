@@ -2,10 +2,9 @@
 Forms für Lesson-Model.
 """
 
+from apps.lessons.models import Lesson
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from apps.lessons.models import Lesson
-from apps.contracts.models import Contract
 
 
 class LessonForm(forms.ModelForm):

@@ -2,16 +2,16 @@
 Tests for seed_demo_data management command.
 """
 
-from django.test import TestCase
-from django.core.management import call_command
-from django.contrib.auth.models import User
-from apps.students.models import Student
-from apps.contracts.models import Contract, ContractMonthlyPlan
-from apps.lessons.models import Lesson
-from apps.lessons.recurring_models import RecurringLesson
 from apps.blocked_times.models import BlockedTime
+from apps.contracts.models import Contract, ContractMonthlyPlan
 from apps.core.models import UserProfile
 from apps.lesson_plans.models import LessonPlan
+from apps.lessons.models import Lesson
+from apps.lessons.recurring_models import RecurringLesson
+from apps.students.models import Student
+from django.contrib.auth.models import User
+from django.core.management import call_command
+from django.test import TestCase
 
 
 class SeedDemoDataTest(TestCase):
@@ -101,8 +101,8 @@ class SeedDemoDataTest(TestCase):
 
     def test_seed_demo_data_week_view_loads_without_errors(self):
         """Test: Week view loads without errors with seed data."""
-        from django.test import Client
         from django.contrib.auth.models import User
+        from django.test import Client
 
         call_command("seed_demo_data", "--clear")
 

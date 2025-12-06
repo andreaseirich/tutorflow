@@ -2,8 +2,8 @@
 Admin-Konfiguration für Billing-App.
 """
 
-from django.contrib import admin
 from apps.billing.models import Invoice, InvoiceItem
+from django.contrib import admin
 
 
 @admin.register(Invoice)

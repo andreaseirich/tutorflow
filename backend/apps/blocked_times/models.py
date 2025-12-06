@@ -2,7 +2,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 # Import RecurringBlockedTime für Django-Erkennung
-from .recurring_models import RecurringBlockedTime
 
 
 class BlockedTime(models.Model):
