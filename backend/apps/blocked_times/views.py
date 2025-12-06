@@ -52,6 +52,8 @@ class BlockedTimeCreateView(CreateView):
 
                 return initial
             except (ValueError, TypeError):
+                # Silently ignore invalid datetime format in GET parameter
+                # Form validation will catch this when user submits
                 pass
 
         # Fallback: Normale Datum-Parameter
