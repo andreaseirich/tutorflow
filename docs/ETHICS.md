@@ -48,6 +48,11 @@ The style of the software should be characterized by order and reliability. No t
 ### Security
 - Secure storage of data
 - Encryption of sensitive information
+- **Security & Data Protection**:
+  - Sensitive data (real student data, actual contracts) must **never** be committed to public repositories
+  - Demo data is fictional and used only for demonstration purposes
+  - Security vulnerabilities should be reported responsibly (see [SECURITY.md](../../SECURITY.md) for reporting guidelines)
+  - All security-related findings are handled confidentially and addressed promptly
 - Regular security checks
 
 ### Demo Data and Privacy

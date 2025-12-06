@@ -403,6 +403,22 @@ A GitHub Actions workflow runs checks and tests on each push/pull request:
 
 See the [CI badge](#tutorflow) at the top of this README for the current build status.
 
+**CodeQL code scanning** is configured to detect common security issues in the Python codebase.
+
+## Security
+
+TutorFlow is licensed under the Apache License 2.0 (see [LICENSE](LICENSE) for details).
+
+### Reporting Vulnerabilities
+
+**Security vulnerabilities should be reported privately, not as public GitHub issues.**
+
+For details on how to report vulnerabilities, see [SECURITY.md](SECURITY.md).
+
+- Security issues should be reported via **GitHub Security Advisories** (private advisory) or through the contact methods described in SECURITY.md
+- GitHub's security features (Security advisories, Code scanning, Dependabot) are configured and supported
+- **Dependabot** is configured to monitor dependencies for security updates (Python packages and GitHub Actions)
+
 ## Validation
 
 A validation script is available to check the project:

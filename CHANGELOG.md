@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.3] - 2025-12-04
+
+### Added
+- **Security Policy**: Added `SECURITY.md` with vulnerability reporting guidelines and security best practices
+- **Dependabot Configuration**: Configured Dependabot for automated dependency updates (Python packages and GitHub Actions)
+- **CodeQL Code Scanning**: Added CodeQL workflow for automated security analysis of Python codebase
+- **Security Documentation**: Enhanced README with security section and references to SECURITY.md
+- **ETHICS.md Enhancement**: Added security and data protection section with guidelines for handling sensitive data
+
+### Changed
+- **README.md**: Added dedicated "Security" section with vulnerability reporting guidelines and security feature overview
+
 ## [0.9.2] - 2025-12-04
 
 ### Changed
