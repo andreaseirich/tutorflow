@@ -74,7 +74,7 @@ class Command(BaseCommand):
             email="anna.schmidt@example.com",
             phone="0123-456790",
             school="Realschule ABC",
-            grade="9. Klasse",
+            grade="Grade 9",
             subjects="German, English",
             notes="Good student, wants to prepare for final exams",
         )
@@ -84,7 +84,7 @@ class Command(BaseCommand):
             last_name="Weber",
             email="tom.weber@example.com",
             school="Gymnasium XY",
-            grade="11. Klasse",
+            grade="Grade 11",
             subjects="Math, Chemistry",
         )
 
@@ -93,7 +93,7 @@ class Command(BaseCommand):
             last_name="Müller",
             email="lisa.mueller@example.com",
             school="Gymnasium XY",
-            grade="8. Klasse",
+            grade="Grade 8",
             subjects="German, English",
             notes="Recurring lessons every Monday and Wednesday",
         )
@@ -158,7 +158,7 @@ class Command(BaseCommand):
             notes="Algebra: Lineare Gleichungen",
         )
 
-        # Konflikt: Überschneidung mit lesson1
+        # Conflict: Overlap with lesson1
         Lesson.objects.create(
             contract=contract2,
             date=today + timedelta(days=1),
@@ -204,7 +204,7 @@ class Command(BaseCommand):
             start_time=time(10, 0),
             duration_minutes=60,
             status="planned",
-            notes="Math: Algebra - 2. Lesson im November",
+            notes="Math: Algebra - 2nd lesson in November",
         )
         Lesson.objects.create(
             contract=contract1,
@@ -212,7 +212,7 @@ class Command(BaseCommand):
             start_time=time(10, 0),
             duration_minutes=60,
             status="planned",
-            notes="Math: Algebra - 3. Lesson im November",
+            notes="Math: Algebra - 3rd lesson in November",
         )
         # This lesson should have a quota conflict (4th lesson, but only 3 planned)
         Lesson.objects.create(
@@ -221,7 +221,7 @@ class Command(BaseCommand):
             start_time=time(10, 0),
             duration_minutes=60,
             status="planned",
-            notes="Math: Algebra - 4. Lesson im November (QUOTA CONFLICT)",
+            notes="Math: Algebra - 4th lesson in November (QUOTA CONFLICT)",
         )
 
         # Recurring Lessons
