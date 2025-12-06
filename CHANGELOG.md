@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.2] - 2025-12-04
+
+### Changed
+- **Language Consistency**: All user-facing texts converted to English
+  - All view messages, form help texts, and docstrings translated to English
+  - Weekday names in calendar view changed from German to English
+  - Demo data seed command output and comments translated
+  - All code comments and docstrings use English
+- **Code Quality**: Removed all hardcoded German strings from UI code
+  - Forms use `gettext_lazy()` for all user-facing strings
+  - View messages use translation functions
+  - Only i18n translation files contain German translations
+
+### Fixed
+- **Security Documentation**: DEPLOYMENT.md already correctly documents production settings
+  - DEBUG=False, SECRET_KEY from environment variables clearly documented
+  - Security checklist included in deployment guide
+
+### Technical
+- **Conflict Detection**: Verified single source of truth for conflict detection
+  - All views use `LessonConflictService.check_conflicts()` consistently
+  - No duplicate conflict logic found
+
 ## [0.9.1] - 2025-12-04
 
 ### Refactored

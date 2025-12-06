@@ -308,5 +308,5 @@ class LessonDeleteView(DeleteView):
         return reverse_lazy("lessons:week") + f"?year={year}&month={month}&day={day}"
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, "Unterrichtsstunde erfolgreich gelöscht.")
+        messages.success(self.request, _("Lesson successfully deleted."))
         return super().delete(request, *args, **kwargs)

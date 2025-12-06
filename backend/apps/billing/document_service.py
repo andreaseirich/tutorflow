@@ -1,5 +1,5 @@
 """
-Service für Rechnungsdokument-Generierung.
+Service for invoice document generation.
 """
 
 from apps.billing.models import Invoice
@@ -8,18 +8,18 @@ from django.template.loader import render_to_string
 
 
 class InvoiceDocumentService:
-    """Service für die Generierung von Rechnungsdokumenten."""
+    """Service for generating invoice documents."""
 
     @staticmethod
     def generate_html_document(invoice: Invoice) -> str:
         """
-        Generiert ein HTML-Dokument für eine Invoice.
+        Generates an HTML document for an invoice.
 
         Args:
-            invoice: Invoice-Instanz
+            invoice: Invoice instance
 
         Returns:
-            HTML-String
+            HTML string
         """
         context = {
             "invoice": invoice,
@@ -32,20 +32,20 @@ class InvoiceDocumentService:
     @staticmethod
     def save_document(invoice: Invoice) -> str:
         """
-        Generiert und speichert das Rechnungsdokument.
+        Generates and saves the invoice document.
 
         Args:
-            invoice: Invoice-Instanz
+            invoice: Invoice instance
 
         Returns:
-            Pfad zum gespeicherten Dokument
+            Path to the saved document
         """
         html_content = InvoiceDocumentService.generate_html_document(invoice)
 
-        # Erstelle Dateinamen
+        # Create filename
         filename = f"invoice_{invoice.id}_{invoice.period_start}_{invoice.period_end}.html"
 
-        # Speichere als FileField
+        # Save as FileField
         invoice.document.save(filename, ContentFile(html_content.encode("utf-8")), save=True)
 
         return invoice.document.path

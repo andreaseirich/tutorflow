@@ -51,16 +51,17 @@ class WeekView(TemplateView):
 
         # Create weekday list
         weekdays = []
+        # Weekday names will be translated in template using i18n
         weekday_names = [
-            "Montag",
-            "Dienstag",
-            "Mittwoch",
-            "Donnerstag",
-            "Freitag",
-            "Samstag",
-            "Sonntag",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
         ]
-        weekday_names_short = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+        weekday_names_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
         for i in range(7):
             day_date = week_start + timedelta(days=i)

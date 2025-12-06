@@ -1,5 +1,5 @@
 """
-Views für Dashboard und Einnahmenübersicht.
+Views for dashboard and income overview.
 """
 
 from apps.core.selectors import IncomeSelector
@@ -10,36 +10,36 @@ from django.views.generic import TemplateView
 
 
 class DashboardView(TemplateView):
-    """Dashboard mit Übersicht über heutige Stunden, Konflikte und Einnahmen."""
+    """Dashboard with overview of today's lessons, conflicts, and income."""
 
     template_name = "core/dashboard.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Automatische Status-Aktualisierung für vergangene Lessons
+        # Automatic status update for past lessons
         LessonStatusUpdater.update_past_lessons_to_taught()
 
         now = timezone.now()
 
-        # Heutige Stunden
+        # Today's lessons
         today_lessons = LessonQueryService.get_today_lessons()
         for lesson in today_lessons:
             lesson.conflicts = LessonConflictService.check_conflicts(lesson)
 
-        # Nächste Stunden
+        # Upcoming lessons
         upcoming_lessons = LessonQueryService.get_upcoming_lessons(days=7)
         for lesson in upcoming_lessons:
             lesson.conflicts = LessonConflictService.check_conflicts(lesson)
 
-        # Konflikte zählen (beide QuerySets zu Listen konvertieren für Kombination)
+        # Count conflicts (convert both QuerySets to lists for combination)
         all_lessons = list(today_lessons) + list(upcoming_lessons)
         conflict_count = sum(1 for lesson in all_lessons if lesson.conflicts)
 
-        # Einnahmen für aktuellen Monat
+        # Income for current month
         current_month_income = IncomeSelector.get_monthly_income(now.year, now.month, status="paid")
 
-        # Einnahmen nach Status für aktuellen Monat
+        # Income by status for current month
         income_by_status = IncomeSelector.get_income_by_status(year=now.year, month=now.month)
 
         # Premium status
@@ -65,26 +65,26 @@ class DashboardView(TemplateView):
 
 
 class IncomeOverviewView(TemplateView):
-    """Einnahmenübersicht mit Monats- und Jahresansicht."""
+    """Income overview with monthly and yearly views."""
 
     template_name = "core/income_overview.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Automatische Status-Aktualisierung für vergangene Lessons
+        # Automatic status update for past lessons
         LessonStatusUpdater.update_past_lessons_to_taught()
 
         now = timezone.now()
 
-        # Jahr und Monat aus URL-Parametern oder aktuelles Datum
+        # Year and month from URL parameters or current date
         year = int(self.request.GET.get("year", now.year))
         month = (
             int(self.request.GET.get("month", now.month)) if "month" in self.request.GET else None
         )
 
         if month:
-            # Monatsansicht
+            # Monthly view
             monthly_income = IncomeSelector.get_monthly_income(year, month, status="paid")
             income_by_status = IncomeSelector.get_income_by_status(year=year, month=month)
             planned_vs_actual = IncomeSelector.get_monthly_planned_vs_actual(year, month)
@@ -101,7 +101,7 @@ class IncomeOverviewView(TemplateView):
                 }
             )
         else:
-            # Jahresansicht
+            # Yearly view
             yearly_income = IncomeSelector.get_yearly_income(year, status="paid")
             income_by_status = IncomeSelector.get_income_by_status(year=year)
             billing_status = IncomeSelector.get_billing_status(year=year)
