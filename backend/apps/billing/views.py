@@ -58,18 +58,24 @@ class InvoiceCreateView(CreateView):
                 try:
                     initial["period_start"] = date.fromisoformat(period_start)
                 except ValueError:
+                    # Silently ignore invalid date format in GET parameter
+                    # Form validation will catch this when user submits
                     pass
 
             if period_end:
                 try:
                     initial["period_end"] = date.fromisoformat(period_end)
                 except ValueError:
+                    # Silently ignore invalid date format in GET parameter
+                    # Form validation will catch this when user submits
                     pass
 
             if contract_id:
                 try:
                     initial["contract"] = int(contract_id)
                 except (ValueError, TypeError):
+                    # Silently ignore invalid contract ID in GET parameter
+                    # Form validation will catch this when user submits
                     pass
 
             if initial:
