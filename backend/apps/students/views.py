@@ -1,16 +1,17 @@
 """
-Views für Student-CRUD-Operationen.
+Views for student CRUD operations.
 """
 
 from apps.students.forms import StudentForm
 from apps.students.models import Student
 from django.contrib import messages
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 
 class StudentListView(ListView):
-    """Liste aller Schüler."""
+    """List of all students."""
 
     model = Student
     template_name = "students/student_list.html"
@@ -19,7 +20,7 @@ class StudentListView(ListView):
 
 
 class StudentDetailView(DetailView):
-    """Detailansicht eines Schülers."""
+    """Detail view of a student."""
 
     model = Student
     template_name = "students/student_detail.html"
@@ -27,7 +28,7 @@ class StudentDetailView(DetailView):
 
 
 class StudentCreateView(CreateView):
-    """Neuen Schüler erstellen."""
+    """Create a new student."""
 
     model = Student
     form_class = StudentForm
@@ -35,12 +36,12 @@ class StudentCreateView(CreateView):
     success_url = reverse_lazy("students:list")
 
     def form_valid(self, form):
-        messages.success(self.request, "Schüler erfolgreich erstellt.")
+        messages.success(self.request, _("Student successfully created."))
         return super().form_valid(form)
 
 
 class StudentUpdateView(UpdateView):
-    """Schüler bearbeiten."""
+    """Update a student."""
 
     model = Student
     form_class = StudentForm
@@ -48,17 +49,17 @@ class StudentUpdateView(UpdateView):
     success_url = reverse_lazy("students:list")
 
     def form_valid(self, form):
-        messages.success(self.request, "Schüler erfolgreich aktualisiert.")
+        messages.success(self.request, _("Student successfully updated."))
         return super().form_valid(form)
 
 
 class StudentDeleteView(DeleteView):
-    """Schüler löschen."""
+    """Delete a student."""
 
     model = Student
     template_name = "students/student_confirm_delete.html"
     success_url = reverse_lazy("students:list")
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, "Schüler erfolgreich gelöscht.")
+        messages.success(self.request, _("Student successfully deleted."))
         return super().delete(request, *args, **kwargs)

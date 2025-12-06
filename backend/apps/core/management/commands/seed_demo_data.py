@@ -1,16 +1,16 @@
 """
-Management Command zum Erstellen von Demo-Daten für TutorFlow.
+Management command for creating demo data for TutorFlow.
 
-Verwendung:
+Usage:
     python manage.py seed_demo_data
 
-Erstellt:
-    - 4 Schüler mit unterschiedlichen Profilen
-    - Zugehörige Verträge (inkl. ContractMonthlyPlan für Quota-Konflikte)
-    - Mehrere Lessons (inkl. Konflikten und Recurring Lessons)
-    - Blockzeiten (inkl. mehrtägiger Urlaub und Konflikten)
-    - Premium-User mit generiertem LessonPlan
-    - Non-Premium-User zum Vergleich
+Creates:
+    - 4 students with different profiles
+    - Associated contracts (including ContractMonthlyPlan for quota conflicts)
+    - Multiple lessons (including conflicts and recurring lessons)
+    - Blocked times (including multi-day vacation and conflicts)
+    - Premium user with generated lesson plan
+    - Non-premium user for comparison
 """
 
 from datetime import date, time, timedelta
@@ -32,18 +32,18 @@ from django.utils import timezone
 
 
 class Command(BaseCommand):
-    help = "Erstellt Demo-Daten für TutorFlow"
+    help = "Creates demo data for TutorFlow"
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--clear",
             action="store_true",
-            help="Löscht zuerst alle vorhandenen Daten (Vorsicht!)",
+            help="Delete all existing data first (Caution!)",
         )
 
     def handle(self, *args, **options):
         if options["clear"]:
-            self.stdout.write(self.style.WARNING("Lösche vorhandene Daten..."))
+            self.stdout.write(self.style.WARNING("Deleting existing data..."))
             LessonPlan.objects.all().delete()
             Lesson.objects.all().delete()
             RecurringLesson.objects.all().delete()
@@ -54,9 +54,9 @@ class Command(BaseCommand):
             UserProfile.objects.all().delete()
             User.objects.filter(is_superuser=False).delete()
 
-        self.stdout.write(self.style.SUCCESS("Erstelle Demo-Daten..."))
+        self.stdout.write(self.style.SUCCESS("Creating demo data..."))
 
-        # Schüler
+        # Students
         student1 = Student.objects.create(
             first_name="Max",
             last_name="Mustermann",
@@ -131,7 +131,7 @@ class Command(BaseCommand):
             unit_duration_minutes=60,
             start_date=date(2025, 12, 1),
             is_active=True,
-            notes="Nur Einzelstunden",
+            notes="Single lessons only",
         )
 
         # Contract 4: Mit Recurring Lessons (Mo+Mi)
@@ -178,7 +178,7 @@ class Command(BaseCommand):
             notes="Physik: Mechanik",
         )
 
-        # Lesson4: Wird als "taught" erstellt und dann in eine Rechnung aufgenommen (wird automatisch "paid")
+        # Lesson4: Created as "taught" and then included in an invoice (automatically becomes "paid")
         lesson4 = Lesson.objects.create(
             contract=contract3,
             date=today - timedelta(days=2),
@@ -188,8 +188,8 @@ class Command(BaseCommand):
             notes="Mathe: Analysis",
         )
 
-        # Quota-Konflikt: Versuche mehr Lessons zu erstellen als geplant
-        # November: 3 geplant, aber 4 Lessons erstellen (4. sollte Konflikt haben)
+        # Quota conflict: Try to create more lessons than planned
+        # November: 3 planned, but create 4 lessons (4th should have conflict)
         Lesson.objects.create(
             contract=contract1,
             date=date(2025, 11, 5),
@@ -281,11 +281,11 @@ class Command(BaseCommand):
         # Generate lessons from recurring lesson
         RecurringLessonService.generate_lessons(recurring2, check_conflicts=True, dry_run=False)
 
-        # Blockzeiten
-        # Blockzeit 1: Uni-Vorlesung (einmalig)
+        # Blocked times
+        # Blocked time 1: University lecture (one-time)
         BlockedTime.objects.create(
-            title="Uni-Vorlesung",
-            description="Mathematik-Vorlesung",
+            title="University Lecture",
+            description="Mathematics lecture",
             start_datetime=timezone.make_aware(
                 timezone.datetime.combine(today + timedelta(days=2), time(10, 0))
             ),
@@ -295,11 +295,11 @@ class Command(BaseCommand):
             is_recurring=False,
         )
 
-        # Blockzeit 2: Mehrtägiger Urlaub (3 Tage)
+        # Blocked time 2: Multi-day vacation (3 days)
         vacation_start = today + timedelta(days=10)
         BlockedTime.objects.create(
-            title="Urlaub",
-            description="Mehrtägiger Urlaub",
+            title="Vacation",
+            description="Multi-day vacation",
             start_datetime=timezone.make_aware(
                 timezone.datetime.combine(vacation_start, time(0, 0))
             ),
@@ -309,7 +309,7 @@ class Command(BaseCommand):
             is_recurring=False,
         )
 
-        # Blockzeit 3: Konflikt mit einer Lesson (bewusst)
+        # Blocked time 3: Conflict with a lesson (intentional)
         conflict_date = today + timedelta(days=5)
         BlockedTime.objects.create(
             title="Andere Tätigkeit",
@@ -442,7 +442,7 @@ class Command(BaseCommand):
                 llm_model="gpt-3.5-turbo",
             )
 
-        # Erstelle eine Demo-Rechnung für lesson4 (damit sie "paid" wird)
+        # Create a demo invoice for lesson4 (so it becomes "paid")
         # Nur wenn lesson4 existiert und als "taught" markiert ist
         if lesson4 and lesson4.status == "taught":
             invoice_period_start = lesson4.date

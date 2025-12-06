@@ -1,5 +1,5 @@
 """
-Views für Contract-CRUD-Operationen.
+Views for contract CRUD operations.
 """
 
 from apps.contracts.forms import ContractForm
@@ -12,11 +12,12 @@ from apps.contracts.models import Contract, ContractMonthlyPlan
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 
 class ContractListView(ListView):
-    """Liste aller Verträge."""
+    """List of all contracts."""
 
     model = Contract
     template_name = "contracts/contract_list.html"
@@ -25,7 +26,7 @@ class ContractListView(ListView):
 
 
 class ContractDetailView(DetailView):
-    """Detailansicht eines Vertrags."""
+    """Detail view of a contract."""
 
     model = Contract
     template_name = "contracts/contract_detail.html"
@@ -33,7 +34,7 @@ class ContractDetailView(DetailView):
 
 
 class ContractCreateView(CreateView):
-    """Neuen Vertrag erstellen."""
+    """Create a new contract."""
 
     model = Contract
     form_class = ContractForm
@@ -59,16 +60,16 @@ class ContractCreateView(CreateView):
             # Weiterleitung zur Update-View, um monatliche Planung zu bearbeiten
             messages.success(
                 self.request,
-                "Vertrag erstellt. Bitte geben Sie die geplanten Einheiten pro Monat ein.",
+                _("Contract created. Please enter the planned units per month."),
             )
             return redirect("contracts:update", pk=self.object.pk)
         else:
-            messages.success(self.request, "Vertrag erfolgreich erstellt.")
+            messages.success(self.request, _("Contract successfully created."))
             return redirect(self.success_url)
 
 
 class ContractUpdateView(UpdateView):
-    """Vertrag bearbeiten."""
+    """Update a contract."""
 
     model = Contract
     form_class = ContractForm
@@ -123,22 +124,20 @@ class ContractUpdateView(UpdateView):
 
         if formset.is_valid():
             formset.save()
-            messages.success(self.request, "Vertrag erfolgreich aktualisiert.")
+            messages.success(self.request, _("Contract successfully updated."))
             return redirect(self.success_url)
         else:
-            messages.error(
-                self.request, "Bitte korrigieren Sie die Fehler in der monatlichen Planung."
-            )
+            messages.error(self.request, _("Please correct the errors in the monthly planning."))
             return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
 
 class ContractDeleteView(DeleteView):
-    """Vertrag löschen."""
+    """Delete a contract."""
 
     model = Contract
     template_name = "contracts/contract_confirm_delete.html"
     success_url = reverse_lazy("contracts:list")
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, "Vertrag erfolgreich gelöscht.")
+        messages.success(self.request, _("Contract successfully deleted."))
         return super().delete(request, *args, **kwargs)
