@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2025-12-04
+
+### Refactored
+- **Module Structure**: Split large modules into smaller, domain-focused files for better maintainability
+  - `lessons/views.py` (500 lines) → `views_crud.py`, `views_calendar.py`, `views_conflicts.py`
+  - `lessons/services.py` (272 lines) → `conflict_service.py`, `query_service.py`
+  - Original module names maintained as backward-compatible re-exports
+- **Code Organization**: Improved separation of concerns with domain-specific modules
+
+### Changed
+- **ARCHITECTURE.md**: Updated project structure documentation to reflect new module organization
+
 ## [0.9.0] - 2025-12-04
 
 ### Changed

@@ -110,8 +110,6 @@ python manage.py seed_demo_data --clear
 
 ### Screenshots
 
-Screenshots are located in `docs/images/`. You can replace them with real screenshots if needed.
-
 ![Dashboard](docs/images/dashboard.png)
 *Dashboard showing today's lessons, upcoming appointments, and conflicts*
 

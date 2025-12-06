@@ -55,12 +55,26 @@ backend/
 │   ├── students/       # Student management
 │   ├── contracts/      # Contract management
 │   ├── lessons/        # Lesson planning
+│   │   ├── views_crud.py      # CRUD views (List, Create, Update, Detail, Delete)
+│   │   ├── views_calendar.py  # Calendar views (Week, Month, Calendar redirect)
+│   │   ├── views_conflicts.py # Conflict views
+│   │   ├── conflict_service.py # Conflict detection service
+│   │   ├── query_service.py   # Lesson query service
+│   │   └── services.py        # Backward compatibility re-exports
 │   ├── blocked_times/  # Blocked time management
 │   ├── lesson_plans/   # AI-generated lesson plans
 │   └── core/           # Core functionality (User extension, Income-Selector)
 ├── config/             # Additional configuration files
 └── manage.py           # Django management script
 ```
+
+#### Module Organization
+
+The codebase follows a domain-driven structure where large modules are split into smaller, focused files:
+
+- **Views**: Split by domain (CRUD operations, calendar views, conflict views)
+- **Services**: Split by responsibility (conflict detection, query operations)
+- **Backward Compatibility**: Original module names (`views.py`, `services.py`) re-export from new modules to maintain existing imports
 
 ## Diagrams
 
