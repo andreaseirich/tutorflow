@@ -521,5 +521,5 @@ class WeeklyCalendarIntegrationTest(TestCase):
 
         # Verify week data includes the lesson
         week_data = WeekService.get_week_data(2023, 1, 31)
-        lesson_dates = [lesson.date for l in week_data["lessons"]]
+        lesson_dates = [lesson.date for lesson in week_data["lessons"]]
         self.assertIn(date(2023, 1, 31), lesson_dates)
