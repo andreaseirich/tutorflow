@@ -1,10 +1,13 @@
 # TutorFlow
 
 [![CI](https://github.com/andreaseirich/tutorflow/actions/workflows/ci.yml/badge.svg)](https://github.com/andreaseirich/tutorflow/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
-[![Django](https://img.shields.io/badge/Django-5.2.9-green.svg)](https://www.djangoproject.com/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Django](https://img.shields.io/badge/django-5.2.9-green.svg)](https://www.djangoproject.com/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![i18n](https://img.shields.io/badge/i18n-English%20%7C%20German-lightgrey.svg)](docs/ARCHITECTURE.md#internationalization-i18n)
+[![Status](https://img.shields.io/badge/status-active%20development-success.svg)](docs/PHASES.md)
 
 ## Project Overview
 
