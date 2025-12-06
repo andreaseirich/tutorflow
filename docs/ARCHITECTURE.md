@@ -8,10 +8,10 @@ TutorFlow is a Django-based web application structured according to modern best 
 
 - [Overview](#overview)
 - [Internationalization (i18n)](#internationalization-i18n)
-- [Technische Architektur](#technische-architektur)
+- [Technical Architecture](#technical-architecture)
 - [Diagrams](#diagrams)
-- [Domain-Modell (Implementiert)](#domain-modell-implementiert)
-- [Architekturprinzipien](#architekturprinzipien)
+- [Domain Model (Implemented)](#domain-model-implemented)
+- [Architecture Principles](#architecture-principles)
 - [Design Decisions & Architecture Rationale](#design-decisions--architecture-rationale)
 - [Data Flow](#data-flow)
 - [Timezone Handling](#timezone-handling)
@@ -33,7 +33,7 @@ TutorFlow is fully internationalized with English as the default language and Ge
 - **Status**: All templates including billing, blocked time, and recurring scheduling views are fully internationalized with English as the source language
 - **Coverage**: No hard-coded German or English text remains in templates - all UI strings are properly wrapped in translation tags
 
-## Technische Architektur
+## Technical Architecture
 
 ### Backend
 
@@ -384,7 +384,7 @@ sequenceDiagram
 
 ### Domain Model (Implemented)
 
-Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Models implementiert:
+The following entities form the core domain model and are implemented as Django models:
 
 #### Student (apps.students)
 - **Fields**: first_name, last_name, email, phone, school, grade, subjects, notes
