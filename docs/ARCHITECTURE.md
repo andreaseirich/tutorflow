@@ -92,7 +92,7 @@ graph TB
         CalendarService[CalendarService<br/>Month Data]
         WeekService[WeekService<br/>Week Data]
         IncomeSelector[IncomeSelector<br/>Income Calculation]
-        LessonStatusService[LessonStatusService<br/>Status Management]
+        LessonStatusUpdater[LessonStatusUpdater<br/>Automatic Status Updates]
     end
     
     subgraph "Model Layer"
@@ -151,7 +151,7 @@ graph TB
     WeekService --> BlockedTime
     IncomeSelector --> Lesson
     IncomeSelector --> ContractMonthlyPlan
-    LessonStatusService --> Lesson
+    LessonStatusUpdater --> Lesson
     
     Student --> Database
     Contract --> Database
@@ -458,8 +458,11 @@ Die folgenden Entitäten bilden das Kern-Domain-Modell und sind als Django-Model
   - `get_monthly_planned_vs_actual()`: Comparison of planned vs. actual units and income per month
 - **Purpose**: Derived monthly/yearly reports without own model. Supports comparison between planned (from ContractMonthlyPlan) and actual (from Lessons) values.
 
-#### LessonStatusService (apps.lessons.status_service)
+#### LessonStatusUpdater (apps.lessons.status_service)
 - **Not a Model**: Service layer for automatic status management of lessons
+- **Automatic Updates**: Automatically sets lessons with status 'planned' to 'taught' when their end time is in the past
+- **Triggered in Views**: Called automatically in DashboardView, WeekView, and IncomeOverviewView
+- **Management Command**: Can be run manually via `python manage.py update_past_lessons`
 - **Methods**:
   - `update_status_for_lesson(lesson)`: Updates status based on date/time
     - Past lessons (end_datetime < now) with status PLANNED or empty → TAUGHT
@@ -597,7 +600,7 @@ This structure makes it easy to find related code: if you're working on scheduli
    - Conflicts are displayed with detailed reasons (type, affected objects, messages)
    - **Conflict recalculation**: After any lesson or blocked time change, conflicts are automatically recalculated for all affected lessons
 7. Lesson is created (without manual status selection in form)
-8. **Automatic status setting**: `LessonStatusService.update_status_for_lesson()`
+8. **Automatic status updates**: `LessonStatusUpdater.update_past_lessons_to_taught()` - automatically sets past planned lessons to taught status
    - Past lessons → Status TAUGHT
    - Future lessons → Status PLANNED
    - PAID/CANCELLED are not overwritten

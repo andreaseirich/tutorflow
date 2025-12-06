@@ -13,7 +13,7 @@ from apps.lessons.forms import LessonForm
 from apps.lessons.services import LessonQueryService, LessonConflictService
 from apps.lessons.calendar_service import CalendarService
 from apps.lessons.week_service import WeekService
-from apps.lessons.status_service import LessonStatusService
+from apps.lessons.status_service import LessonStatusUpdater
 
 
 class LessonListView(ListView):
@@ -373,6 +373,10 @@ class WeekView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # Automatische Status-Aktualisierung für vergangene Lessons
+        from apps.lessons.status_service import LessonStatusUpdater
+        LessonStatusUpdater.update_past_lessons_to_taught()
         
         # Jahr, Monat und Tag aus URL-Parametern (Fallback: aktuelles Datum)
         year_param = self.request.GET.get('year')

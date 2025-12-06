@@ -149,7 +149,7 @@ TutorFlow provides a complete solution for managing tutoring activities:
   - **Recurring Lessons**: Support for recurring lessons (e.g., every Monday at 2 PM)
 - **Blocked Times**: Management of personal appointments and blocked times (e.g., university, job, community)
 - **Income Evaluation**: Monthly and yearly evaluations of income by status
-- **Automatic Status Management**: Past lessons are automatically marked as taught
+- **Automatic Status Management**: Lessons with status 'planned' are automatically set to 'taught' when their end time is in the past. Updates happen automatically when accessing Dashboard, Week View, or Income Overview. Can also be run manually via `python manage.py update_past_lessons`
 - **Billing System**: Create invoices from selected lessons with HTML document generation
 - **Premium Feature**: AI-powered generation of lesson plans using an LLM API
 
@@ -170,7 +170,7 @@ TutorFlow provides a complete solution for managing tutoring activities:
     - **Click on Conflict Icon**: Opens conflict detail view with reasons
   - **Month Calendar**: Alternative view for monthly overview (legacy, redirects to week view)
   - **Recurring Lessons**: Recurring lessons are created exclusively via the lesson creation form in week view (no separate button/page)
-  - **Automatic Status Management**: Lesson status (planned/taught) is automatically set based on date
+  - **Automatic Status Management**: Lesson status (planned/taught) is automatically updated based on time progression. Past planned lessons become 'taught' automatically when views are accessed
 - **Blocked Times**: Management of personal appointments (university, job, etc.)
   - **Calendar Integration**: Blocked times are managed exclusively via the calendar (create, edit, display)
   - **Multi-day Blocked Times**: Support for multi-day blocks (e.g., vacation/travel)
