@@ -17,6 +17,52 @@ class LessonStatusUpdater:
     """
 
     @staticmethod
+    def update_status_for_lesson(lesson: Lesson) -> bool:
+        """
+        Aktualisiert den Status einer einzelnen Lesson basierend auf Datum/Zeit.
+        
+        Regeln:
+        - Wenn end_datetime < jetzt und Status PLANNED → setze auf TAUGHT
+        - Wenn start_datetime >= jetzt und Status leer/None → setze auf PLANNED
+        - PAID oder CANCELLED werden NICHT überschrieben
+        
+        Args:
+            lesson: Die Lesson-Instanz
+            
+        Returns:
+            True, wenn Status geändert wurde, False sonst
+        """
+        now = timezone.now()
+        
+        # Berechne start_datetime und end_datetime
+        start_datetime = timezone.make_aware(
+            datetime.combine(lesson.date, lesson.start_time)
+        )
+        end_datetime = start_datetime + timedelta(minutes=lesson.duration_minutes)
+        
+        # Status PAID oder CANCELLED nicht überschreiben
+        if lesson.status in ['paid', 'cancelled']:
+            return False
+        
+        status_changed = False
+        
+        # Vergangene Lesson (end_datetime < jetzt) mit Status PLANNED oder leer → TAUGHT
+        if end_datetime < now and (lesson.status == 'planned' or not lesson.status or lesson.status == ''):
+            lesson.status = 'taught'
+            status_changed = True
+        
+        # Zukünftige Lesson (start_datetime >= jetzt) ohne Status → PLANNED
+        elif start_datetime >= now and (not lesson.status or lesson.status == ''):
+            lesson.status = 'planned'
+            status_changed = True
+        
+        # Speichern nur, wenn Lesson bereits gespeichert ist (hat PK)
+        if status_changed and lesson.pk:
+            lesson.save(update_fields=['status', 'updated_at'])
+        
+        return status_changed
+
+    @staticmethod
     def update_past_lessons_to_taught(now=None) -> int:
         """
         Setzt alle Lessons mit Status 'planned' auf 'taught', deren Endzeit
