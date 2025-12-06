@@ -38,7 +38,7 @@ TutorFlow is fully internationalized with English as the default language and Ge
 ### Backend
 
 #### Framework
-- **Django 5.2.9**: Modern Python web framework
+- **Django 6.0**: Modern Python web framework
 - **SQLite**: Standard database for development
 - **PostgreSQL**: Optional, prepared for production
 
