@@ -227,4 +227,6 @@ class LLMClient:
         except requests.exceptions.RequestException as e:
             raise LLMClientError(_("API error: {error}").format(error=str(e))) from e
         except (KeyError, ValueError) as e:
-            raise LLMClientError(_("Error parsing API response: {error}").format(error=str(e))) from e
+            raise LLMClientError(
+                _("Error parsing API response: {error}").format(error=str(e))
+            ) from e

@@ -2,7 +2,6 @@
 Forms für Billing-App.
 """
 
-
 from apps.billing.models import Invoice
 from apps.contracts.models import Contract
 from django import forms

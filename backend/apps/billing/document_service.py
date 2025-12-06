@@ -2,7 +2,6 @@
 Service für Rechnungsdokument-Generierung.
 """
 
-
 from apps.billing.models import Invoice
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
