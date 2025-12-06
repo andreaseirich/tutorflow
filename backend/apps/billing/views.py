@@ -8,6 +8,7 @@ from apps.billing.document_service import InvoiceDocumentService
 from apps.billing.forms import InvoiceCreateForm
 from apps.billing.models import Invoice
 from apps.billing.services import InvoiceService
+from apps.contracts.models import Contract
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -90,8 +91,6 @@ class InvoiceCreateView(CreateView):
                 period_end = date.fromisoformat(period_end)
                 contract = None
                 if contract_id:
-                    from apps.contracts.models import Contract
-
                     contract = Contract.objects.get(pk=contract_id)
 
                 billable_lessons = InvoiceService.get_billable_lessons(
@@ -101,7 +100,9 @@ class InvoiceCreateView(CreateView):
                 context["period_start"] = period_start
                 context["period_end"] = period_end
                 context["contract"] = contract
-            except (ValueError, Exception):
+            except (ValueError, Contract.DoesNotExist):
+                # Silently ignore invalid date formats or non-existent contracts in preview
+                # The form validation will catch these errors when the user submits
                 pass
 
         return context
