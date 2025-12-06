@@ -423,7 +423,9 @@ class WeeklyCalendarIntegrationTest(TestCase):
 
         # Should have lessons on Monday and Wednesday
         monday_lessons = [lesson for lesson in week_data["lessons"] if lesson.date.weekday() == 0]
-        wednesday_lessons = [lesson for lesson in week_data["lessons"] if lesson.date.weekday() == 2]
+        wednesday_lessons = [
+            lesson for lesson in week_data["lessons"] if lesson.date.weekday() == 2
+        ]
         self.assertGreater(len(monday_lessons), 0)
         self.assertGreater(len(wednesday_lessons), 0)
 
