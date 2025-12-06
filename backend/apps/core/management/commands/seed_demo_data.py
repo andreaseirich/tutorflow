@@ -98,7 +98,7 @@ class Command(BaseCommand):
             notes="Recurring lessons every Monday and Wednesday",
         )
 
-        # Verträge
+        # Contracts
         # Contract 1: With monthly quotas (for quota conflicts)
         contract1 = Contract.objects.create(
             student=student1,
@@ -184,7 +184,7 @@ class Command(BaseCommand):
             date=today - timedelta(days=2),
             start_time=time(15, 0),
             duration_minutes=60,
-            status="taught",  # Zuerst als "taught" erstellen
+            status="taught",  # First create as "taught"
             notes="Math: Analysis",
         )
 
@@ -214,7 +214,7 @@ class Command(BaseCommand):
             status="planned",
             notes="Math: Algebra - 3. Lesson im November",
         )
-        # Diese Lesson sollte einen Quota-Konflikt haben (4. Lesson, aber nur 3 geplant)
+        # This lesson should have a quota conflict (4th lesson, but only 3 planned)
         Lesson.objects.create(
             contract=contract1,
             date=date(2025, 11, 26),
@@ -339,14 +339,14 @@ class Command(BaseCommand):
             username="demo_premium",
             defaults={
                 "email": "premium@example.com",
-                "is_staff": True,  # Erforderlich für Admin-Login
+                "is_staff": True,  # Required for admin login
                 "is_active": True,
             },
         )
 
-        # Setze Passwort (auch wenn User bereits existiert, um sicherzustellen, dass es korrekt ist)
+        # Set password (even if user already exists, to ensure it's correct)
         premium_user.set_password("demo123")
-        premium_user.is_staff = True  # Erforderlich für Admin-Login
+        premium_user.is_staff = True  # Required for admin login
         premium_user.is_active = True
         premium_user.save()
 
@@ -394,27 +394,27 @@ class Command(BaseCommand):
             subject="Mathe",
             content="""# Unterrichtsplan: Lineare Gleichungen
 
-## Einstieg (10 Min)
-- Wiederholung: Was sind lineare Gleichungen?
+## Introduction (10 Min)
+- Review: What are linear equations?
 - Beispiel: 2x + 3 = 7
 
 ## Hauptteil (40 Min)
-- Lösen einfacher linearer Gleichungen
+- Solving simple linear equations
 - Übungsaufgaben aus dem Buch
 - Gemeinsame Besprechung
 
 ## Abschluss (10 Min)
-- Zusammenfassung der wichtigsten Schritte
+- Summary of the most important steps
 - Hausaufgaben: 3 weitere Aufgaben""",
             grade_level="10. Klasse",
             duration_minutes=60,
             llm_model="gpt-3.5-turbo",
         )
 
-        # Demo LessonPlan 2 (für lesson3 - noch kein Plan, kann AI generieren)
-        # lesson3 hat noch keinen Plan, damit Premium-User die AI-Funktion testen kann
+        # Demo LessonPlan 2 (for lesson3 - no plan yet, can be generated with AI)
+        # lesson3 has no plan yet, so premium user can test the AI function
 
-        # Demo LessonPlan 3 (für eine der Recurring Lessons, falls vorhanden)
+        # Demo LessonPlan 3 (for one of the recurring lessons, if available)
         recurring_lessons = Lesson.objects.filter(contract=contract4).order_by("date")
         if recurring_lessons.exists():
             first_recurring_lesson = recurring_lessons.first()
@@ -423,27 +423,27 @@ class Command(BaseCommand):
                 lesson=first_recurring_lesson,
                 topic="German Grammar: Sentence Components",
                 subject="German",
-                content="""# Unterrichtsplan: Satzglieder
+                content="""# Lesson Plan: Sentence Components
 
-## Einstieg (10 Min)
-- Wiederholung: Was sind Satzglieder?
-- Beispiele: Subjekt, Prädikat, Objekt
+## Introduction (10 Min)
+- Review: What are sentence components?
+- Examples: Subject, predicate, object
 
-## Hauptteil (40 Min)
-- Bestimmung von Satzgliedern in Beispielsätzen
-- Übungsaufgaben
-- Gemeinsame Besprechung
+## Main Part (40 Min)
+- Identifying sentence components in example sentences
+- Practice exercises
+- Joint discussion
 
-## Abschluss (10 Min)
-- Zusammenfassung
-- Hausaufgaben: 5 Sätze analysieren""",
-                grade_level="8. Klasse",
+## Conclusion (10 Min)
+- Summary
+- Homework: Analyze 5 sentences""",
+                grade_level="Grade 8",
                 duration_minutes=60,
                 llm_model="gpt-3.5-turbo",
             )
 
         # Create a demo invoice for lesson4 (so it becomes "paid")
-        # Nur wenn lesson4 existiert und als "taught" markiert ist
+        # Only if lesson4 exists and is marked as "taught"
         if lesson4 and lesson4.status == "taught":
             invoice_period_start = lesson4.date
             invoice_period_end = lesson4.date
@@ -480,10 +480,10 @@ class Command(BaseCommand):
         self.stdout.write("    Username: demo_standard")
         self.stdout.write("    Password: demo123")
         self.stdout.write(self.style.WARNING("\n⚠️  Hinweise:"))
-        self.stdout.write("  - Lesson1 und Lesson2 haben einen Zeit-Konflikt!")
-        self.stdout.write("  - Lesson8 hat einen Quota-Konflikt (4. Lesson, aber nur 3 geplant)!")
-        self.stdout.write("  - lesson_conflict hat einen Konflikt mit blocked_time3!")
+        self.stdout.write("  - Lesson1 and Lesson2 have a time conflict!")
+        self.stdout.write("  - Lesson8 has a quota conflict (4th lesson, but only 3 planned)!")
+        self.stdout.write("  - lesson_conflict has a conflict with blocked_time3!")
         self.stdout.write(
-            "  - Recurring Lessons wurden generiert (Mo+Mi für student4, Di+Do für student2)!"
+            "  - Recurring lessons were generated (Mon+Wed for student4, Tue+Thu for student2)!"
         )
-        self.stdout.write("  - lesson3 hat noch keinen LessonPlan (kann mit AI generiert werden)!")
+        self.stdout.write("  - lesson3 has no lesson plan yet (can be generated with AI)!")
