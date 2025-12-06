@@ -65,7 +65,7 @@ class Command(BaseCommand):
             school="Gymnasium XY",
             grade="10. Klasse",
             subjects="Mathe, Physik",
-            notes="Sehr motiviert, braucht Unterstützung bei Algebra",
+            notes="Very motivated, needs support with algebra",
         )
 
         student2 = Student.objects.create(
@@ -75,8 +75,8 @@ class Command(BaseCommand):
             phone="0123-456790",
             school="Realschule ABC",
             grade="9. Klasse",
-            subjects="Deutsch, Englisch",
-            notes="Gute Schülerin, möchte sich auf Abitur vorbereiten",
+            subjects="German, English",
+            notes="Good student, wants to prepare for final exams",
         )
 
         student3 = Student.objects.create(
@@ -85,7 +85,7 @@ class Command(BaseCommand):
             email="tom.weber@example.com",
             school="Gymnasium XY",
             grade="11. Klasse",
-            subjects="Mathe, Chemie",
+            subjects="Math, Chemistry",
         )
 
         student4 = Student.objects.create(
@@ -94,7 +94,7 @@ class Command(BaseCommand):
             email="lisa.mueller@example.com",
             school="Gymnasium XY",
             grade="8. Klasse",
-            subjects="Deutsch, Englisch",
+            subjects="German, English",
             notes="Recurring lessons every Monday and Wednesday",
         )
 
@@ -106,7 +106,7 @@ class Command(BaseCommand):
             unit_duration_minutes=60,
             start_date=date(2025, 11, 1),
             is_active=True,
-            notes="Wöchentlich 2x Mathe - mit monatlichen Kontingenten",
+            notes="Weekly 2x Math - with monthly quotas",
         )
 
         # ContractMonthlyPlan for quota conflicts
@@ -116,7 +116,7 @@ class Command(BaseCommand):
         # Contract 2: With recurring lessons
         contract2 = Contract.objects.create(
             student=student2,
-            institute="Nachhilfe-Institut ABC",
+            institute="Tutoring Institute ABC",
             hourly_rate=Decimal("30.00"),
             unit_duration_minutes=90,
             start_date=date(2025, 10, 15),
@@ -166,7 +166,7 @@ class Command(BaseCommand):
             duration_minutes=90,
             status="planned",
             travel_time_before_minutes=20,
-            notes="Deutsch: Textanalyse",
+            notes="German: Text Analysis",
         )
 
         Lesson.objects.create(
@@ -185,7 +185,7 @@ class Command(BaseCommand):
             start_time=time(15, 0),
             duration_minutes=60,
             status="taught",  # Zuerst als "taught" erstellen
-            notes="Mathe: Analysis",
+            notes="Math: Analysis",
         )
 
         # Quota conflict: Try to create more lessons than planned
@@ -196,7 +196,7 @@ class Command(BaseCommand):
             start_time=time(10, 0),
             duration_minutes=60,
             status="planned",
-            notes="Mathe: Algebra - 1. Lesson im November",
+            notes="Math: Algebra - 1. Lesson im November",
         )
         Lesson.objects.create(
             contract=contract1,
@@ -204,7 +204,7 @@ class Command(BaseCommand):
             start_time=time(10, 0),
             duration_minutes=60,
             status="planned",
-            notes="Mathe: Algebra - 2. Lesson im November",
+            notes="Math: Algebra - 2. Lesson im November",
         )
         Lesson.objects.create(
             contract=contract1,
@@ -212,7 +212,7 @@ class Command(BaseCommand):
             start_time=time(10, 0),
             duration_minutes=60,
             status="planned",
-            notes="Mathe: Algebra - 3. Lesson im November",
+            notes="Math: Algebra - 3. Lesson im November",
         )
         # Diese Lesson sollte einen Quota-Konflikt haben (4. Lesson, aber nur 3 geplant)
         Lesson.objects.create(
@@ -221,7 +221,7 @@ class Command(BaseCommand):
             start_time=time(10, 0),
             duration_minutes=60,
             status="planned",
-            notes="Mathe: Algebra - 4. Lesson im November (QUOTA CONFLICT)",
+            notes="Math: Algebra - 4. Lesson im November (QUOTA CONFLICT)",
         )
 
         # Recurring Lessons
@@ -239,7 +239,7 @@ class Command(BaseCommand):
             travel_time_before_minutes=15,
             travel_time_after_minutes=15,
             recurrence_type="weekly",
-            notes="Deutsch: Grammatik und Rechtschreibung",
+            notes="German: Grammar and Spelling",
             monday=True,
             tuesday=False,
             wednesday=True,
@@ -421,8 +421,8 @@ class Command(BaseCommand):
             LessonPlan.objects.create(
                 student=student4,
                 lesson=first_recurring_lesson,
-                topic="Deutsche Grammatik: Satzglieder",
-                subject="Deutsch",
+                topic="German Grammar: Sentence Components",
+                subject="German",
                 content="""# Unterrichtsplan: Satzglieder
 
 ## Einstieg (10 Min)
