@@ -71,6 +71,8 @@ class BlockedTimeCreateView(CreateView):
                     datetime.combine(parsed_date, datetime.min.time().replace(hour=10))
                 )
             except (ValueError, TypeError):
+                # Silently ignore invalid date format in GET parameter
+                # Form validation will catch this when user submits
                 pass
         return initial
 

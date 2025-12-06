@@ -77,7 +77,7 @@ class LLMClient:
                     time.sleep(wait_time)
                     continue
                 # For other errors or after max retries, raise immediately
-                raise
+                raise last_error
 
         # Should not reach here, but just in case
         if last_error:
