@@ -79,9 +79,11 @@ class LLMClient:
                 # For other errors or after max retries, raise immediately
                 raise last_error from e
 
-        # Should not reach here, but just in case
+        # Should not reach here, but ensure we always raise if we do
         if last_error:
             raise last_error
+        # This should never happen, but ensures explicit return/raise
+        raise LLMClientError(_("Unexpected error: max retries exceeded without error"))
 
     def _make_api_request(
         self,
