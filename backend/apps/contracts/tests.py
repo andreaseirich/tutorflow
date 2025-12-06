@@ -10,29 +10,24 @@ class ContractModelTest(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.student = Student.objects.create(
-            first_name="Max",
-            last_name="Mustermann"
-        )
+        self.student = Student.objects.create(first_name="Max", last_name="Mustermann")
 
     def test_create_contract(self):
         """Test: Contract kann erstellt werden."""
         contract = Contract.objects.create(
             student=self.student,
-            hourly_rate=Decimal('25.00'),
+            hourly_rate=Decimal("25.00"),
             unit_duration_minutes=60,
-            start_date=date.today()
+            start_date=date.today(),
         )
         self.assertEqual(contract.student, self.student)
-        self.assertEqual(contract.hourly_rate, Decimal('25.00'))
+        self.assertEqual(contract.hourly_rate, Decimal("25.00"))
         self.assertTrue(contract.is_active)
 
     def test_contract_relationship_to_student(self):
         """Test: Beziehung zwischen Contract und Student."""
         contract = Contract.objects.create(
-            student=self.student,
-            hourly_rate=Decimal('30.00'),
-            start_date=date.today()
+            student=self.student, hourly_rate=Decimal("30.00"), start_date=date.today()
         )
         self.assertEqual(self.student.contracts.first(), contract)
 
@@ -41,8 +36,8 @@ class ContractModelTest(TestCase):
         contract = Contract.objects.create(
             student=self.student,
             institute="Nachhilfe-Institut XY",
-            hourly_rate=Decimal('35.00'),
-            start_date=date.today()
+            hourly_rate=Decimal("35.00"),
+            start_date=date.today(),
         )
         self.assertEqual(contract.institute, "Nachhilfe-Institut XY")
         self.assertIn("Nachhilfe-Institut XY", str(contract))

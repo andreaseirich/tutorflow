@@ -1,41 +1,36 @@
 """
 Models for recurring blocked times (series appointments).
 """
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
 class RecurringBlockedTime(models.Model):
     """Recurring blocked time - template for series appointments."""
-    
+
     title = models.CharField(
         max_length=200,
-        help_text=_("Title of the blocked time (e.g., 'University lecture', 'Community')")
+        help_text=_("Title of the blocked time (e.g., 'University lecture', 'Community')"),
     )
     description = models.TextField(
-        blank=True,
-        null=True,
-        help_text=_("Description of the blocked time")
+        blank=True, null=True, help_text=_("Description of the blocked time")
     )
     start_date = models.DateField(help_text=_("Series start date"))
-    end_date = models.DateField(
-        null=True,
-        blank=True,
-        help_text=_("Series end date (optional)")
-    )
+    end_date = models.DateField(null=True, blank=True, help_text=_("Series end date (optional)"))
     start_time = models.TimeField(help_text=_("Start time"))
     end_time = models.TimeField(help_text=_("End time"))
     # Recurrence type
     RECURRENCE_TYPE_CHOICES = [
-        ('weekly', _('Weekly')),
-        ('biweekly', _('Bi-weekly')),
-        ('monthly', _('Monthly')),
+        ("weekly", _("Weekly")),
+        ("biweekly", _("Bi-weekly")),
+        ("monthly", _("Monthly")),
     ]
     recurrence_type = models.CharField(
         max_length=20,
         choices=RECURRENCE_TYPE_CHOICES,
-        default='weekly',
-        help_text=_("Recurrence type: Weekly, bi-weekly, or monthly")
+        default="weekly",
+        help_text=_("Recurrence type: Weekly, bi-weekly, or monthly"),
     )
     # Weekdays as Boolean fields
     monday = models.BooleanField(default=False, help_text=_("Monday"))
@@ -45,17 +40,14 @@ class RecurringBlockedTime(models.Model):
     friday = models.BooleanField(default=False, help_text=_("Friday"))
     saturday = models.BooleanField(default=False, help_text=_("Saturday"))
     sunday = models.BooleanField(default=False, help_text=_("Sunday"))
-    is_active = models.BooleanField(
-        default=True,
-        help_text=_("Is the series active?")
-    )
+    is_active = models.BooleanField(default=True, help_text=_("Is the series active?"))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-start_date', 'title']
-        verbose_name = _('Recurring Blocked Time')
-        verbose_name_plural = _('Recurring Blocked Times')
+        ordering = ["-start_date", "title"]
+        verbose_name = _("Recurring Blocked Time")
+        verbose_name_plural = _("Recurring Blocked Times")
 
     def __str__(self):
         weekdays = self.get_active_weekdays_display()
@@ -83,7 +75,7 @@ class RecurringBlockedTime(models.Model):
     def get_active_weekdays_display(self):
         """Returns a human-readable representation of active weekdays."""
         from django.utils.translation import gettext_lazy as _
-        weekday_names = [_('Mo'), _('Tu'), _('We'), _('Th'), _('Fr'), _('Sa'), _('Su')]
-        active = [weekday_names[i] for i in self.get_active_weekdays()]
-        return ', '.join(active) if active else _('None')
 
+        weekday_names = [_("Mo"), _("Tu"), _("We"), _("Th"), _("Fr"), _("Sa"), _("Su")]
+        active = [weekday_names[i] for i in self.get_active_weekdays()]
+        return ", ".join(active) if active else _("None")

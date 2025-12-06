@@ -1,6 +1,7 @@
 """
 Template filters for lesson-related formatting.
 """
+
 from django import template
 from django.utils import timezone
 
@@ -32,4 +33,3 @@ def local_date(datetime_obj):
         local_dt = timezone.localtime(datetime_obj)
         return local_dt.date()
     return None
-

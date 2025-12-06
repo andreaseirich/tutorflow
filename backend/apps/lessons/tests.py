@@ -11,14 +11,9 @@ class LessonModelTest(TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.student = Student.objects.create(
-            first_name="Max",
-            last_name="Mustermann"
-        )
+        self.student = Student.objects.create(first_name="Max", last_name="Mustermann")
         self.contract = Contract.objects.create(
-            student=self.student,
-            hourly_rate=Decimal('25.00'),
-            start_date=date.today()
+            student=self.student, hourly_rate=Decimal("25.00"), start_date=date.today()
         )
 
     def test_create_lesson(self):
@@ -28,10 +23,10 @@ class LessonModelTest(TestCase):
             date=date.today(),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='planned'
+            status="planned",
         )
         self.assertEqual(lesson.contract, self.contract)
-        self.assertEqual(lesson.status, 'planned')
+        self.assertEqual(lesson.status, "planned")
         self.assertEqual(lesson.total_time_minutes, 60)
 
     def test_lesson_with_travel_time(self):
@@ -42,7 +37,7 @@ class LessonModelTest(TestCase):
             start_time=time(14, 0),
             duration_minutes=60,
             travel_time_before_minutes=15,
-            travel_time_after_minutes=20
+            travel_time_after_minutes=20,
         )
         self.assertEqual(lesson.total_time_minutes, 95)  # 60 + 15 + 20
 
@@ -53,16 +48,13 @@ class LessonModelTest(TestCase):
             date=date.today(),
             start_time=time(14, 0),
             duration_minutes=60,
-            status='paid'
+            status="paid",
         )
-        self.assertEqual(lesson.get_status_display(), 'Ausgezahlt')
+        self.assertEqual(lesson.get_status_display(), "Ausgezahlt")
 
     def test_lesson_relationship_to_contract(self):
         """Test: Beziehung zwischen Lesson und Contract."""
         lesson = Lesson.objects.create(
-            contract=self.contract,
-            date=date.today(),
-            start_time=time(14, 0),
-            duration_minutes=60
+            contract=self.contract, date=date.today(), start_time=time(14, 0), duration_minutes=60
         )
         self.assertEqual(self.contract.lessons.first(), lesson)

@@ -4,6 +4,7 @@ URL configuration for tutorflow project.
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -11,16 +12,16 @@ from django.conf.urls.static import static
 from django.views.i18n import set_language
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('i18n/setlang/', set_language, name='set_language'),
-    path('', include('apps.core.urls')),
-    path('students/', include('apps.students.urls')),
-    path('contracts/', include('apps.contracts.urls')),
-    path('lessons/', include('apps.lessons.urls')),
-    path('blocked-times/', include('apps.blocked_times.urls')),
-    path('billing/', include('apps.billing.urls')),
-    path('ai/', include('apps.ai.urls')),
-    path('lesson-plans/', include('apps.lesson_plans.urls')),
+    path("admin/", admin.site.urls),
+    path("i18n/setlang/", set_language, name="set_language"),
+    path("", include("apps.core.urls")),
+    path("students/", include("apps.students.urls")),
+    path("contracts/", include("apps.contracts.urls")),
+    path("lessons/", include("apps.lessons.urls")),
+    path("blocked-times/", include("apps.blocked_times.urls")),
+    path("billing/", include("apps.billing.urls")),
+    path("ai/", include("apps.ai.urls")),
+    path("lesson-plans/", include("apps.lesson_plans.urls")),
 ]
 
 # Serve media files in development
