@@ -63,8 +63,8 @@ class Command(BaseCommand):
             email="max.mustermann@example.com",
             phone="0123-456789",
             school="Gymnasium XY",
-            grade="10. Klasse",
-            subjects="Mathe, Physik",
+            grade="Grade 10",
+            subjects="Math, Physics",
             notes="Very motivated, needs support with algebra",
         )
 
@@ -124,7 +124,7 @@ class Command(BaseCommand):
             notes="Recurring lessons weekly",
         )
 
-        # Contract 3: Nur Einzelstunden
+        # Contract 3: Single lessons only
         contract3 = Contract.objects.create(
             student=student3,
             hourly_rate=Decimal("28.00"),
@@ -155,14 +155,14 @@ class Command(BaseCommand):
             status="planned",
             travel_time_before_minutes=15,
             travel_time_after_minutes=20,
-            notes="Algebra: Lineare Gleichungen",
+            notes="Algebra: Linear Equations",
         )
 
         # Conflict: Overlap with lesson1
         Lesson.objects.create(
             contract=contract2,
             date=today + timedelta(days=1),
-            start_time=time(14, 30),  # Überschneidung!
+            start_time=time(14, 30),  # Overlap!
             duration_minutes=90,
             status="planned",
             travel_time_before_minutes=20,
@@ -175,7 +175,7 @@ class Command(BaseCommand):
             start_time=time(16, 0),
             duration_minutes=60,
             status="planned",
-            notes="Physik: Mechanik",
+            notes="Physics: Mechanics",
         )
 
         # Lesson4: Created as "taught" and then included in an invoice (automatically becomes "paid")
@@ -196,7 +196,7 @@ class Command(BaseCommand):
             start_time=time(10, 0),
             duration_minutes=60,
             status="planned",
-            notes="Math: Algebra - 1. Lesson im November",
+            notes="Math: Algebra - 1st lesson in November",
         )
         Lesson.objects.create(
             contract=contract1,
@@ -267,7 +267,7 @@ class Command(BaseCommand):
             travel_time_before_minutes=20,
             travel_time_after_minutes=20,
             recurrence_type="weekly",
-            notes="Englisch: Conversation and Grammar",
+            notes="English: Conversation and Grammar",
             monday=False,
             tuesday=True,
             wednesday=False,
@@ -330,7 +330,7 @@ class Command(BaseCommand):
             start_time=time(14, 30),  # Overlap with blocked_time3
             duration_minutes=60,
             status="planned",
-            notes="Mathe: Analysis - CONFLICT WITH BLOCKED TIME",
+            notes="Math: Analysis - CONFLICT WITH BLOCKED TIME",
         )
 
         # Premium user with lesson plan
@@ -350,19 +350,19 @@ class Command(BaseCommand):
         premium_user.is_active = True
         premium_user.save()
 
-        # Erstelle oder aktualisiere UserProfile
+        # Create or update UserProfile
         profile, profile_created = UserProfile.objects.get_or_create(
             user=premium_user, defaults={"is_premium": True, "premium_since": timezone.now()}
         )
 
-        # Aktualisiere Profile, falls es bereits existiert
+        # Update profile if it already exists
         if not profile_created:
             profile.is_premium = True
             if not profile.premium_since:
                 profile.premium_since = timezone.now()
             profile.save()
 
-        # Non-Premium-User zum Vergleich
+        # Non-premium user for comparison
         non_premium_user, created = User.objects.get_or_create(
             username="demo_standard",
             defaults={
@@ -386,27 +386,27 @@ class Command(BaseCommand):
         non_premium_profile.is_premium = False
         non_premium_profile.save()
 
-        # Demo LessonPlan 1 (für lesson1 - bereits existierend)
+        # Demo LessonPlan 1 (for lesson1 - already existing)
         LessonPlan.objects.create(
             student=student1,
             lesson=lesson1,
-            topic="Lineare Gleichungen",
-            subject="Mathe",
-            content="""# Unterrichtsplan: Lineare Gleichungen
+            topic="Linear Equations",
+            subject="Math",
+            content="""# Lesson Plan: Linear Equations
 
 ## Introduction (10 Min)
 - Review: What are linear equations?
-- Beispiel: 2x + 3 = 7
+- Example: 2x + 3 = 7
 
-## Hauptteil (40 Min)
+## Main Part (40 Min)
 - Solving simple linear equations
-- Übungsaufgaben aus dem Buch
-- Gemeinsame Besprechung
+- Practice exercises from the book
+- Joint discussion
 
-## Abschluss (10 Min)
+## Conclusion (10 Min)
 - Summary of the most important steps
-- Hausaufgaben: 3 weitere Aufgaben""",
-            grade_level="10. Klasse",
+- Homework: 3 more exercises""",
+            grade_level="Grade 10",
             duration_minutes=60,
             llm_model="gpt-3.5-turbo",
         )
@@ -457,29 +457,31 @@ class Command(BaseCommand):
             demo_invoice.status = "sent"
             demo_invoice.save(update_fields=["status", "updated_at"])
 
-            # lesson4 sollte jetzt automatisch auf "paid" gesetzt worden sein
+            # lesson4 should now be automatically set to "paid"
 
-        self.stdout.write(self.style.SUCCESS("\n✅ Demo-Daten erfolgreich erstellt:"))
-        self.stdout.write(f"  - {Student.objects.count()} Schüler")
-        self.stdout.write(f"  - {Contract.objects.count()} Verträge")
-        self.stdout.write(f"  - {ContractMonthlyPlan.objects.count()} Monatspläne")
-        self.stdout.write(f"  - {Lesson.objects.count()} Unterrichtsstunden")
-        self.stdout.write(f"  - {RecurringLesson.objects.count()} Recurring Lessons")
-        self.stdout.write(f"  - {BlockedTime.objects.count()} Blockzeiten")
-        self.stdout.write(f"  - {UserProfile.objects.filter(is_premium=True).count()} Premium-User")
+        self.stdout.write(self.style.SUCCESS("\n✅ Demo data successfully created:"))
+        self.stdout.write(f"  - {Student.objects.count()} students")
+        self.stdout.write(f"  - {Contract.objects.count()} contracts")
+        self.stdout.write(f"  - {ContractMonthlyPlan.objects.count()} monthly plans")
+        self.stdout.write(f"  - {Lesson.objects.count()} lessons")
+        self.stdout.write(f"  - {RecurringLesson.objects.count()} recurring lessons")
+        self.stdout.write(f"  - {BlockedTime.objects.count()} blocked times")
         self.stdout.write(
-            f"  - {UserProfile.objects.filter(is_premium=False).count()} Non-Premium-User"
+            f"  - {UserProfile.objects.filter(is_premium=True).count()} premium users"
         )
-        self.stdout.write(f"  - {LessonPlan.objects.count()} Unterrichtspläne")
-        self.stdout.write(f"  - {Invoice.objects.count()} Rechnungen")
-        self.stdout.write(self.style.SUCCESS("\n📝 Demo-Logins:"))
+        self.stdout.write(
+            f"  - {UserProfile.objects.filter(is_premium=False).count()} non-premium users"
+        )
+        self.stdout.write(f"  - {LessonPlan.objects.count()} lesson plans")
+        self.stdout.write(f"  - {Invoice.objects.count()} invoices")
+        self.stdout.write(self.style.SUCCESS("\n📝 Demo Logins:"))
         self.stdout.write("  Premium User:")
         self.stdout.write("    Username: demo_premium")
         self.stdout.write("    Password: demo123")
         self.stdout.write("  Standard User:")
         self.stdout.write("    Username: demo_standard")
         self.stdout.write("    Password: demo123")
-        self.stdout.write(self.style.WARNING("\n⚠️  Hinweise:"))
+        self.stdout.write(self.style.WARNING("\n⚠️  Notes:"))
         self.stdout.write("  - Lesson1 and Lesson2 have a time conflict!")
         self.stdout.write("  - Lesson8 has a quota conflict (4th lesson, but only 3 planned)!")
         self.stdout.write("  - lesson_conflict has a conflict with blocked_time3!")
