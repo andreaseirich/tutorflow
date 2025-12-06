@@ -29,9 +29,8 @@ class LLMClient:
         self.model_name = settings.LLM_MODEL_NAME
         self.timeout = settings.LLM_TIMEOUT_SECONDS
 
-        if not self.api_key:
-            # In Entwicklung/Demo kann API_KEY leer sein (wird in Tests gemockt)
-            pass
+        # In Entwicklung/Demo kann API_KEY leer sein (wird in Tests gemockt)
+        # Die Validierung erfolgt in generate_text() wenn nötig
 
     def generate_text(
         self,
