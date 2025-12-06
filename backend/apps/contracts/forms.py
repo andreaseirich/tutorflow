@@ -2,9 +2,8 @@
 Forms für Contract-Model.
 """
 
-from django import forms
 from apps.contracts.models import Contract
-from apps.students.models import Student
+from django import forms
 
 
 class ContractForm(forms.ModelForm):

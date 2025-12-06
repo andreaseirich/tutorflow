@@ -2,12 +2,11 @@
 Views für BlockedTime-CRUD-Operationen.
 """
 
-from django.shortcuts import render
-from django.contrib import messages
-from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from apps.blocked_times.models import BlockedTime
 from apps.blocked_times.forms import BlockedTimeForm
+from apps.blocked_times.models import BlockedTime
+from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 
 
 class BlockedTimeDetailView(DetailView):
@@ -36,6 +35,7 @@ class BlockedTimeCreateView(CreateView):
         if start_param and end_param:
             try:
                 from datetime import datetime
+
                 from django.utils import timezone
 
                 start_dt = datetime.fromisoformat(start_param.replace("Z", "+00:00"))
@@ -58,6 +58,7 @@ class BlockedTimeCreateView(CreateView):
         date_param = self.request.GET.get("date")
         if date_param:
             from datetime import datetime
+
             from django.utils import timezone
 
             try:
@@ -82,8 +83,8 @@ class BlockedTimeCreateView(CreateView):
         return reverse_lazy("lessons:week") + f"?year={year}&month={month}&day={day}"
 
     def form_valid(self, form):
-        from django.utils.translation import gettext_lazy as _
         from apps.lessons.services import recalculate_conflicts_for_blocked_time
+        from django.utils.translation import gettext_lazy as _
 
         blocked_time = form.save()
 
@@ -113,8 +114,8 @@ class BlockedTimeUpdateView(UpdateView):
         return reverse_lazy("lessons:week") + f"?year={year}&month={month}&day={day}"
 
     def form_valid(self, form):
-        from django.utils.translation import gettext_lazy as _
         from apps.lessons.services import recalculate_conflicts_for_blocked_time
+        from django.utils.translation import gettext_lazy as _
 
         blocked_time = form.save()
 
@@ -140,8 +141,8 @@ class BlockedTimeDeleteView(DeleteView):
         return reverse_lazy("lessons:week") + f"?year={year}&month={month}&day={day}"
 
     def delete(self, request, *args, **kwargs):
-        from django.utils.translation import gettext_lazy as _
         from apps.lessons.services import recalculate_conflicts_for_blocked_time
+        from django.utils.translation import gettext_lazy as _
 
         blocked_time = self.get_object()
 

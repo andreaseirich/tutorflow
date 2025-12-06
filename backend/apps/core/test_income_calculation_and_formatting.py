@@ -2,16 +2,16 @@
 Tests für Einnahmenberechnung und Formatierung.
 """
 
-from django.test import TestCase
 from datetime import date, time
 from decimal import Decimal
-from apps.students.models import Student
-from apps.contracts.models import Contract
-from apps.lessons.models import Lesson
-from apps.billing.models import Invoice, InvoiceItem
+
 from apps.billing.services import InvoiceService
+from apps.contracts.models import Contract
 from apps.core.selectors import IncomeSelector
 from apps.core.templatetags.currency import euro
+from apps.lessons.models import Lesson
+from apps.students.models import Student
+from django.test import TestCase
 
 
 class IncomeCalculationTest(TestCase):
@@ -84,14 +84,14 @@ class IncomeCalculationTest(TestCase):
     def test_monthly_income_matches_invoice_total(self):
         """Test: Monatliche Einnahmen stimmen mit Rechnungssumme überein."""
         # Erstelle mehrere Lessons
-        lesson1 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 15),
             start_time=time(14, 0),
             duration_minutes=90,  # 2 Einheiten = 24€
             status="taught",
         )
-        lesson2 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 16),
             start_time=time(15, 0),
@@ -115,14 +115,14 @@ class IncomeCalculationTest(TestCase):
     def test_income_by_status_uses_correct_calculation(self):
         """Test: Einnahmen nach Status verwenden korrekte Berechnung."""
         # Erstelle Lessons mit verschiedenen Status
-        lesson1 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 15),
             start_time=time(14, 0),
             duration_minutes=90,  # 2 Einheiten = 24€
             status="taught",
         )
-        lesson2 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 16),
             start_time=time(15, 0),
@@ -140,7 +140,7 @@ class IncomeCalculationTest(TestCase):
     def test_billing_status_uses_invoice_item_amounts(self):
         """Test: Abrechnungsstatus verwendet Beträge aus InvoiceItems."""
         # Erstelle Lesson und Rechnung
-        lesson = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 8, 15),
             start_time=time(14, 0),

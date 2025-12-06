@@ -2,14 +2,15 @@
 Views für RecurringLesson-CRUD-Operationen.
 """
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from django.utils.translation import gettext as _, ngettext
-from apps.lessons.recurring_models import RecurringLesson
 from apps.lessons.recurring_forms import RecurringLessonForm
+from apps.lessons.recurring_models import RecurringLesson
 from apps.lessons.recurring_service import RecurringLessonService
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 
 class RecurringLessonListView(ListView):
@@ -156,8 +157,8 @@ def generate_lessons_from_recurring(request, pk):
 
     # Weiterleitung zum Kalender, falls Lessons erstellt wurden
     if result["created"] > 0:
-        from django.utils import timezone
         from django.urls import reverse
+        from django.utils import timezone
 
         today = timezone.localdate()
         calendar_url = (

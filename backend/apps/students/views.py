@@ -2,12 +2,11 @@
 Views für Student-CRUD-Operationen.
 """
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from apps.students.models import Student
 from apps.students.forms import StudentForm
+from apps.students.models import Student
+from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 
 class StudentListView(ListView):

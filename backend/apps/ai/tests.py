@@ -2,19 +2,20 @@
 Tests für AI-Funktionen (Premium-Gating, LessonPlan-Generierung).
 """
 
-from django.test import TestCase
-from django.contrib.auth.models import User
-from unittest.mock import Mock, patch
-from decimal import Decimal
 from datetime import date, time
-from apps.students.models import Student
+from decimal import Decimal
+from unittest.mock import Mock, patch
+
+from apps.ai.client import LLMClientError
+from apps.ai.prompts import build_lesson_plan_prompt, extract_subject_from_student
+from apps.ai.services import LessonPlanGenerationError, LessonPlanService
 from apps.contracts.models import Contract
-from apps.lessons.models import Lesson
 from apps.core.models import UserProfile
 from apps.core.utils import is_premium_user
-from apps.ai.services import LessonPlanService, LessonPlanGenerationError
-from apps.ai.client import LLMClient, LLMClientError
-from apps.ai.prompts import build_lesson_plan_prompt, extract_subject_from_student
+from apps.lessons.models import Lesson
+from apps.students.models import Student
+from django.contrib.auth.models import User
+from django.test import TestCase
 
 
 class PremiumGatingTest(TestCase):

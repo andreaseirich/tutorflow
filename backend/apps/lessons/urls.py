@@ -2,9 +2,8 @@
 URL-Konfiguration für Lesson-App.
 """
 
+from apps.lessons import recurring_views, views
 from django.urls import path
-from apps.lessons import views
-from apps.lessons import recurring_views
 
 app_name = "lessons"
 

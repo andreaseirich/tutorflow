@@ -3,10 +3,10 @@ Service für automatische Status-Setzung von Lessons basierend auf Datum/Zeit.
 """
 
 from datetime import datetime, timedelta
-from django.utils import timezone
-from django.db.models import Q, F
-from django.db import transaction
+
 from apps.lessons.models import Lesson
+from django.db import transaction
+from django.utils import timezone
 
 
 class LessonStatusUpdater:

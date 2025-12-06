@@ -2,12 +2,13 @@
 Tests für RecurringBlockedTime und RecurringBlockedTimeService.
 """
 
-from django.test import TestCase
-from datetime import date, time, datetime, timedelta
-from django.utils import timezone
+from datetime import date, datetime, time, timedelta
+
+from apps.blocked_times.models import BlockedTime
 from apps.blocked_times.recurring_models import RecurringBlockedTime
 from apps.blocked_times.recurring_service import RecurringBlockedTimeService
-from apps.blocked_times.models import BlockedTime
+from django.test import TestCase
+from django.utils import timezone
 
 
 class RecurringBlockedTimeModelTest(TestCase):
@@ -203,7 +204,6 @@ class BlockedTimeCalendarIntegrationTest(TestCase):
         self.assertEqual(blocked_time.end_datetime.date(), date(2025, 1, 17))
 
         # Prüfe, dass alle betroffenen Tage erfasst werden können
-        from datetime import timedelta
 
         current_date = blocked_time.start_datetime.date()
         end_date = blocked_time.end_datetime.date()

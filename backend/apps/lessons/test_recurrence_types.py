@@ -2,16 +2,16 @@
 Tests für verschiedene Wiederholungsmuster bei Recurring Lessons.
 """
 
-from django.test import TestCase
 from datetime import date, time, timedelta
 from decimal import Decimal
-from django.utils import timezone
-from apps.students.models import Student
+
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
 from apps.lessons.recurring_models import RecurringLesson
 from apps.lessons.recurring_service import RecurringLessonService
-from apps.lessons.status_service import LessonStatusService
+from apps.students.models import Student
+from django.test import TestCase
+from django.utils import timezone
 
 
 class WeeklyRecurrenceTest(TestCase):
@@ -200,7 +200,7 @@ class RecurrenceStatusAutomationTest(TestCase):
             monday=True,
         )
 
-        result = RecurringLessonService.generate_lessons(recurring, check_conflicts=False)
+        RecurringLessonService.generate_lessons(recurring, check_conflicts=False)
 
         # Prüfe Status der erzeugten Lessons
         lessons = Lesson.objects.filter(contract=self.contract)
@@ -224,7 +224,7 @@ class RecurrenceStatusAutomationTest(TestCase):
             monday=True,
         )
 
-        result = RecurringLessonService.generate_lessons(recurring, check_conflicts=False)
+        RecurringLessonService.generate_lessons(recurring, check_conflicts=False)
 
         # Prüfe Status der erzeugten Lessons
         lessons = Lesson.objects.filter(contract=self.contract)

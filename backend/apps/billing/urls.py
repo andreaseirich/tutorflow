@@ -2,8 +2,8 @@
 URL-Konfiguration für Billing-App.
 """
 
-from django.urls import path
 from apps.billing import views
+from django.urls import path
 
 app_name = "billing"
 

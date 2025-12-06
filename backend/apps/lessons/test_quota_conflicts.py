@@ -2,12 +2,13 @@
 Tests für Kontingent-Konflikte (ContractQuotaService).
 """
 
-from django.test import TestCase
 from datetime import date, time
+
+from apps.contracts.models import Contract, ContractMonthlyPlan
 from apps.lessons.models import Lesson
 from apps.lessons.quota_service import ContractQuotaService
-from apps.contracts.models import Contract, ContractMonthlyPlan
 from apps.students.models import Student
+from django.test import TestCase
 
 
 class ContractQuotaServiceTest(TestCase):

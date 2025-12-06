@@ -3,23 +3,23 @@ Comprehensive integration tests for TutorFlow workflows.
 Tests cover: Recurring Lesson generation, Conflict detection, Billing, Weekly Calendar.
 """
 
-from django.test import TestCase, Client
-from django.urls import reverse
-from django.contrib.auth.models import User
-from django.utils import timezone
-from datetime import date, time, timedelta
+from datetime import date, time
 from decimal import Decimal
 
-from apps.students.models import Student
+from apps.billing.models import Invoice
+from apps.billing.services import InvoiceService
+from apps.blocked_times.models import BlockedTime
 from apps.contracts.models import Contract, ContractMonthlyPlan
 from apps.lessons.models import Lesson
 from apps.lessons.recurring_models import RecurringLesson
 from apps.lessons.recurring_service import RecurringLessonService
 from apps.lessons.services import LessonConflictService
 from apps.lessons.week_service import WeekService
-from apps.blocked_times.models import BlockedTime
-from apps.billing.models import Invoice, InvoiceItem
-from apps.billing.services import InvoiceService
+from apps.students.models import Student
+from django.contrib.auth.models import User
+from django.test import Client, TestCase
+from django.urls import reverse
+from django.utils import timezone
 
 
 class RecurringLessonGenerationIntegrationTest(TestCase):
@@ -103,7 +103,7 @@ class RecurringLessonGenerationIntegrationTest(TestCase):
     def test_recurring_lesson_with_conflict_detection(self):
         """Test that recurring lesson generation respects conflict detection."""
         # Create a blocked time
-        blocked_time = BlockedTime.objects.create(
+        BlockedTime.objects.create(
             title="Holiday",
             start_datetime=timezone.make_aware(
                 timezone.datetime.combine(date(2023, 1, 9), time(14, 0))
@@ -184,7 +184,7 @@ class ConflictDetectionIntegrationTest(TestCase):
     def test_multiple_conflict_types(self):
         """Test that a lesson can have multiple conflict types."""
         # Create a lesson
-        lesson1 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2023, 1, 5),
             start_time=time(14, 0),
@@ -193,7 +193,7 @@ class ConflictDetectionIntegrationTest(TestCase):
         )
 
         # Create a blocked time
-        blocked_time = BlockedTime.objects.create(
+        BlockedTime.objects.create(
             title="Meeting",
             start_datetime=timezone.make_aware(
                 timezone.datetime.combine(date(2023, 1, 5), time(14, 30))
@@ -292,14 +292,14 @@ class BillingWorkflowIntegrationTest(TestCase):
     def test_invoice_creation_excludes_already_billed_lessons(self):
         """Test that lessons already in an invoice are not included in a new invoice."""
         # Create taught lessons
-        lesson1 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2023, 1, 5),
             start_time=time(14, 0),
             duration_minutes=60,
             status="taught",
         )
-        lesson2 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2023, 1, 12),
             start_time=time(14, 0),
@@ -344,7 +344,7 @@ class BillingWorkflowIntegrationTest(TestCase):
         invoice1 = InvoiceService.create_invoice_from_lessons(
             period_start=date(2023, 1, 1), period_end=date(2023, 1, 31), contract=self.contract
         )
-        invoice2 = InvoiceService.create_invoice_from_lessons(
+        InvoiceService.create_invoice_from_lessons(
             period_start=date(2023, 2, 1), period_end=date(2023, 2, 28), contract=self.contract
         )
 
@@ -384,14 +384,14 @@ class WeeklyCalendarIntegrationTest(TestCase):
     def test_week_view_loads_correct_data(self):
         """Test that week view loads with correct lessons and blocked times."""
         # Create lessons in different days of the week
-        lesson_monday = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2023, 1, 2),  # Monday
             start_time=time(14, 0),
             duration_minutes=60,
             status="planned",
         )
-        lesson_wednesday = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2023, 1, 4),  # Wednesday
             start_time=time(16, 0),
@@ -400,7 +400,7 @@ class WeeklyCalendarIntegrationTest(TestCase):
         )
 
         # Create blocked time
-        blocked_time = BlockedTime.objects.create(
+        BlockedTime.objects.create(
             title="Holiday",
             start_datetime=timezone.make_aware(
                 timezone.datetime.combine(date(2023, 1, 3), time(10, 0))
@@ -506,7 +506,7 @@ class WeeklyCalendarIntegrationTest(TestCase):
     def test_week_view_handles_week_boundaries_correctly(self):
         """Test that week view correctly handles weeks that span month boundaries."""
         # Create lesson at end of January (Jan 31, 2023 is a Tuesday)
-        lesson = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2023, 1, 31),
             start_time=time(14, 0),

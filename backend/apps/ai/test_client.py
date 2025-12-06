@@ -2,10 +2,11 @@
 Tests für LLM-Client (mit Mock-Requests).
 """
 
-from django.test import TestCase
-from unittest.mock import patch, Mock
-from django.conf import settings
+from unittest.mock import Mock, patch
+
 from apps.ai.client import LLMClient, LLMClientError
+from django.conf import settings
+from django.test import TestCase
 
 
 class LLMClientTest(TestCase):

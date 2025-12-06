@@ -2,14 +2,15 @@
 Tests für LessonStatusUpdater.
 """
 
-from django.test import TestCase
-from datetime import date, time, timedelta, datetime
+from datetime import date, datetime, time, timedelta
 from decimal import Decimal
-from django.utils import timezone
-from apps.students.models import Student
+
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
 from apps.lessons.status_service import LessonStatusUpdater
+from apps.students.models import Student
+from django.test import TestCase
+from django.utils import timezone
 
 
 class LessonStatusUpdaterTest(TestCase):

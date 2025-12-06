@@ -2,14 +2,12 @@
 Views for lesson plan management.
 """
 
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
-from django.views.generic import TemplateView
-from django.utils.translation import gettext_lazy as _
+from apps.core.utils import is_premium_user
+from apps.lesson_plans.models import LessonPlan
 from apps.lessons.models import Lesson
 from apps.lessons.services import LessonConflictService
-from apps.lesson_plans.models import LessonPlan
-from apps.core.utils import is_premium_user
+from django.shortcuts import get_object_or_404
+from django.views.generic import TemplateView
 
 
 class LessonPlanView(TemplateView):

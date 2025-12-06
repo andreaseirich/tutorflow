@@ -9,8 +9,8 @@ if their end time is in the past. Lessons with status 'paid' or 'cancelled'
 are not modified.
 """
 
-from django.core.management.base import BaseCommand
 from apps.lessons.status_service import LessonStatusUpdater
+from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):

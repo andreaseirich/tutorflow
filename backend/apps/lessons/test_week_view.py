@@ -2,17 +2,16 @@
 Tests für WeekView und WeekService.
 """
 
-from django.test import TestCase
-from datetime import date, time, timedelta
+from datetime import date, time
 from decimal import Decimal
-from django.utils import timezone
-from apps.students.models import Student
+
+from apps.blocked_times.models import BlockedTime
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
-from apps.blocked_times.models import BlockedTime
 from apps.lessons.week_service import WeekService
-from apps.lessons.views import WeekView
-from django.test import Client
+from apps.students.models import Student
+from django.test import Client, TestCase
+from django.utils import timezone
 
 
 class WeekServiceTest(TestCase):

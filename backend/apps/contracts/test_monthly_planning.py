@@ -2,14 +2,15 @@
 Tests für ContractMonthlyPlan und monatliche Planung.
 """
 
-from django.test import TestCase
 from datetime import date
 from decimal import Decimal
-from apps.students.models import Student
-from apps.contracts.models import Contract, ContractMonthlyPlan
+
 from apps.contracts.formsets import generate_monthly_plans_for_contract, iter_contract_months
+from apps.contracts.models import Contract, ContractMonthlyPlan
 from apps.core.selectors import IncomeSelector
 from apps.lessons.models import Lesson
+from apps.students.models import Student
+from django.test import TestCase
 
 
 class ContractMonthlyPlanTest(TestCase):
@@ -108,7 +109,7 @@ class GenerateMonthlyPlansTest(TestCase):
         )
 
         # Generiere Pläne erneut
-        plans = generate_monthly_plans_for_contract(contract)
+        generate_monthly_plans_for_contract(contract)
 
         # Existierender Plan sollte erhalten bleiben
         existing_plan.refresh_from_db()

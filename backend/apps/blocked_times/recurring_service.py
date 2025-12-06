@@ -3,11 +3,12 @@ Service für wiederholende Blockzeiten (Recurring Blocked Times).
 """
 
 from datetime import date, datetime, timedelta
-from typing import List, Optional
-from django.utils import timezone
-from django.utils.translation import gettext as _
+from typing import List
+
 from apps.blocked_times.models import BlockedTime
 from apps.blocked_times.recurring_models import RecurringBlockedTime
+from django.utils import timezone
+from django.utils.translation import gettext as _
 
 
 class RecurringBlockedTimeService:
@@ -281,8 +282,8 @@ class RecurringBlockedTimeService:
 
             # Prüfe Konflikte mit Lessons (falls gewünscht)
             if check_conflicts:
-                from apps.lessons.services import LessonConflictService
                 from apps.lessons.models import Lesson
+                from apps.lessons.services import LessonConflictService
 
                 # Finde alle Lessons, die mit dieser Blockzeit kollidieren
                 conflicting_lessons = Lesson.objects.filter(date=blocked_date).select_related(

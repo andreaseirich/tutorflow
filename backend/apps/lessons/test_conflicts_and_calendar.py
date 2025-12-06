@@ -2,16 +2,16 @@
 Tests für Konflikt-Details und Kalender mit vergangenen Lessons.
 """
 
-from django.test import TestCase
 from datetime import date, time, timedelta
 from decimal import Decimal
-from django.utils import timezone
-from apps.students.models import Student
+
 from apps.contracts.models import Contract
-from apps.lessons.models import Lesson
-from apps.lessons.views import LessonDetailView, ConflictDetailView, CalendarView
 from apps.lessons.calendar_service import CalendarService
-from django.test import RequestFactory
+from apps.lessons.models import Lesson
+from apps.lessons.views import CalendarView
+from apps.students.models import Student
+from django.test import RequestFactory, TestCase
+from django.utils import timezone
 
 
 class ConflictDetailTest(TestCase):
@@ -117,10 +117,10 @@ class CalendarPastLessonsTest(TestCase):
         future_date = today + timedelta(days=10)
 
         # Erstelle vergangene und zukünftige Lessons
-        past_lesson = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract, date=past_date, start_time=time(14, 0), duration_minutes=60
         )
-        future_lesson = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract, date=future_date, start_time=time(15, 0), duration_minutes=60
         )
 

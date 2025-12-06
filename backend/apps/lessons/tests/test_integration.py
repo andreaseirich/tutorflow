@@ -2,22 +2,22 @@
 Integration tests for lesson scheduling, conflicts, and billing workflows.
 """
 
-from django.test import TestCase, Client
-from django.urls import reverse
-from django.contrib.auth.models import User
-from django.utils import timezone
-from datetime import date, time, timedelta
+from datetime import date, time
 from decimal import Decimal
 
-from apps.students.models import Student
-from apps.contracts.models import Contract, ContractMonthlyPlan
+from apps.billing.models import Invoice
+from apps.billing.services import InvoiceService
+from apps.blocked_times.models import BlockedTime
+from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
 from apps.lessons.recurring_models import RecurringLesson
 from apps.lessons.recurring_service import RecurringLessonService
 from apps.lessons.services import LessonConflictService
-from apps.blocked_times.models import BlockedTime
-from apps.billing.models import Invoice, InvoiceItem
-from apps.billing.services import InvoiceService
+from apps.students.models import Student
+from django.contrib.auth.models import User
+from django.test import Client, TestCase
+from django.urls import reverse
+from django.utils import timezone
 
 
 class RecurringLessonIntegrationTest(TestCase):
@@ -278,7 +278,7 @@ class WeeklyCalendarIntegrationTest(TestCase):
     def test_week_view_loads_correctly(self):
         """Test that week view loads with correct data."""
         # Create a lesson in a specific week
-        lesson = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2023, 1, 4),  # Wednesday
             start_time=time(14, 0),

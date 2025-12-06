@@ -2,14 +2,15 @@
 Tests for week view click behavior (lesson plan vs edit).
 """
 
-from django.test import TestCase, Client
-from django.contrib.auth.models import User
-from django.urls import reverse
 from datetime import date, time
 from decimal import Decimal
-from apps.students.models import Student
+
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
+from apps.students.models import Student
+from django.contrib.auth.models import User
+from django.test import Client, TestCase
+from django.urls import reverse
 
 
 class WeekViewClickBehaviorTest(TestCase):
@@ -37,7 +38,7 @@ class WeekViewClickBehaviorTest(TestCase):
 
     def test_week_view_contains_lesson_plan_link(self):
         """Test: Week view contains link to lesson plan view for lessons."""
-        response = self.client.get(reverse("lessons:week") + f"?year=2023&month=1&day=15")
+        response = self.client.get(reverse("lessons:week") + "?year=2023&month=1&day=15")
 
         self.assertEqual(response.status_code, 200)
         # Check that lesson plan URL is present
@@ -46,7 +47,7 @@ class WeekViewClickBehaviorTest(TestCase):
 
     def test_week_view_contains_edit_icon_for_lesson(self):
         """Test: Week view contains edit icon/link for lessons."""
-        response = self.client.get(reverse("lessons:week") + f"?year=2023&month=1&day=15")
+        response = self.client.get(reverse("lessons:week") + "?year=2023&month=1&day=15")
 
         self.assertEqual(response.status_code, 200)
         # Check that edit URL is present (should be in the edit icon)

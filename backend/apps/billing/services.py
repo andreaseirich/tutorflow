@@ -2,12 +2,11 @@
 Services für Billing-Funktionalität.
 """
 
-from datetime import datetime
 from decimal import Decimal
-from django.utils import timezone
-from django.utils.translation import gettext as _
+
 from apps.billing.models import Invoice, InvoiceItem
 from apps.lessons.models import Lesson
+from django.utils.translation import gettext as _
 
 
 class InvoiceService:

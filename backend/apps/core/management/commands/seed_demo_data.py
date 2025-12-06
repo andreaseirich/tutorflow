@@ -13,21 +13,22 @@ Erstellt:
     - Non-Premium-User zum Vergleich
 """
 
-from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
-from django.utils import timezone
-from decimal import Decimal
 from datetime import date, time, timedelta
-from apps.students.models import Student
+from decimal import Decimal
+
+from apps.billing.models import Invoice
+from apps.billing.services import InvoiceService
+from apps.blocked_times.models import BlockedTime
 from apps.contracts.models import Contract, ContractMonthlyPlan
+from apps.core.models import UserProfile
+from apps.lesson_plans.models import LessonPlan
 from apps.lessons.models import Lesson
 from apps.lessons.recurring_models import RecurringLesson
 from apps.lessons.recurring_service import RecurringLessonService
-from apps.blocked_times.models import BlockedTime
-from apps.core.models import UserProfile
-from apps.lesson_plans.models import LessonPlan
-from apps.billing.models import Invoice, InvoiceItem
-from apps.billing.services import InvoiceService
+from apps.students.models import Student
+from django.contrib.auth.models import User
+from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 
 class Command(BaseCommand):
@@ -158,7 +159,7 @@ class Command(BaseCommand):
         )
 
         # Konflikt: Überschneidung mit lesson1
-        lesson2 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=contract2,
             date=today + timedelta(days=1),
             start_time=time(14, 30),  # Überschneidung!
@@ -168,7 +169,7 @@ class Command(BaseCommand):
             notes="Deutsch: Textanalyse",
         )
 
-        lesson3 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=contract1,
             date=today + timedelta(days=3),
             start_time=time(16, 0),
@@ -189,7 +190,7 @@ class Command(BaseCommand):
 
         # Quota-Konflikt: Versuche mehr Lessons zu erstellen als geplant
         # November: 3 geplant, aber 4 Lessons erstellen (4. sollte Konflikt haben)
-        lesson5 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=contract1,
             date=date(2025, 11, 5),
             start_time=time(10, 0),
@@ -197,7 +198,7 @@ class Command(BaseCommand):
             status="planned",
             notes="Mathe: Algebra - 1. Lesson im November",
         )
-        lesson6 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=contract1,
             date=date(2025, 11, 12),
             start_time=time(10, 0),
@@ -205,7 +206,7 @@ class Command(BaseCommand):
             status="planned",
             notes="Mathe: Algebra - 2. Lesson im November",
         )
-        lesson7 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=contract1,
             date=date(2025, 11, 19),
             start_time=time(10, 0),
@@ -214,7 +215,7 @@ class Command(BaseCommand):
             notes="Mathe: Algebra - 3. Lesson im November",
         )
         # Diese Lesson sollte einen Quota-Konflikt haben (4. Lesson, aber nur 3 geplant)
-        lesson8 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=contract1,
             date=date(2025, 11, 26),
             start_time=time(10, 0),
@@ -282,7 +283,7 @@ class Command(BaseCommand):
 
         # Blockzeiten
         # Blockzeit 1: Uni-Vorlesung (einmalig)
-        blocked_time1 = BlockedTime.objects.create(
+        BlockedTime.objects.create(
             title="Uni-Vorlesung",
             description="Mathematik-Vorlesung",
             start_datetime=timezone.make_aware(
@@ -296,7 +297,7 @@ class Command(BaseCommand):
 
         # Blockzeit 2: Mehrtägiger Urlaub (3 Tage)
         vacation_start = today + timedelta(days=10)
-        blocked_time2 = BlockedTime.objects.create(
+        BlockedTime.objects.create(
             title="Urlaub",
             description="Mehrtägiger Urlaub",
             start_datetime=timezone.make_aware(
@@ -310,7 +311,7 @@ class Command(BaseCommand):
 
         # Blockzeit 3: Konflikt mit einer Lesson (bewusst)
         conflict_date = today + timedelta(days=5)
-        blocked_time3 = BlockedTime.objects.create(
+        BlockedTime.objects.create(
             title="Andere Tätigkeit",
             description="Bewusst konflikt mit einer Lesson",
             start_datetime=timezone.make_aware(
@@ -323,7 +324,7 @@ class Command(BaseCommand):
         )
 
         # Erstelle eine Lesson, die mit blocked_time3 kollidiert
-        lesson_conflict = Lesson.objects.create(
+        Lesson.objects.create(
             contract=contract3,
             date=conflict_date,
             start_time=time(14, 30),  # Überschneidung mit blocked_time3
@@ -386,7 +387,7 @@ class Command(BaseCommand):
         non_premium_profile.save()
 
         # Demo LessonPlan 1 (für lesson1 - bereits existierend)
-        lesson_plan1 = LessonPlan.objects.create(
+        LessonPlan.objects.create(
             student=student1,
             lesson=lesson1,
             topic="Lineare Gleichungen",
@@ -417,7 +418,7 @@ class Command(BaseCommand):
         recurring_lessons = Lesson.objects.filter(contract=contract4).order_by("date")
         if recurring_lessons.exists():
             first_recurring_lesson = recurring_lessons.first()
-            lesson_plan3 = LessonPlan.objects.create(
+            LessonPlan.objects.create(
                 student=student4,
                 lesson=first_recurring_lesson,
                 topic="Deutsche Grammatik: Satzglieder",
@@ -458,7 +459,7 @@ class Command(BaseCommand):
 
             # lesson4 sollte jetzt automatisch auf "paid" gesetzt worden sein
 
-        self.stdout.write(self.style.SUCCESS(f"\n✅ Demo-Daten erfolgreich erstellt:"))
+        self.stdout.write(self.style.SUCCESS("\n✅ Demo-Daten erfolgreich erstellt:"))
         self.stdout.write(f"  - {Student.objects.count()} Schüler")
         self.stdout.write(f"  - {Contract.objects.count()} Verträge")
         self.stdout.write(f"  - {ContractMonthlyPlan.objects.count()} Monatspläne")
@@ -471,18 +472,18 @@ class Command(BaseCommand):
         )
         self.stdout.write(f"  - {LessonPlan.objects.count()} Unterrichtspläne")
         self.stdout.write(f"  - {Invoice.objects.count()} Rechnungen")
-        self.stdout.write(self.style.SUCCESS(f"\n📝 Demo-Logins:"))
-        self.stdout.write(f"  Premium User:")
-        self.stdout.write(f"    Username: demo_premium")
-        self.stdout.write(f"    Password: demo123")
-        self.stdout.write(f"  Standard User:")
-        self.stdout.write(f"    Username: demo_standard")
-        self.stdout.write(f"    Password: demo123")
-        self.stdout.write(self.style.WARNING(f"\n⚠️  Hinweise:"))
-        self.stdout.write(f"  - Lesson1 und Lesson2 haben einen Zeit-Konflikt!")
-        self.stdout.write(f"  - Lesson8 hat einen Quota-Konflikt (4. Lesson, aber nur 3 geplant)!")
-        self.stdout.write(f"  - lesson_conflict hat einen Konflikt mit blocked_time3!")
+        self.stdout.write(self.style.SUCCESS("\n📝 Demo-Logins:"))
+        self.stdout.write("  Premium User:")
+        self.stdout.write("    Username: demo_premium")
+        self.stdout.write("    Password: demo123")
+        self.stdout.write("  Standard User:")
+        self.stdout.write("    Username: demo_standard")
+        self.stdout.write("    Password: demo123")
+        self.stdout.write(self.style.WARNING("\n⚠️  Hinweise:"))
+        self.stdout.write("  - Lesson1 und Lesson2 haben einen Zeit-Konflikt!")
+        self.stdout.write("  - Lesson8 hat einen Quota-Konflikt (4. Lesson, aber nur 3 geplant)!")
+        self.stdout.write("  - lesson_conflict hat einen Konflikt mit blocked_time3!")
         self.stdout.write(
-            f"  - Recurring Lessons wurden generiert (Mo+Mi für student4, Di+Do für student2)!"
+            "  - Recurring Lessons wurden generiert (Mo+Mi für student4, Di+Do für student2)!"
         )
-        self.stdout.write(f"  - lesson3 hat noch keinen LessonPlan (kann mit AI generiert werden)!")
+        self.stdout.write("  - lesson3 hat noch keinen LessonPlan (kann mit AI generiert werden)!")

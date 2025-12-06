@@ -2,17 +2,16 @@
 Tests for conflict visibility in views.
 """
 
-from django.test import TestCase, Client
-from django.contrib.auth.models import User
-from django.urls import reverse
 from datetime import date, time, timedelta
 from decimal import Decimal
-from django.utils import timezone
-from apps.students.models import Student
+
 from apps.contracts.models import Contract, ContractMonthlyPlan
 from apps.lessons.models import Lesson
-from apps.blocked_times.models import BlockedTime
 from apps.lessons.services import LessonConflictService
+from apps.students.models import Student
+from django.contrib.auth.models import User
+from django.test import Client, TestCase
+from django.urls import reverse
 
 
 class ConflictVisibilityTest(TestCase):
@@ -40,21 +39,21 @@ class ConflictVisibilityTest(TestCase):
         """Test: Conflict detail view shows quota conflicts."""
         # Create 4 lessons in January (but only 3 planned)
         today = date(2023, 1, 15)
-        lesson1 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=today,
             start_time=time(10, 0),
             duration_minutes=60,
             status="planned",
         )
-        lesson2 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=today + timedelta(days=1),
             start_time=time(10, 0),
             duration_minutes=60,
             status="planned",
         )
-        lesson3 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=today + timedelta(days=2),
             start_time=time(10, 0),

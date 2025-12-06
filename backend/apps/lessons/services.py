@@ -2,13 +2,14 @@
 Service-Layer für Lesson-Planungslogik und Konfliktprüfung.
 """
 
-from datetime import datetime, date, time, timedelta
+from datetime import date, datetime, timedelta
+
+from apps.blocked_times.models import BlockedTime
+from apps.lessons.models import Lesson
+from apps.lessons.quota_service import ContractQuotaService
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.db.models import Q
-from apps.lessons.models import Lesson
-from apps.blocked_times.models import BlockedTime
-from apps.lessons.quota_service import ContractQuotaService
 
 
 def recalculate_conflicts_for_affected_lessons(lesson: Lesson):
@@ -48,7 +49,6 @@ def recalculate_conflicts_for_blocked_time(blocked_time: BlockedTime):
     """
     # Find all lessons that might overlap with this blocked time
     start_datetime = blocked_time.start_datetime
-    end_datetime = blocked_time.end_datetime
 
     # Find lessons on the same date
     affected_lessons = Lesson.objects.filter(date=start_datetime.date())
@@ -153,7 +153,6 @@ class LessonConflictService:
         # Prüfe Konflikte mit Blockzeiten
         # Verwende eine breitere Query, aber prüfe dann explizit auf Overlap
         # Filter nach Datum, um Performance zu verbessern (für mehrtägige Blockzeiten)
-        lesson_date = lesson.date
         # Find blocked times that could overlap: start before lesson ends, end after lesson starts
         blocked_times = BlockedTime.objects.filter(
             start_datetime__lt=end_datetime, end_datetime__gt=start_datetime

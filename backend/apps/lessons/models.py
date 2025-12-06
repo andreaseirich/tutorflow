@@ -1,10 +1,9 @@
-from django.db import models
-from django.core.validators import MinValueValidator
-from django.utils.translation import gettext_lazy as _
 from apps.contracts.models import Contract
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 # Import RecurringLesson für Django-Erkennung
-from .recurring_models import RecurringLesson
 
 
 class Lesson(models.Model):

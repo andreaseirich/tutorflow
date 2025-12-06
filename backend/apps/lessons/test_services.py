@@ -2,15 +2,16 @@
 Tests für Lesson-Services (Konfliktprüfung, Abfragen).
 """
 
-from django.test import TestCase
+from datetime import date, datetime, time
 from decimal import Decimal
-from datetime import date, time, datetime, timedelta
-from django.utils import timezone
-from apps.students.models import Student
+
+from apps.blocked_times.models import BlockedTime
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
 from apps.lessons.services import LessonConflictService, LessonQueryService
-from apps.blocked_times.models import BlockedTime
+from apps.students.models import Student
+from django.test import TestCase
+from django.utils import timezone
 
 
 class LessonConflictServiceTest(TestCase):
@@ -53,7 +54,7 @@ class LessonConflictServiceTest(TestCase):
         lesson1 = Lesson.objects.create(
             contract=self.contract1, date=date.today(), start_time=time(14, 0), duration_minutes=60
         )
-        lesson2 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract2,
             date=date.today(),
             start_time=time(16, 0),  # 2 Stunden später, keine Überschneidung
@@ -68,7 +69,7 @@ class LessonConflictServiceTest(TestCase):
         lesson1 = Lesson.objects.create(
             contract=self.contract1, date=date.today(), start_time=time(14, 0), duration_minutes=60
         )
-        lesson2 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract2,
             date=date.today(),
             start_time=time(14, 30),  # Überschneidung!
@@ -86,7 +87,7 @@ class LessonConflictServiceTest(TestCase):
         )
 
         # Blockzeit, die mit Lesson überlappt
-        blocked_time = BlockedTime.objects.create(
+        BlockedTime.objects.create(
             title="Uni-Vorlesung",
             start_datetime=timezone.make_aware(datetime.combine(date.today(), time(14, 30))),
             end_datetime=timezone.make_aware(datetime.combine(date.today(), time(16, 0))),
@@ -105,7 +106,7 @@ class LessonConflictServiceTest(TestCase):
             duration_minutes=60,
             travel_time_after_minutes=30,  # Endet um 15:30
         )
-        lesson2 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract2,
             date=date.today(),
             start_time=time(15, 0),  # Startet um 15:00, Überschneidung!
@@ -136,7 +137,7 @@ class LessonQueryServiceTest(TestCase):
             duration_minutes=60,
         )
         # Lesson im November 2025 (sollte nicht erscheinen)
-        lesson2 = Lesson.objects.create(
+        Lesson.objects.create(
             contract=self.contract,
             date=date(2025, 11, 30),
             start_time=time(14, 0),

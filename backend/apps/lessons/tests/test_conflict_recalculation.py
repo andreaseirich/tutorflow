@@ -2,17 +2,18 @@
 Tests for conflict recalculation after lesson/blocked time changes.
 """
 
-from django.test import TestCase, Client
-from django.contrib.auth.models import User
-from django.urls import reverse
-from datetime import date, time, datetime
+from datetime import date, datetime, time
 from decimal import Decimal
-from django.utils import timezone
-from apps.students.models import Student
+
+from apps.blocked_times.models import BlockedTime
 from apps.contracts.models import Contract
 from apps.lessons.models import Lesson
-from apps.blocked_times.models import BlockedTime
 from apps.lessons.services import LessonConflictService
+from apps.students.models import Student
+from django.contrib.auth.models import User
+from django.test import Client, TestCase
+from django.urls import reverse
+from django.utils import timezone
 
 
 class ConflictRecalculationTest(TestCase):
@@ -93,7 +94,6 @@ class ConflictRecalculationTest(TestCase):
 
     def test_conflict_disappears_after_blocked_time_deletion(self):
         """Test: Conflict disappears when blocking blocked time is deleted via delete view."""
-        from apps.blocked_times.models import BlockedTime
 
         # Create a lesson
         lesson = Lesson.objects.create(

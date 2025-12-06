@@ -2,10 +2,10 @@
 Template-Filter für Währungsformatierung mit Lokalisierung.
 """
 
-from django import template
-from django.utils import numberformat
-from django.utils.translation import get_language
 from decimal import Decimal
+
+from django import template
+from django.utils.translation import get_language
 
 register = template.Library()
 

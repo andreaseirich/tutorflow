@@ -2,7 +2,8 @@
 Prompt-Bau für LessonPlan-Generierung.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 from apps.lessons.models import Lesson
 
 
@@ -18,7 +19,6 @@ def build_lesson_plan_prompt(lesson: Lesson, context: Dict[str, Any]) -> tuple[s
         Tuple (system_prompt, user_prompt)
     """
     student = lesson.contract.student
-    contract = lesson.contract
 
     # System-Prompt: Rolle und Aufgabe
     system_prompt = """Du bist ein erfahrener Nachhilfelehrer, der strukturierte Unterrichtspläne erstellt.
@@ -31,9 +31,9 @@ Der Plan soll:
 
     # User-Prompt: Kontext und Details
     user_prompt_parts = [
-        f"Erstelle einen Unterrichtsplan für eine Nachhilfestunde:",
-        f"",
-        f"**Schüler:**",
+        "Erstelle einen Unterrichtsplan für eine Nachhilfestunde:",
+        "",
+        "**Schüler:**",
         f"- Name: {student.first_name} {student.last_name}",
     ]
 
@@ -48,8 +48,8 @@ Der Plan soll:
 
     user_prompt_parts.extend(
         [
-            f"",
-            f"**Unterrichtsstunde:**",
+            "",
+            "**Unterrichtsstunde:**",
             f"- Datum: {lesson.date}",
             f"- Dauer: {lesson.duration_minutes} Minuten",
             f"- Status: {lesson.get_status_display()}",
@@ -67,8 +67,8 @@ Der Plan soll:
     if context.get("previous_lessons"):
         user_prompt_parts.extend(
             [
-                f"",
-                f"**Vorherige Stunden:**",
+                "",
+                "**Vorherige Stunden:**",
             ]
         )
         for prev_lesson in context["previous_lessons"][:3]:  # Max 3 vorherige
@@ -79,15 +79,15 @@ Der Plan soll:
     if student.notes:
         user_prompt_parts.extend(
             [
-                f"",
+                "",
                 f"**Schüler-Notizen:** {student.notes}",
             ]
         )
 
     user_prompt_parts.extend(
         [
-            f"",
-            f"Erstelle einen strukturierten Unterrichtsplan für diese Stunde.",
+            "",
+            "Erstelle einen strukturierten Unterrichtsplan für diese Stunde.",
         ]
     )
 

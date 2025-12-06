@@ -2,14 +2,11 @@
 Views für Dashboard und Einnahmenübersicht.
 """
 
-from django.shortcuts import render
-from django.views.generic import TemplateView
-from django.utils import timezone
-from datetime import date
-from apps.lessons.services import LessonQueryService
-from apps.lessons.services import LessonConflictService
-from apps.lessons.status_service import LessonStatusUpdater
 from apps.core.selectors import IncomeSelector
+from apps.lessons.services import LessonConflictService, LessonQueryService
+from apps.lessons.status_service import LessonStatusUpdater
+from django.utils import timezone
+from django.views.generic import TemplateView
 
 
 class DashboardView(TemplateView):
