@@ -550,6 +550,10 @@ The app structure (`apps.core`, `apps.students`, `apps.contracts`, `apps.lessons
 **Scheduling Flow:**
 - **Views**: `apps.lessons.views` (WeekView, CalendarView, LessonCreateView)
 - **Services**: `apps.lessons.services` (LessonConflictService, LessonQueryService)
+  - **LessonQueryService**: Query service for lessons with methods:
+    - `get_today_lessons()`: Returns all lessons for today (date == today)
+    - `get_upcoming_lessons(days=7)`: Returns lessons from tomorrow up to 7 days in the future (date > today, date <= today + days)
+    - **Important**: `get_upcoming_lessons` excludes today's lessons to avoid duplication with the "Today" section in the dashboard
 - **Templates**: `apps.lessons.templates.lessons` (week.html, calendar.html, lesson_form.html)
 - **Models**: `apps.lessons.models` (Lesson, RecurringLesson)
 

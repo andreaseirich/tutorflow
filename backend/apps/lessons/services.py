@@ -248,19 +248,23 @@ class LessonQueryService:
     @staticmethod
     def get_upcoming_lessons(days: int = 7) -> list[Lesson]:
         """
-        Gibt die nächsten Lessons zurück.
+        Gibt die nächsten Lessons zurück (ohne heutige Lessons).
+        
+        Heutige Lessons werden ausgeschlossen, da sie bereits im
+        separaten "Today"-Bereich angezeigt werden.
         
         Args:
-            days: Anzahl der Tage in die Zukunft
+            days: Anzahl der Tage in die Zukunft (ab morgen)
         
         Returns:
-            Liste von Lesson-Objekten
+            Liste von Lesson-Objekten (ab morgen bis heute + days)
         """
         today = timezone.now().date()
         end_date = today + timedelta(days=days)
         
+        # Nur Lessons ab morgen (date > today), nicht heute
         return Lesson.objects.filter(
-            date__gte=today,
+            date__gt=today,
             date__lte=end_date
         ).select_related('contract', 'contract__student').order_by('date', 'start_time')[:10]
 

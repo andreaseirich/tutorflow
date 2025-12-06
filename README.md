@@ -182,6 +182,9 @@ TutorFlow provides a complete solution for managing tutoring activities:
   - **Automatic Recalculation**: Conflicts are automatically recalculated after any lesson or blocked time change
 - **Income Overview**: Monthly and yearly evaluations by status (planned, taught, paid)
 - **Dashboard**: Overview of today's/upcoming lessons, conflicts, income
+  - **Today section**: Shows all lessons for today (date == today)
+  - **Next lessons (7 days)**: Shows lessons from tomorrow up to 7 days in the future (date > today, date <= today + 7)
+  - **Separation**: Today's lessons are excluded from "Next lessons" to avoid duplication
 
 ### Premium Features
 - **AI-powered Lesson Plans**: Automatic generation of detailed lesson plans via LLM API
