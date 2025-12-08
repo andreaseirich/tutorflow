@@ -70,7 +70,6 @@ class PromptBuildingTest(TestCase):
 
     def test_build_lesson_plan_prompt(self):
         """Test: Prompt wird korrekt gebaut."""
-        context = {"previous_lessons": []}
         safe_context = sanitize_context(
             {
                 "student": {
