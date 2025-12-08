@@ -6,6 +6,7 @@ from typing import Any, Dict, Optional
 
 from apps.ai.client import LLMClient, LLMClientError
 from apps.ai.prompts import build_lesson_plan_prompt, extract_subject_from_student
+from apps.ai.utils_safety import sanitize_context
 from apps.lesson_plans.models import LessonPlan
 from apps.lessons.models import Lesson
 from django.conf import settings
@@ -47,10 +48,36 @@ class LessonPlanService:
             contract__student=student, date__lt=lesson.date
         ).order_by("-date")[:5]
 
+        previous_lessons_data = [
+            {
+                "date": prev_lesson.date.isoformat(),
+                "notes": prev_lesson.notes or "",
+                "status": prev_lesson.get_status_display(),
+            }
+            for prev_lesson in previous_lessons
+        ]
+
         return {
-            "previous_lessons": list(previous_lessons),
-            "student_notes": student.notes,
-            "contract_duration": lesson.contract.unit_duration_minutes,
+            "student": {
+                "full_name": f"{student.first_name} {student.last_name}".strip(),
+                "email": student.email or "",
+                "phone": student.phone or "",
+                "address": student.school or "",
+                "tax_id": "",
+                "dob": "",
+                "medical_info": "",
+                "grade": student.grade or "",
+                "subjects": student.subjects or "",
+                "notes": student.notes or "",
+            },
+            "lesson": {
+                "date": lesson.date.isoformat(),
+                "duration_minutes": lesson.duration_minutes,
+                "status": lesson.get_status_display(),
+                "notes": lesson.notes or "",
+            },
+            "contract": {"unit_duration_minutes": lesson.contract.unit_duration_minutes},
+            "previous_lessons": previous_lessons_data,
         }
 
     def generate_lesson_plan(self, lesson: Lesson) -> LessonPlan:
@@ -66,11 +93,12 @@ class LessonPlanService:
         Raises:
             LessonPlanGenerationError: Bei Fehlern bei der Generierung
         """
-        # Sammle Kontext
-        context = self.gather_context(lesson)
+        # Sammle Kontext und wende PII-Schutz an
+        raw_context = self.gather_context(lesson)
+        safe_context = sanitize_context(raw_context)
 
         # Baue Prompt
-        system_prompt, user_prompt = build_lesson_plan_prompt(lesson, context)
+        system_prompt, user_prompt = build_lesson_plan_prompt(lesson, safe_context)
 
         # Rufe LLM auf
         try:

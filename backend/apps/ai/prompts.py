@@ -18,7 +18,14 @@ def build_lesson_plan_prompt(lesson: Lesson, context: Dict[str, Any]) -> tuple[s
     Returns:
         Tuple (system_prompt, user_prompt)
     """
-    student = lesson.contract.student
+    student_ctx = context.get("student", {})
+    lesson_ctx = context.get("lesson", {})
+    previous_lessons = context.get("previous_lessons", [])
+
+    student_name = student_ctx.get("full_name") or "[REDACTED]"
+    student_grade = student_ctx.get("grade")
+    subjects = student_ctx.get("subjects")
+    lesson_notes = lesson_ctx.get("notes") or ""
 
     # System-Prompt: Rolle und Aufgabe
     system_prompt = """Du bist ein erfahrener Nachhilfelehrer, der strukturierte Unterrichtspläne erstellt.
@@ -34,53 +41,49 @@ Der Plan soll:
         "Erstelle einen Unterrichtsplan für eine Nachhilfestunde:",
         "",
         "**Schüler:**",
-        f"- Name: {student.first_name} {student.last_name}",
+        f"- Name: {student_name}",
     ]
 
-    if student.grade:
-        user_prompt_parts.append(f"- Klasse: {student.grade}")
+    if student_grade:
+        user_prompt_parts.append(f"- Klasse: {student_grade}")
 
-    if student.subjects:
-        # Versuche das Fach aus den Subjects zu extrahieren
-        subjects = student.subjects.split(",")
-        subject = subjects[0].strip() if subjects else "Allgemein"
+    if subjects:
+        subject_list = subjects.split(",")
+        subject = subject_list[0].strip() if subject_list else "Allgemein"
         user_prompt_parts.append(f"- Fach: {subject}")
 
     user_prompt_parts.extend(
         [
             "",
             "**Unterrichtsstunde:**",
-            f"- Datum: {lesson.date}",
-            f"- Dauer: {lesson.duration_minutes} Minuten",
-            f"- Status: {lesson.get_status_display()}",
+            f"- Datum: {lesson_ctx.get('date', lesson.date)}",
+            f"- Dauer: {lesson_ctx.get('duration_minutes', lesson.duration_minutes)} Minuten",
+            f"- Status: {lesson_ctx.get('status', lesson.get_status_display())}",
         ]
     )
 
-    if lesson.notes:
-        user_prompt_parts.extend(
-            [
-                f"- Notizen: {lesson.notes}",
-            ]
-        )
+    if lesson_notes:
+        user_prompt_parts.append(f"- Notizen: {lesson_notes}")
 
     # Kontext aus vorherigen Lessons
-    if context.get("previous_lessons"):
+    if previous_lessons:
         user_prompt_parts.extend(
             [
                 "",
                 "**Vorherige Stunden:**",
             ]
         )
-        for prev_lesson in context["previous_lessons"][:3]:  # Max 3 vorherige
+        for prev_lesson in previous_lessons[:3]:  # Max 3 vorherige
             user_prompt_parts.append(
-                f"- {prev_lesson.date}: {prev_lesson.notes or 'Keine Notizen'}"
+                f"- {prev_lesson.get('date')}: {prev_lesson.get('notes') or 'Keine Notizen'}"
             )
 
-    if student.notes:
+    student_notes = student_ctx.get("notes")
+    if student_notes:
         user_prompt_parts.extend(
             [
                 "",
-                f"**Schüler-Notizen:** {student.notes}",
+                f"**Schüler-Notizen:** {student_notes}",
             ]
         )
 
