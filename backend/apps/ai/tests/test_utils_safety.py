@@ -23,4 +23,3 @@ class SanitizeContextTest(SimpleTestCase):
         self.assertEqual(sanitized["student"]["email"], REDACTED)
         self.assertEqual(sanitized["student"]["subjects"], "Math")
         self.assertEqual(sanitized["list"][0]["phone"], REDACTED)
-

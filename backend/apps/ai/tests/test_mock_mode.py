@@ -44,4 +44,3 @@ class MockLLMModeTest(TestCase):
 
         self.assertEqual(result, "Real call")
         mock_post.assert_called_once()
-
