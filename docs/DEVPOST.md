@@ -26,11 +26,12 @@ TutorFlow is a Django-based tutoring operations app with conflict-aware scheduli
 - Lightweight health check and smoke scripts for fast verification.
 
 ## What I built during the hackathon
-- LLM mock mode with local `docs/llm_samples.json` and test coverage.
-- PII sanitizer for AI context; prompts rebuilt to use sanitized data.
-- Deterministic fixtures `backend/fixtures/demo_data.json` plus `scripts/run_demo.sh`.
-- Health endpoint `/health/` and CI with `MOCK_LLM=1`.
-- Documentation updates (README, SECURITY, ARCHITECTURE) for jury-readiness.
+- LLM mock mode with local `docs/llm_samples.json` and test coverage; no external calls in demo/CI.
+- PII sanitizer for AI context; prompts rebuilt to use sanitized data before any AI call.
+- Deterministic demo: `backend/fixtures/demo_data.json`, `.env.example`, `scripts/run_demo.sh` (one-command demo).
+- Calendar/conflict engine kept deterministic for judges; overlapping lessons included in fixtures.
+- Billing & income views stabilized; health endpoint `/health/` plus `scripts/smoke_demo.sh`.
+- Docs/CI refresh: README, SECURITY, ARCHITECTURE, DEVPOST, CodeQL + MOCK_LLM in CI.
 
 ## How to run the demo
 ```bash
