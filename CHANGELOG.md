@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.4] - 2025-12-08
+
+### Added
+- **LLM Mock Mode**: Mock responses from `docs/llm_samples.json` when `MOCK_LLM=1` or the API key is missing; tests cover env-driven behavior.
+- **PII Sanitizer**: Sanitizes AI context before prompt creation; prompts rebuilt to consume sanitized data.
+- **Deterministic Demo**: New fixture `backend/fixtures/demo_data.json`, `.env.example`, and executable `scripts/run_demo.sh` for one-command startup; `scripts/smoke_demo.sh` for health checks.
+- **Health Endpoint**: `/health/` JSON response with dedicated test; CI enforces `MOCK_LLM=1`.
+- **Docs**: Added `docs/VIDEO_SCRIPT.md` for the demo script.
+
+### Changed
+- **Documentation Refresh**: README, DEVPOST, SECURITY, and ARCHITECTURE updated to describe mock mode, privacy safeguards, demo flow, and deterministic data.
+
 ## [0.9.3] - 2025-12-04
 
 ### Security

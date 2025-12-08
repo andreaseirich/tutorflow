@@ -44,6 +44,14 @@ When reporting a vulnerability, please provide:
 
 All security-related information will be handled confidentially and will not be shared publicly until a fix is available.
 
+## LLM & Privacy Policy
+
+- **PII Sanitizer**: Prompts are sanitized before AI usage (full name, address, email, phone, tax_id, dob, medical_info → `[REDACTED]`).
+- **Mock Mode Default**: `MOCK_LLM=1` is enabled for demos and CI to avoid external LLM traffic unless explicitly disabled.
+- **No Prompt Logs in Demo Mode**: User prompts/responses are not persisted when running with mock mode.
+- **Sanitized Context Only**: Lesson plans are generated from sanitized context to reduce exposure of personal data.
+- **Opt-in for Production**: Live AI calls require setting `LLM_API_KEY` and disabling `MOCK_LLM` explicitly.
+
 ## Security Best Practices
 
 When using TutorFlow:

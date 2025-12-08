@@ -22,11 +22,20 @@ TutorFlow is a comprehensive web application designed for tutors to manage their
 
 ## Quick Start
 
-### Prerequisites
+### One-Command Demo (Mocked AI, deterministic data)
+```bash
+cp .env.example .env
+./scripts/run_demo.sh
+```
+- Starts with `MOCK_LLM=1` (no external calls) and loads `fixtures/demo_data.json`
+- Health check: `curl http://127.0.0.1:8000/health/` → `{"status": "ok"}`
+- Demo logins: `demo_premium` / `demo123`, `demo_user` / `demo123`
+
+### Prerequisites (manual setup)
 - Python 3.12 or higher
 - pip
 
-### Installation
+### Installation (manual)
 
 1. **Clone repository:**
 ```bash
@@ -54,7 +63,12 @@ python manage.py migrate
 python manage.py compilemessages  # For i18n support
 ```
 
-5. **Start development server:**
+5. **Load deterministic demo data (optional):**
+```bash
+python manage.py loaddata fixtures/demo_data.json
+```
+
+6. **Start development server:**
 ```bash
 python manage.py runserver
 ```
@@ -63,26 +77,25 @@ The application is available at `http://127.0.0.1:8000/`.
 
 ### Demo Login & Quick Tour
 
-**Load demo data:**
+**Fast path (recommended):**
+```bash
+cp .env.example .env
+./scripts/run_demo.sh
+```
+Starts the server, loads deterministic fixtures, and enables `MOCK_LLM=1` so no external calls are made.
+
+**Manual loading:**
 ```bash
 cd backend
-python manage.py seed_demo_data
-```
-
-Or clear existing data and create fresh demo data:
-
-```bash
-python manage.py seed_demo_data --clear
+python manage.py loaddata fixtures/demo_data.json
+python manage.py runserver
 ```
 
 **Demo Data Includes:**
-- 4 students with different profiles
-- Contracts with monthly plans (for quota conflict examples)
-- Multiple lessons (including time conflicts, quota conflicts, and recurring lessons)
-- Recurring lessons (weekly patterns with weekday selection: Mo+We for student4, Tu+Th for student2)
-- Blocked times (including multi-day vacation and conflict examples)
-- Premium user with generated lesson plans
-- Non-premium user for comparison
+- 3 students, 2 contracts with different quotas
+- 1 overlapping lesson conflict, 1 taught lesson, 1 planned lesson
+- Deterministic lesson plan entry generated via Mock LLM
+- Premium vs. standard user experience
 
 **Logins:**
 - **Premium User:**
@@ -91,14 +104,14 @@ python manage.py seed_demo_data --clear
   - Password: `demo123`
 - **Standard User:**
   - URL: `http://127.0.0.1:8000/admin/`
-  - Username: `demo_standard`
+  - Username: `demo_user`
   - Password: `demo123`
 
 **Demo Features to Explore:**
-- Recurring lessons: Check student4's lessons (Monday and Wednesday pattern)
-- Quota conflicts: Contract1 has 3 planned units in November, but 4 lessons created (lesson8 shows quota conflict)
-- Time conflicts: Lesson1 and Lesson2 overlap, lesson_conflict overlaps with blocked_time3
-- Lesson plans: lesson1 has a lesson plan (click on lesson in week view), lesson3 can be used to test AI generation
+- Lesson conflicts: Lessons 1 and 2 overlap (same day/time window)
+- Status variety: Lesson 3 is `taught`, Lesson 4 is `planned`
+- Lesson plan: Lesson 1 already contains a mock-generated plan
+- Health check: `GET /health/` returns `{"status": "ok"}`
 
 **See main features in 2 minutes:**
 1. **Dashboard** (`/`): Overview of today's lessons, upcoming appointments, and conflicts
@@ -274,47 +287,24 @@ The application is then available at `http://127.0.0.1:8000/`.
 
 ### Load Demo Data
 
-To test the application with demo data, you can run the seed command:
+Deterministic fixtures (used by `./scripts/run_demo.sh`):
 
 ```bash
 cd backend
-python manage.py seed_demo_data
+python manage.py loaddata fixtures/demo_data.json
 ```
 
-This creates:
+Creates:
 - 3 demo students with different profiles
-- Associated contracts
-- Several lessons (including a conflict for demonstration)
-- Blocked times
-- 1 premium user with generated lesson plan
+- 2 contracts, 1 overlapping lesson conflict, 1 taught lesson, 1 planned lesson
+- LessonPlan entry pre-filled from Mock LLM
+- Premium vs. standard user for comparison
 
-**Demo Logins:**
-- **Premium User:**
-  - Login URL: `http://127.0.0.1:8000/admin/`
-  - Username: `demo_premium`
-  - Password: `demo123`
-- **Standard User:**
-  - Login URL: `http://127.0.0.1:8000/admin/`
-  - Username: `demo_standard`
-  - Password: `demo123`
+**Demo Logins (via Admin):**
+- `demo_premium` / `demo123` (premium)
+- `demo_user` / `demo123` (standard)
 
-**Note:** Login is done via the Django Admin interface. After successful login, you can access the various areas of the application via the navigation.
-
-**Demo Scenario:**
-The demo data shows a realistic scenario with:
-- 4 students in different grade levels with different contract types
-- Recurring lessons: Monday+Wednesday pattern for student4, Tuesday+Thursday for student2
-- Contract monthly plans: Contract1 has 3 planned units in November (quota conflict example)
-- Multiple conflicts:
-  - Time conflicts: Lesson1 and Lesson2 overlap, lesson_conflict overlaps with blocked_time3
-  - Quota conflicts: Lesson8 exceeds planned quota (4th lesson but only 3 planned)
-- Blocked times: University lecture, multi-day vacation, conflict example
-- Lesson plans: lesson1 has a generated lesson plan, lesson3 can be used to test AI generation
-- Premium vs. non-premium user comparison
-- Different contracts (private and via institute)
-- A conflict situation between two lessons (to demonstrate conflict detection)
-- A blocked time (university lecture)
-- A premium user with AI-generated lesson plan
+**Note:** AI responses are mocked by default (`MOCK_LLM=1`) and PII is sanitized before prompting. Set `LLM_API_KEY` and disable `MOCK_LLM` to use a real LLM.
 
 ## Internationalization
 
@@ -418,6 +408,7 @@ For details on how to report vulnerabilities, see [SECURITY.md](SECURITY.md).
 - Security issues should be reported via **GitHub Security Advisories** (private advisory) or through the contact methods described in SECURITY.md
 - GitHub's security features (Security advisories, Code scanning, Dependabot) are configured and supported
 - **Dependabot** is configured to monitor dependencies for security updates (Python packages and GitHub Actions)
+- **LLM & Privacy**: Mock mode is enabled by default (`MOCK_LLM=1`), prompts are sanitized (PII redacted) before AI use, and no user prompt logs are persisted in demo mode
 
 ## Validation
 
