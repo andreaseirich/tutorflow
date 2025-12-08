@@ -81,6 +81,29 @@ This document logs the project's progress and important milestones.
 
 ---
 
+## Checkpoint 7: Mock-First Demo & Privacy
+
+**Date**: 2025-12-08
+
+**Phase**: Phase 5 – Polishing, Validation & Hackathon Refinement
+
+**Status**: ✅ Completed
+
+### Completed
+- ✅ One-command demo (`.env.example` + `scripts/run_demo.sh`) with deterministic fixtures
+- ✅ LLM mock mode default (`MOCK_LLM=1`) with `docs/llm_samples.json` and tests
+- ✅ PII sanitizer before prompt creation; prompts rebuilt to use sanitized context
+- ✅ Health endpoint `/health/` + smoke script; CI exports `MOCK_LLM=1`
+- ✅ Docs updated (README, DEVPOST, SECURITY, ARCHITECTURE) to reflect mock mode and privacy
+
+### Validation
+- [x] Demo runs offline with mocked AI responses
+- [x] Fixtures load deterministically
+- [x] `/health/` returns 200
+- [x] Tests cover mock mode and sanitizer (CI enforces MOCK_LLM)
+
+---
+
 ## Validation Results
 
 ### Structure Check

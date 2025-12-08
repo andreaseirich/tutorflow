@@ -708,24 +708,27 @@ This structure makes it easy to find related code: if you're working on scheduli
    - Student: Name, grade, subject, notes
    - Lesson: Date, duration, status, notes
    - Previous lessons: Last 5 lessons for context
-5. **Prompt building**: `apps.ai.prompts.build_lesson_plan_prompt()` creates structured prompt
-6. **LLM call**: `apps.ai.client.LLMClient` communicates with LLM API (OpenAI-compatible)
-7. **Error handling**: Timeouts, network and API errors are handled cleanly
-7. **Storage**: Result is stored as `LessonPlan` with:
+5. **PII Sanitizer**: `apps.ai.utils_safety.sanitize_context()` redacts PII before prompt creation
+6. **Prompt building**: `apps.ai.prompts.build_lesson_plan_prompt()` creates structured prompt
+7. **LLM call**: `apps.ai.client.LLMClient` communicates with LLM API (OpenAI-compatible) or returns local samples when `MOCK_LLM=1`
+8. **Error handling**: Timeouts, network and API errors are handled cleanly
+9. **Storage**: Result is stored as `LessonPlan` with:
    - Link to Lesson and Student
    - Generated content (Markdown text)
    - Metadata (model name, creation timestamp)
-8. **UI display**: LessonPlan is displayed in lesson detail view
-9. **Human-in-the-Loop**: Tutor reviews and adjusts the plan
+10. **UI display**: LessonPlan is displayed in lesson detail view
+11. **Human-in-the-Loop**: Tutor reviews and adjusts the plan
 
 ### AI Architecture (Phase 4)
 - **apps.ai.client.LLMClient**: Low-level API communication
   - OpenAI-compatible format
   - Timeout handling
   - Error handling (LLMClientError)
+  - Mock mode via `MOCK_LLM=1` with local samples (`docs/llm_samples.json`) for offline/demo use
 - **apps.ai.prompts**: Prompt building
   - Structured system and user prompts
   - Context aggregation
+- **apps.ai.utils_safety**: PII sanitization for AI context prior to prompt creation
 - **apps.ai.services.LessonPlanService**: High-level service
   - Orchestrates context collection, prompt building and LLM call
   - Creates/updates LessonPlan model

@@ -1,187 +1,187 @@
 [
-  {
-    "model": "auth.user",
-    "pk": 1,
-    "fields": {
-      "username": "demo_premium",
-      "password": "pbkdf2_sha256$600000$demo$kBOLnQhbkpl5/ze1eVvNwPZSiP1Qp8SxMFnRwTLPqxc=",
-      "is_superuser": true,
-      "is_staff": true,
-      "is_active": true,
-      "email": "demo_premium@example.com",
-      "first_name": "Demo",
-      "last_name": "Premium"
+    {
+      "model": "auth.user",
+      "pk": 1,
+      "fields": {
+        "username": "demo_premium",
+        "password": "pbkdf2_sha256$600000$demo$kBOLnQhbkpl5/ze1eVvNwPZSiP1Qp8SxMFnRwTLPqxc=",
+        "is_superuser": true,
+        "is_staff": true,
+        "is_active": true,
+        "email": "demo_premium@example.com",
+        "first_name": "Demo",
+        "last_name": "Premium"
+      }
+    },
+    {
+      "model": "auth.user",
+      "pk": 2,
+      "fields": {
+        "username": "demo_user",
+        "password": "pbkdf2_sha256$600000$demo$kBOLnQhbkpl5/ze1eVvNwPZSiP1Qp8SxMFnRwTLPqxc=",
+        "is_superuser": false,
+        "is_staff": true,
+        "is_active": true,
+        "email": "demo_user@example.com",
+        "first_name": "Demo",
+        "last_name": "User"
+      }
+    },
+    {
+      "model": "core.userprofile",
+      "pk": 1,
+      "fields": {
+        "user": 1,
+        "is_premium": true
+      }
+    },
+    {
+      "model": "core.userprofile",
+      "pk": 2,
+      "fields": {
+        "user": 2,
+        "is_premium": false
+      }
+    },
+    {
+      "model": "students.student",
+      "pk": 1,
+      "fields": {
+        "first_name": "Alex",
+        "last_name": "Miller",
+        "email": "alex@example.com",
+        "phone": "",
+        "school": "Demo School",
+        "grade": "10",
+        "subjects": "Math, Physics",
+        "notes": "Prefers visual examples"
+      }
+    },
+    {
+      "model": "students.student",
+      "pk": 2,
+      "fields": {
+        "first_name": "Jamie",
+        "last_name": "Kim",
+        "email": "jamie@example.com",
+        "phone": "",
+        "school": "Demo School",
+        "grade": "9",
+        "subjects": "English, History",
+        "notes": "Focus on writing"
+      }
+    },
+    {
+      "model": "students.student",
+      "pk": 3,
+      "fields": {
+        "first_name": "Sam",
+        "last_name": "Lopez",
+        "email": "sam@example.com",
+        "phone": "",
+        "school": "Demo School",
+        "grade": "11",
+        "subjects": "Chemistry",
+        "notes": "Preparing for exam"
+      }
+    },
+    {
+      "model": "contracts.contract",
+      "pk": 1,
+      "fields": {
+        "student": 1,
+        "institute": "",
+        "hourly_rate": "30.00",
+        "unit_duration_minutes": 60,
+        "start_date": "2025-01-01",
+        "end_date": null,
+        "is_active": true,
+        "notes": "Main math contract"
+      }
+    },
+    {
+      "model": "contracts.contract",
+      "pk": 2,
+      "fields": {
+        "student": 2,
+        "institute": "",
+        "hourly_rate": "28.00",
+        "unit_duration_minutes": 60,
+        "start_date": "2025-01-01",
+        "end_date": null,
+        "is_active": true,
+        "notes": "Writing coaching"
+      }
+    },
+    {
+      "model": "lessons.lesson",
+      "pk": 1,
+      "fields": {
+        "contract": 1,
+        "date": "2025-02-03",
+        "start_time": "14:00:00",
+        "duration_minutes": 60,
+        "status": "planned",
+        "travel_time_before_minutes": 0,
+        "travel_time_after_minutes": 0,
+        "notes": "Planned algebra session"
+      }
+    },
+    {
+      "model": "lessons.lesson",
+      "pk": 2,
+      "fields": {
+        "contract": 1,
+        "date": "2025-02-03",
+        "start_time": "14:30:00",
+        "duration_minutes": 60,
+        "status": "planned",
+        "travel_time_before_minutes": 0,
+        "travel_time_after_minutes": 0,
+        "notes": "Conflicting geometry session"
+      }
+    },
+    {
+      "model": "lessons.lesson",
+      "pk": 3,
+      "fields": {
+        "contract": 1,
+        "date": "2025-01-28",
+        "start_time": "13:00:00",
+        "duration_minutes": 60,
+        "status": "taught",
+        "travel_time_before_minutes": 0,
+        "travel_time_after_minutes": 0,
+        "notes": "Completed topic review"
+      }
+    },
+    {
+      "model": "lessons.lesson",
+      "pk": 4,
+      "fields": {
+        "contract": 2,
+        "date": "2025-02-04",
+        "start_time": "15:00:00",
+        "duration_minutes": 60,
+        "status": "planned",
+        "travel_time_before_minutes": 0,
+        "travel_time_after_minutes": 0,
+        "notes": "Essay planning"
+      }
+    },
+    {
+      "model": "lesson_plans.lessonplan",
+      "pk": 1,
+      "fields": {
+        "student": 1,
+        "lesson": 1,
+        "topic": "Mock lesson plan",
+        "subject": "Math",
+        "content": "[Mock] Warm-up, core practice, recap.",
+        "grade_level": "10",
+        "duration_minutes": 60,
+        "llm_model": "mock"
+      }
     }
-  },
-  {
-    "model": "auth.user",
-    "pk": 2,
-    "fields": {
-      "username": "demo_user",
-      "password": "pbkdf2_sha256$600000$demo$kBOLnQhbkpl5/ze1eVvNwPZSiP1Qp8SxMFnRwTLPqxc=",
-      "is_superuser": false,
-      "is_staff": true,
-      "is_active": true,
-      "email": "demo_user@example.com",
-      "first_name": "Demo",
-      "last_name": "User"
-    }
-  },
-  {
-    "model": "core.userprofile",
-    "pk": 1,
-    "fields": {
-      "user": 1,
-      "is_premium": true
-    }
-  },
-  {
-    "model": "core.userprofile",
-    "pk": 2,
-    "fields": {
-      "user": 2,
-      "is_premium": false
-    }
-  },
-  {
-    "model": "students.student",
-    "pk": 1,
-    "fields": {
-      "first_name": "Alex",
-      "last_name": "Miller",
-      "email": "alex@example.com",
-      "phone": "",
-      "school": "Demo School",
-      "grade": "10",
-      "subjects": "Math, Physics",
-      "notes": "Prefers visual examples"
-    }
-  },
-  {
-    "model": "students.student",
-    "pk": 2,
-    "fields": {
-      "first_name": "Jamie",
-      "last_name": "Kim",
-      "email": "jamie@example.com",
-      "phone": "",
-      "school": "Demo School",
-      "grade": "9",
-      "subjects": "English, History",
-      "notes": "Focus on writing"
-    }
-  },
-  {
-    "model": "students.student",
-    "pk": 3,
-    "fields": {
-      "first_name": "Sam",
-      "last_name": "Lopez",
-      "email": "sam@example.com",
-      "phone": "",
-      "school": "Demo School",
-      "grade": "11",
-      "subjects": "Chemistry",
-      "notes": "Preparing for exam"
-    }
-  },
-  {
-    "model": "contracts.contract",
-    "pk": 1,
-    "fields": {
-      "student": 1,
-      "institute": "",
-      "hourly_rate": "30.00",
-      "unit_duration_minutes": 60,
-      "start_date": "2025-01-01",
-      "end_date": null,
-      "is_active": true,
-      "notes": "Main math contract"
-    }
-  },
-  {
-    "model": "contracts.contract",
-    "pk": 2,
-    "fields": {
-      "student": 2,
-      "institute": "",
-      "hourly_rate": "28.00",
-      "unit_duration_minutes": 60,
-      "start_date": "2025-01-01",
-      "end_date": null,
-      "is_active": true,
-      "notes": "Writing coaching"
-    }
-  },
-  {
-    "model": "lessons.lesson",
-    "pk": 1,
-    "fields": {
-      "contract": 1,
-      "date": "2025-02-03",
-      "start_time": "14:00:00",
-      "duration_minutes": 60,
-      "status": "planned",
-      "travel_time_before_minutes": 0,
-      "travel_time_after_minutes": 0,
-      "notes": "Planned algebra session"
-    }
-  },
-  {
-    "model": "lessons.lesson",
-    "pk": 2,
-    "fields": {
-      "contract": 1,
-      "date": "2025-02-03",
-      "start_time": "14:30:00",
-      "duration_minutes": 60,
-      "status": "planned",
-      "travel_time_before_minutes": 0,
-      "travel_time_after_minutes": 0,
-      "notes": "Conflicting geometry session"
-    }
-  },
-  {
-    "model": "lessons.lesson",
-    "pk": 3,
-    "fields": {
-      "contract": 1,
-      "date": "2025-01-28",
-      "start_time": "13:00:00",
-      "duration_minutes": 60,
-      "status": "taught",
-      "travel_time_before_minutes": 0,
-      "travel_time_after_minutes": 0,
-      "notes": "Completed topic review"
-    }
-  },
-  {
-    "model": "lessons.lesson",
-    "pk": 4,
-    "fields": {
-      "contract": 2,
-      "date": "2025-02-04",
-      "start_time": "15:00:00",
-      "duration_minutes": 60,
-      "status": "planned",
-      "travel_time_before_minutes": 0,
-      "travel_time_after_minutes": 0,
-      "notes": "Essay planning"
-    }
-  },
-  {
-    "model": "lesson_plans.lessonplan",
-    "pk": 1,
-    "fields": {
-      "student": 1,
-      "lesson": 1,
-      "topic": "Mock lesson plan",
-      "subject": "Math",
-      "content": "[Mock] Warm-up, core practice, recap.",
-      "grade_level": "10",
-      "duration_minutes": 60,
-      "llm_model": "mock"
-    }
-  }
-]
-
+  ]
+  
