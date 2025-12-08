@@ -16,4 +16,3 @@ class DemoFixturesLoadTest(TestCase):
     def test_status_variety_present(self):
         self.assertTrue(Lesson.objects.filter(status="planned").exists())
         self.assertTrue(Lesson.objects.filter(status="taught").exists())
-

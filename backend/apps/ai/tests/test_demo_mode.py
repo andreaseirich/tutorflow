@@ -35,4 +35,3 @@ class LessonPlanMockIntegrationTest(TestCase):
         service.generate_lesson_plan(lesson)
 
         self.assertTrue(mock_sanitize.called)
-
