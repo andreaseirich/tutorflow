@@ -9,6 +9,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      MOCK_LLM: 1
+      DJANGO_SECRET_KEY: test-ci-secret
+      DJANGO_DEBUG: "True"
     
     steps:
     - uses: actions/checkout@v6
