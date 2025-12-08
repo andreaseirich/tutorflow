@@ -2,8 +2,12 @@
 Low-Level-Client für LLM-API-Kommunikation.
 """
 
+import json
 import logging
+import os
 import time
+from functools import lru_cache
+from pathlib import Path
 from typing import Optional
 
 import requests
@@ -19,6 +23,26 @@ class LLMClientError(Exception):
     pass
 
 
+SAMPLES_PATH = Path(__file__).resolve().parents[3] / "docs" / "llm_samples.json"
+
+
+@lru_cache(maxsize=1)
+def _load_llm_samples() -> dict:
+    try:
+        with open(SAMPLES_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            if isinstance(data, dict):
+                return data
+            logger.warning("LLM samples file has unexpected format (expected dict).")
+            return {}
+    except FileNotFoundError:
+        logger.warning("LLM samples file not found at %s", SAMPLES_PATH)
+        return {}
+    except json.JSONDecodeError:
+        logger.warning("LLM samples file is invalid JSON: %s", SAMPLES_PATH)
+        return {}
+
+
 class LLMClient:
     """Client für die Kommunikation mit einer LLM-API (z. B. OpenAI)."""
 
@@ -28,6 +52,8 @@ class LLMClient:
         self.api_key = settings.LLM_API_KEY
         self.model_name = settings.LLM_MODEL_NAME
         self.timeout = settings.LLM_TIMEOUT_SECONDS
+        self.mock_enabled = os.environ.get("MOCK_LLM", "") == "1" or not self.api_key
+        self.mock_samples = _load_llm_samples()
 
         # In Entwicklung/Demo kann API_KEY leer sein (wird in Tests gemockt)
         # Die Validierung erfolgt in generate_text() wenn nötig
@@ -58,6 +84,9 @@ class LLMClient:
         Raises:
             LLMClientError: Bei API-Fehlern, Timeouts oder Netzwerkproblemen
         """
+        if self.mock_enabled:
+            return self._generate_mock_text(prompt, system_prompt)
+
         if not self.api_key:
             raise LLMClientError(
                 _("LLM_API_KEY is not configured. Please set the LLM_API_KEY environment variable.")
@@ -83,6 +112,54 @@ class LLMClient:
             raise last_error
         # This should never happen, but ensures explicit return/raise
         raise LLMClientError(_("Unexpected error: max retries exceeded without error"))
+
+    def _generate_mock_text(self, prompt: str, system_prompt: Optional[str]) -> str:
+        sample_key = self._select_sample_key(prompt, system_prompt)
+        sample = self.mock_samples.get(sample_key)
+
+        if sample:
+            return sample
+
+        if self.mock_samples:
+            return next(iter(self.mock_samples.values()))
+
+        raise LLMClientError(
+            _("Mock mode is active, but no mock samples are available (key: {key}).").format(
+                key=sample_key
+            )
+        )
+
+    def _select_sample_key(self, prompt: str, system_prompt: Optional[str] = None) -> str:
+        """Einfache Heuristik, um einen passenden Sample-Key zu wählen."""
+        text = f"{prompt} {system_prompt or ''}".lower()
+        if "grammar" in text or "grammatik" in text:
+            return "lesson_plan_grammar"
+        if "math" in text or "mathe" in text:
+            return "lesson_plan_math"
+        if "write" in text or "writing" in text or "aufsatz" in text:
+            return "lesson_plan_writing"
+        return "lesson_plan_basic"
+
+    def generate_lesson_plan(self, context: Optional[dict] = None) -> str:
+        """
+        Vereinfachte Schnittstelle für Lesson-Plan-Generierung im Mock-Modus.
+
+        Wenn Mock aktiv ist, wird immer eine Mock-Antwort geliefert.
+        In echtem Betrieb sollte stattdessen generate_text() mit Prompts genutzt werden.
+        """
+        if not self.mock_enabled:
+            raise LLMClientError(
+                _("Mock mode is disabled. Call generate_text() with real prompts instead.")
+            )
+
+        sample = self.mock_samples.get("lesson_plan_basic")
+        if sample:
+            return sample
+
+        if self.mock_samples:
+            return next(iter(self.mock_samples.values()))
+
+        raise LLMClientError(_("Mock mode is active, but no mock samples are available."))
 
     def _make_api_request(
         self,
