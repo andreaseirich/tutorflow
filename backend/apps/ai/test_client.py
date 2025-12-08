@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 
 from apps.ai.client import LLMClient, LLMClientError
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 
 class LLMClientTest(TestCase):
@@ -67,13 +67,12 @@ class LLMClientTest(TestCase):
 
         self.assertIn("API-Fehler", str(context.exception))
 
-    def test_generate_text_no_api_key(self):
-        """Test: Fehler wenn API-Key fehlt."""
-        settings.LLM_API_KEY = ""
-
+    @override_settings(LLM_API_KEY="")
+    @patch.dict("os.environ", {}, clear=True)
+    def test_generate_text_no_api_key_triggers_mock(self):
+        """Test: Ohne API-Key wird automatisch Mock-Modus verwendet."""
         client = LLMClient()
 
-        with self.assertRaises(LLMClientError) as context:
-            client.generate_text("Test-Prompt")
+        result = client.generate_text("Test-Prompt")
 
-        self.assertIn("LLM_API_KEY", str(context.exception))
+        self.assertIn("Lesson Plan", result)
