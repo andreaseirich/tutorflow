@@ -9,6 +9,7 @@ from unittest.mock import Mock, patch
 from apps.ai.client import LLMClientError
 from apps.ai.prompts import build_lesson_plan_prompt, extract_subject_from_student
 from apps.ai.services import LessonPlanGenerationError, LessonPlanService
+from apps.ai.utils_safety import REDACTED, sanitize_context
 from apps.contracts.models import Contract
 from apps.core.models import UserProfile
 from apps.core.utils import is_premium_user
@@ -70,10 +71,27 @@ class PromptBuildingTest(TestCase):
     def test_build_lesson_plan_prompt(self):
         """Test: Prompt wird korrekt gebaut."""
         context = {"previous_lessons": []}
-        system_prompt, user_prompt = build_lesson_plan_prompt(self.lesson, context)
+        safe_context = sanitize_context(
+            {
+                "student": {
+                    "full_name": "Max Mustermann",
+                    "grade": "10. Klasse",
+                    "subjects": "Mathe, Deutsch",
+                    "notes": "Benötigt Schwerpunkt Grammatik",
+                },
+                "lesson": {
+                    "date": self.lesson.date.isoformat(),
+                    "duration_minutes": 60,
+                    "status": self.lesson.get_status_display(),
+                    "notes": "Konzentriert arbeiten",
+                },
+                "previous_lessons": [],
+            }
+        )
+        system_prompt, user_prompt = build_lesson_plan_prompt(self.lesson, safe_context)
 
         self.assertIn("Nachhilfelehrer", system_prompt)
-        self.assertIn("Max Mustermann", user_prompt)
+        self.assertIn(REDACTED, user_prompt)
         self.assertIn("10. Klasse", user_prompt)
         self.assertIn("60 Minuten", user_prompt)
 
@@ -141,5 +159,6 @@ class LessonPlanServiceTest(TestCase):
         context = service.gather_context(self.lesson)
 
         self.assertIn("previous_lessons", context)
-        self.assertIn("student_notes", context)
-        self.assertIn("contract_duration", context)
+        self.assertIn("student", context)
+        self.assertIn("lesson", context)
+        self.assertEqual(context["lesson"]["duration_minutes"], 60)
