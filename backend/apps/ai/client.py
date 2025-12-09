@@ -5,6 +5,7 @@ Low-Level-Client für LLM-API-Kommunikation.
 import json
 import logging
 import os
+import random
 import time
 from functools import lru_cache
 from pathlib import Path
@@ -55,8 +56,10 @@ class LLMClient:
         self.mock_enabled = os.environ.get("MOCK_LLM", "") == "1" or not self.api_key
         self.mock_samples = _load_llm_samples()
 
-        # In Entwicklung/Demo kann API_KEY leer sein (wird in Tests gemockt)
-        # Die Validierung erfolgt in generate_text() wenn nötig
+        if not self.mock_enabled and not self.api_key:
+            raise LLMClientError(
+                _("LLM_API_KEY is required when MOCK_LLM=0 (live mode disabled without key).")
+            )
 
     def generate_text(
         self,
@@ -101,7 +104,9 @@ class LLMClient:
                 # Retry only for rate limit errors (429)
                 error_msg = str(e)
                 if "rate limit" in error_msg.lower() and attempt < max_retries:
-                    wait_time = retry_delay * (attempt + 1)  # Exponential backoff
+                    base = retry_delay * (attempt + 1)
+                    wait_time = base + random.uniform(1, 2)
+                    logger.warning("LLM rate limit: retry %s after %.2fs", attempt + 1, wait_time)
                     time.sleep(wait_time)
                     continue
                 # For other errors or after max retries, raise immediately
@@ -292,6 +297,7 @@ class LLMClient:
                 raise LLMClientError(_("Unexpected API response format"))
 
         except requests.exceptions.Timeout as e:
+            logger.error("LLM API request timed out after %ss", self.timeout, exc_info=True)
             raise LLMClientError(
                 _("API timeout after {seconds} seconds").format(seconds=self.timeout)
             ) from e
@@ -303,6 +309,7 @@ class LLMClient:
                 ) from e
             raise LLMClientError(_("API error: {error}").format(error=str(e))) from e
         except requests.exceptions.RequestException as e:
+            logger.error("LLM API request failed: %s", e, exc_info=True)
             raise LLMClientError(_("API error: {error}").format(error=str(e))) from e
         except (KeyError, ValueError) as e:
             raise LLMClientError(

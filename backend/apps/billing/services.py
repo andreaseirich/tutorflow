@@ -6,6 +6,7 @@ from decimal import Decimal
 
 from apps.billing.models import Invoice, InvoiceItem
 from apps.lessons.models import Lesson
+from django.db import transaction
 from django.utils.translation import gettext as _
 
 
@@ -64,10 +65,13 @@ class InvoiceService:
         """
         # Lade automatisch alle abrechenbaren Lessons im Zeitraum
         contract_id = contract.id if contract else None
-        lessons = InvoiceService.get_billable_lessons(period_start, period_end, contract_id)
+        with transaction.atomic():
+            lessons = InvoiceService.get_billable_lessons(
+                period_start, period_end, contract_id
+            ).select_for_update()
 
-        if not lessons.exists():
-            raise ValueError(_("No billable lessons found in the specified period."))
+            if not lessons.exists():
+                raise ValueError(_("No billable lessons found in the specified period."))
 
         # Determine payer_name; payer_address is optional (Student has no address field)
         if contract:
@@ -79,53 +83,51 @@ class InvoiceService:
             payer_name = first_lesson.contract.student.full_name
             payer_address = ""
 
-        # Erstelle Invoice
-        invoice = Invoice.objects.create(
-            payer_name=payer_name,
-            payer_address=payer_address,
-            contract=contract or lessons.first().contract,
-            period_start=period_start,
-            period_end=period_end,
-            status="draft",
-        )
-
-        # Erstelle InvoiceItems
-        total_amount = Decimal("0.00")
-        for lesson in lessons:
-            # Berechne Betrag basierend auf Einheiten
-            # units = lesson_duration_minutes / contract_unit_duration_minutes
-            # amount = units * rate_per_unit
-            contract = lesson.contract
-            unit_duration = Decimal(str(contract.unit_duration_minutes))
-            lesson_duration = Decimal(str(lesson.duration_minutes))
-            units = lesson_duration / unit_duration
-            rate_per_unit = contract.hourly_rate
-            amount = units * rate_per_unit
-
-            InvoiceItem.objects.create(
-                invoice=invoice,
-                lesson=lesson,
-                description=_("Lesson {date} {time} - {student}").format(
-                    date=lesson.date,
-                    time=lesson.start_time.strftime("%H:%M"),
-                    student=lesson.contract.student.full_name,
-                ),
-                date=lesson.date,
-                duration_minutes=lesson.duration_minutes,
-                amount=amount,
+            # Erstelle Invoice
+            invoice = Invoice.objects.create(
+                payer_name=payer_name,
+                payer_address=payer_address,
+                contract=contract or lessons.first().contract,
+                period_start=period_start,
+                period_end=period_end,
+                status="draft",
             )
 
-            total_amount += amount
+            # Erstelle InvoiceItems
+            total_amount = Decimal("0.00")
+            for lesson in lessons:
+                # Berechne Betrag basierend auf Einheiten
+                contract = lesson.contract
+                unit_duration = Decimal(str(contract.unit_duration_minutes))
+                lesson_duration = Decimal(str(lesson.duration_minutes))
+                units = lesson_duration / unit_duration
+                rate_per_unit = contract.hourly_rate
+                amount = units * rate_per_unit
 
-            # Markiere Lesson als abgerechnet (Status PAID)
-            lesson.status = "paid"
-            lesson.save(update_fields=["status", "updated_at"])
+                InvoiceItem.objects.create(
+                    invoice=invoice,
+                    lesson=lesson,
+                    description=_("Lesson {date} {time} - {student}").format(
+                        date=lesson.date,
+                        time=lesson.start_time.strftime("%H:%M"),
+                        student=lesson.contract.student.full_name,
+                    ),
+                    date=lesson.date,
+                    duration_minutes=lesson.duration_minutes,
+                    amount=amount,
+                )
 
-        # Setze Gesamtbetrag (Summe aller InvoiceItems)
-        invoice.total_amount = total_amount
-        invoice.save(update_fields=["total_amount", "updated_at"])
+                total_amount += amount
 
-        return invoice
+                # Markiere Lesson als abgerechnet (Status PAID)
+                lesson.status = "paid"
+                lesson.save(update_fields=["status", "updated_at"])
+
+            # Setze Gesamtbetrag (Summe aller InvoiceItems)
+            invoice.total_amount = total_amount
+            invoice.save(update_fields=["total_amount", "updated_at"])
+
+            return invoice
 
     @staticmethod
     def delete_invoice(invoice: Invoice):
