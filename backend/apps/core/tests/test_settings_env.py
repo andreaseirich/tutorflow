@@ -2,7 +2,6 @@ import os
 from unittest import mock
 
 from django.test import SimpleTestCase
-
 from tutorflow import settings
 
 
