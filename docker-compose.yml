@@ -31,7 +31,7 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=${DATABASE_URL:-postgresql://${POSTGRES_USER:-tutorflow_user}:${POSTGRES_PASSWORD:-tutorflow_password}@db:5432/${POSTGRES_DB:-tutorflow}
+      - DATABASE_URL=${DATABASE_URL:-postgresql://${POSTGRES_USER:-tutorflow_user}:${POSTGRES_PASSWORD:-tutorflow_password}@db:5432/${POSTGRES_DB:-tutorflow}}
     depends_on:
       db:
         condition: service_healthy
