@@ -7,6 +7,24 @@
 [![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![i18n](https://img.shields.io/badge/i18n-English%20%7C%20German-lightgrey.svg)](docs/ARCHITECTURE.md#internationalization-i18n)
 
+## TL;DR – Demo in 2 Befehlen
+
+```bash
+cp .env.example .env
+./scripts/run_demo.sh
+```
+
+- Startet das Backend mit `MOCK_LLM=1`, lädt die deterministischen Fixtures und öffnet `http://127.0.0.1:8000/`.
+- Health-Check: `curl http://127.0.0.1:8000/health/` → `{ "status": "ok" }`
+- Smoke-Test ohne Browser: `./scripts/smoke_demo.sh` (wartet auf `/health/`)
+
+**Demo-Logins**
+
+| Rolle            | Benutzername    | Passwort  | Bereich |
+| ---------------- | --------------- | --------- | ------- |
+| Premium (AI)     | `demo_premium`  | `demo123` | Admin   |
+| Standard         | `demo_user`     | `demo123` | Admin   |
+
 ## Project Overview
 
 TutorFlow is a comprehensive web application designed for tutors to manage their tutoring business efficiently. It solves the challenge of organizing students, contracts, and lessons while avoiding scheduling conflicts and maintaining clear financial oversight. The application is built for tutors who need a structured, reliable tool to manage their teaching activities, track income, and generate invoices—all with intelligent conflict detection and AI-powered lesson planning support.
