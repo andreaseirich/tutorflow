@@ -39,15 +39,15 @@ TutorFlow is fully internationalized with English as the default language and Ge
 
 #### Framework
 - **Django 6.0**: Modern Python web framework
-- **SQLite**: Standard database for development
-- **PostgreSQL**: Optional, prepared for production
+- **Database (env-first)**: Uses `DATABASE_URL` with `dj-database-url`; falls back to SQLite for local/demo
+- **PostgreSQL**: Recommended for production and Docker/Compose
 
 #### Project Structure
 
 ```
 backend/
 ├── tutorflow/          # Main project configuration
-│   ├── settings.py     # Django settings
+│   ├── settings.py     # Django settings (env-first: SECRET_KEY/DEBUG/ALLOWED_HOSTS/DATABASE_URL/STATIC_ROOT)
 │   ├── urls.py         # URL routing
 │   ├── wsgi.py         # WSGI configuration
 │   └── asgi.py         # ASGI configuration

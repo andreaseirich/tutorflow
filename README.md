@@ -13,7 +13,7 @@ TutorFlow is a comprehensive web application designed for tutors to manage their
 
 ## Key Features
 
-- **📅 Intelligent Scheduling**: Interactive week view with drag-to-create appointments, automatic conflict detection (time overlaps & contract quotas), and recurring lesson support
+- **📅 Intelligent Scheduling**: Interactive week view with click-to-create appointments, automatic conflict detection (time overlaps & contract quotas), and recurring lesson support
 - **👥 Student & Contract Management**: Centralized management of students, contracts, and monthly planning with flexible contract structures
 - **💰 Billing & Income Tracking**: Automated invoice generation from lessons, monthly/yearly income overviews, and planned vs. actual comparisons
 - **🚫 Blocked Time Management**: Personal appointment blocking (vacations, university, etc.) with multi-day and recurring support, fully integrated in calendar
@@ -115,7 +115,7 @@ python manage.py runserver
 
 **See main features in 2 minutes:**
 1. **Dashboard** (`/`): Overview of today's lessons, upcoming appointments, and conflicts
-2. **Week View** (`/lessons/week/`): Interactive calendar - drag time ranges to create appointments, click to edit
+2. **Week View** (`/lessons/week/`): Interactive calendar - click time blocks to create appointments, click to edit
 3. **Income Overview** (`/income/`): Monthly/yearly financial tracking with planned vs. actual comparisons
 4. **Billing** (`/billing/invoices/`): Create invoices from taught lessons with HTML document generation
 
@@ -140,7 +140,7 @@ python manage.py runserver
 1. **Login**: Use demo credentials (`demo_premium` / `demo123`) to access the admin interface
 2. **Dashboard**: View today's lessons, upcoming appointments, and conflicts overview
 3. **Week Calendar**: Open `/lessons/week/` to see the interactive calendar
-   - Drag a time range to create a new lesson or blocked time
+   - Click in a time block to create a new lesson or blocked time
    - Click on a lesson to view/edit details or generate an AI lesson plan
    - Click on conflict icons to see detailed conflict information
 4. **Conflict Detection**: Inspect conflicts in the week view or lesson detail pages
@@ -151,7 +151,7 @@ python manage.py runserver
 
 TutorFlow follows a simple 3-step workflow:
 
-1. **📅 Scheduling**: Plan lessons via the interactive week view. Drag time ranges to create appointments, set up recurring lessons, and block personal time. The system automatically detects scheduling conflicts and contract quota violations.
+1. **📅 Scheduling**: Plan lessons via the interactive week view. Click time blocks to create appointments, set up recurring lessons, and block personal time. The system automatically detects scheduling conflicts and contract quota violations.
 
 2. **⚠️ Conflict Detection**: Real-time conflict detection ensures you never double-book. The system checks for:
    - Time overlaps with other lessons (including travel times)
@@ -222,7 +222,7 @@ TutorFlow provides a complete solution for managing tutoring activities:
 ## Tech Stack
 
 ### Backend
-- **Framework**: Django 5.2.9
+- **Framework**: Django 6.0
 - **Database**: SQLite (development), PostgreSQL (optional for production)
 - **Python**: 3.12+
 - **Dependencies**: Django, requests (see `requirements.txt`)
@@ -230,15 +230,15 @@ TutorFlow provides a complete solution for managing tutoring activities:
 
 ### Premium Features (AI)
 - **LLM Integration**: OpenAI-compatible API for AI-generated lesson plans
-- **Configuration**: API keys via environment variables:
+- **Configuration**: API keys via environment variables. Production model is configurable via `LLM_MODEL_NAME` and defaults to `gpt-3.5-turbo`:
   ```bash
   export LLM_API_KEY="your-api-key"
   export LLM_API_BASE_URL="https://api.openai.com/v1"  # Optional
-  export LLM_MODEL_NAME="gpt-5-turbo"  # Optional
+  export LLM_MODEL_NAME="gpt-3.5-turbo"  # Optional
   ```
 
 ### Frontend
-- To be defined in later phases (e.g., Django Templates, HTMX, Tailwind)
+- Django Templates with minimal JavaScript for the calendar UI
 
 ## Setup
 

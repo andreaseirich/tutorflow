@@ -14,15 +14,18 @@ This guide provides instructions for deploying TutorFlow in a production environ
 
 ## Database Setup
 
-### PostgreSQL
+TutorFlow uses an environment-first database configuration:
+
+- **Production/CI**: Set `DATABASE_URL` (e.g. `postgresql://user:pass@host:5432/tutorflow`). The settings use `dj-database-url` to parse this value.
+- **Local/Demo fallback**: If `DATABASE_URL` is not set, SQLite is used at `backend/db.sqlite3`.
+
+### PostgreSQL (recommended for production)
 
 1. **Install PostgreSQL:**
    ```bash
-   # Ubuntu/Debian
-   sudo apt-get install postgresql postgresql-contrib
-   
-   # macOS
-   brew install postgresql
+   sudo apt-get install postgresql postgresql-contrib  # Ubuntu/Debian
+   # or
+   brew install postgresql  # macOS
    ```
 
 2. **Create database and user:**
@@ -32,18 +35,9 @@ This guide provides instructions for deploying TutorFlow in a production environ
    GRANT ALL PRIVILEGES ON DATABASE tutorflow TO tutorflow_user;
    ```
 
-3. **Update Django settings:**
-   ```python
-   DATABASES = {
-       'default': {
-           'ENGINE': 'django.db.backends.postgresql',
-           'NAME': 'tutorflow',
-           'USER': 'tutorflow_user',
-           'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-           'HOST': 'localhost',
-           'PORT': '5432',
-       }
-   }
+3. **Configure environment:**
+   ```bash
+   export DATABASE_URL="postgresql://tutorflow_user:your-password@localhost:5432/tutorflow"
    ```
 
 ## Environment Variables
