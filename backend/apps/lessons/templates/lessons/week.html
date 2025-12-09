@@ -73,14 +73,14 @@
                                     <div style="flex: 1;">
                                         <span style="font-size: 1.1em; margin-right: 4px;">📚</span> <strong>{{ lesson.contract.student.first_name }}</strong>
                                         {% if lesson.id in conflicts_by_lesson %}
-                                        <a href="{% url 'lessons:conflicts' lesson.pk %}" style="color: #ffeb3b; font-size: 1.1em; margin-left: 4px; text-decoration: none;" title="{% trans 'Conflict detected - Click for details' %}" onclick="event.stopPropagation();">⚠️</a>
+                                        <a href="{% url 'lessons:conflicts' lesson.pk %}" style="color: #ffeb3b; font-size: 1.1em; margin-left: 4px; text-decoration: none;" title="{% trans 'Conflict detected - Click for details' %}" aria-label="{% trans 'View Conflicts' %}" onclick="event.stopPropagation();">⚠️</a>
                                         {% endif %}<br>
                                         <small style="opacity: 0.9;">{{ lesson.start_time|time:'H:i' }} - {{ lesson.duration_minutes }} {% trans "Min." %}</small>
                                         {% if lesson.status == 'paid' %}<small style="display: block; opacity: 0.8;">✓ {% trans "Paid" %}</small>{% endif %}
                                     </div>
                                     <a href="{% url 'lessons:update' lesson.pk %}?year={{ weekday.date.year }}&month={{ weekday.date.month }}&day={{ weekday.date.day }}" 
                                        style="color: white; text-decoration: none; font-size: 1.1em; padding: 2px 4px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-left: 4px; flex-shrink: 0;"
-                                       title="{% trans 'Edit lesson' %}"
+                                       title="{% trans 'Edit lesson' %}" aria-label="{% trans 'Edit Lesson' %}"
                                        onclick="event.stopPropagation();">
                                         ✏️
                                     </a>
@@ -146,8 +146,8 @@
         </label>
     </div>
     <div class="btn-group">
-        <button onclick="confirmCreate()" class="btn btn-success">{% trans "Create" %}</button>
-        <button onclick="cancelCreate()" class="btn btn-secondary">{% trans "Cancel" %}</button>
+        <button onclick="confirmCreate()" class="btn btn-success" aria-label="{% trans 'Create Lesson' %}">{% trans "Create" %}</button>
+        <button onclick="cancelCreate()" class="btn btn-secondary" aria-label="{% trans 'Cancel' %}">{% trans "Cancel" %}</button>
     </div>
 </div>
 
