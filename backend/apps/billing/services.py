@@ -69,15 +69,15 @@ class InvoiceService:
         if not lessons.exists():
             raise ValueError(_("No billable lessons found in the specified period."))
 
-        # Bestimme payer_name und payer_address
+        # Determine payer_name; payer_address is optional (Student has no address field)
         if contract:
             payer_name = contract.student.full_name
-            payer_address = getattr(contract.student, "address", "") or ""
+            payer_address = ""
         else:
             # Nehme den ersten Vertrag als Basis
             first_lesson = lessons.first()
             payer_name = first_lesson.contract.student.full_name
-            payer_address = getattr(first_lesson.contract.student, "address", "") or ""
+            payer_address = ""
 
         # Erstelle Invoice
         invoice = Invoice.objects.create(
