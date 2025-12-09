@@ -733,14 +733,14 @@ This structure makes it easy to find related code: if you're working on scheduli
   - Orchestrates context collection, prompt building and LLM call
   - Creates/updates LessonPlan model
 - **Configuration**: LLM settings via environment variables (LLM_API_KEY, LLM_API_BASE_URL, LLM_MODEL_NAME)
+- **Resilience**: Rate-limit backoff mit Jitter, Timeout-Logging, Mock-Mode (`MOCK_LLM=1`) als Default; Live-Mode schlägt fehl, wenn kein API-Key gesetzt ist.
 
 ## Timezone Handling
 
 - **Timezone**: Europe/Berlin (according to Master Prompt)
-- Django is configured with `TIME_ZONE = 'Europe/Berlin'` and `USE_TZ = True`
-- All timestamps, dates and log entries use the timezone Europe/Berlin
-- Models with DateTimeField use Django's timezone-aware datetime fields
-- Admin interfaces and tests correctly consider the timezone
+- Anwendungen behandeln Zeiten lokal in Europe/Berlin; Persistierung wird konsistent in dieser Zone betrieben, keine automatische UTC-Konvertierung für Lesson-Zeiten vorgesehen.
+- Hinweis: Für spätere Multi-TZ-Szenarien ist eine explizite Konvertierung/Normalisierung zu planen.
+- Django ist mit `TIME_ZONE = 'Europe/Berlin'` und `USE_TZ = True` konfiguriert, UI/Tests berücksichtigen die lokale Zone.
 
 ## Security
 

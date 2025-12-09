@@ -556,3 +556,6 @@ All originally documented dates with `2025-01-27` were corrected to the correct 
 
 ### Next Steps
 1. Phase 7 fully completed
+
+## Checkpoint 2025-12-09
+- Security/Deployment hardening: env-first settings, secure defaults, pinned deps, entrypoint, CI, AI backoff, billing locking, timezone note.

@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2025-12-09
+
+### Added
+- Deployment entrypoint script (migrate + optional collectstatic) for container runs; compose healthcheck hitting `/health/`.
+- CI workflow with Python 3.12, ruff checks, compileall, and Django tests.
+- UX: ARIA labels for key buttons; cached conflict checks on lessons; UX note in `docs/UX.md`.
+- Sanitizer regex for email/phone plus additional unit tests.
+
+### Changed
+- Secure defaults in settings: DEBUG default off, ALLOWED_HOSTS default localhost/127.0.0.1, CSRF trusted origins via env, SECURE_* flags via env; env example expanded.
+- AI client: rate-limit backoff with jitter, timeout logging, fail-fast when live mode lacks API key.
+- Requirements fully pinned including gunicorn.
+- Documentation: README/SECURITY/ARCHITECTURE updated for secure env-first deployment, click-to-create calendar, AI resilience, timezone note.
+
+### Fixed
+- Billing invoice creation wrapped in transactions with row locking; double invoicing guarded by tests.
+
 ## [0.9.5] - 2025-12-09
 
 ### Fixed
