@@ -18,21 +18,16 @@ RUN apt-get update && apt-get install -y \
 # Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir gunicorn
 
 # Copy project
 COPY backend/ /app/backend/
+COPY scripts/entrypoint.sh /app/scripts/entrypoint.sh
+RUN chmod +x /app/scripts/entrypoint.sh
 WORKDIR /app/backend
-
-# Compile translation files
-RUN python manage.py compilemessages
-
-# Collect static files
-RUN python manage.py collectstatic --noinput || true
 
 # Expose port
 EXPOSE 8000
 
-# Run gunicorn
-CMD ["gunicorn", "tutorflow.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4"]
+# Entrypoint will run migrations/collectstatic (if applicable) and start gunicorn
+ENTRYPOINT ["/app/scripts/entrypoint.sh"]
 
