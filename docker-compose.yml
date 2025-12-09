@@ -3,12 +3,14 @@ version: '3.8'
 services:
   db:
     image: postgres:15
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: tutorflow
-      POSTGRES_USER: tutorflow_user
-      POSTGRES_PASSWORD: tutorflow_password
+      POSTGRES_DB: ${POSTGRES_DB:-tutorflow}
+      POSTGRES_USER: ${POSTGRES_USER:-tutorflow_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tutorflow_password}
     ports:
       - "5432:5432"
     healthcheck:
@@ -29,7 +31,7 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://tutorflow_user:tutorflow_password@db:5432/tutorflow
+      - DATABASE_URL=${DATABASE_URL:-postgresql://${POSTGRES_USER:-tutorflow_user}:${POSTGRES_PASSWORD:-tutorflow_password}@db:5432/${POSTGRES_DB:-tutorflow}}
     depends_on:
       db:
         condition: service_healthy
