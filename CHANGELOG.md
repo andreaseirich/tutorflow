@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.5] - 2025-12-09
+
+### Fixed
+- **Finance planned amount**: Planned amount now uses unit-based rate (no duration multiplier); tests added for 45-minute units and 90-minute lessons.
+- **Invoice payer address**: Invoice creation no longer requires a student address; payer_address falls back to empty string.
+- **Calendar UX copy**: Week view note clarifies click-to-create (no drag-to-create).
+
+### Changed
+- **Settings hardening**: SECRET_KEY/DEBUG/ALLOWED_HOSTS moved to env helpers; database is env-first via `DATABASE_URL` (dj-database-url) with SQLite fallback; STATIC_ROOT set for deployments.
+- **AI config naming**: README aligns with default model `gpt-3.5-turbo`.
+- **Docs**: README/DEPLOYMENT/SECURITY/ARCHITECTURE updated for env-first settings, static files, and database guidance; `.env.example` added.
+
+### Added
+- **Tests**: Coverage for finance planned amount, invoice address fallback, env helpers, and calendar template note.
+
 ## [0.9.4] - 2025-12-08
 
 ### Added
