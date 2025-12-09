@@ -29,6 +29,14 @@ cp .env.example .env
 
 TutorFlow is a comprehensive web application designed for tutors to manage their tutoring business efficiently. It solves the challenge of organizing students, contracts, and lessons while avoiding scheduling conflicts and maintaining clear financial oversight. The application is built for tutors who need a structured, reliable tool to manage their teaching activities, track income, and generate invoices—all with intelligent conflict detection and AI-powered lesson planning support.
 
+## Submission (Teca Hacks)
+
+- **Devpost-Einreichung:** Trage den finalen Link zur TutorFlow-Projektseite auf Devpost ein (inkl. Teammitglieder und Tech-Stack).
+- **Demo-Video (empfohlen):** Kurzer Walkthrough (2–3 Minuten) mit Fokus auf Week View, Konflikterkennung und AI Lesson Plans.
+- **Kurzbeschreibung:** 2–3 Sätze zu Problem & Lösung (z. B. „Tutor:innen vermeiden Doppelbuchungen, erhalten finanzielle Übersicht und generieren AI-gestützte Lesson Plans“).
+- **Repository-Link & Deploy-Hinweis:** GitHub-Link (dieses Repo) plus kurzer Hinweis auf Demo-Setup (`./scripts/run_demo.sh`, Mock-LLM).
+- **Lernpunkte & Herausforderungen:** Notiere die wichtigsten Learnings (z. B. Konfliktdetektion, i18n, OpenAI-kompatibles API-Design).
+
 ## Key Features
 
 - **📅 Intelligent Scheduling**: Interactive week view with click-to-create appointments, automatic conflict detection (time overlaps & contract quotas), and recurring lesson support
@@ -37,6 +45,14 @@ TutorFlow is a comprehensive web application designed for tutors to manage their
 - **🚫 Blocked Time Management**: Personal appointment blocking (vacations, university, etc.) with multi-day and recurring support, fully integrated in calendar
 - **🤖 AI-Powered Lesson Plans**: Premium feature for automatic generation of structured lesson plans using LLM APIs (OpenAI-compatible) with automatic retry on rate limits
 - **🌍 Full Internationalization**: Complete i18n/l10n support with English (default) and German, including proper date, number, and currency formatting
+
+### Feature Walkthrough in 2 Minuten
+
+1. **Dashboard** (`/`): Heute/kommende Lessons, Konflikt-Widget, Premium-Badge.
+2. **Week View** (`/lessons/week/`): Drag-to-create, Konflikt-Icons, Klick auf Lesson → Edit & AI Lesson Plan.
+3. **Income Overview** (`/income/`): Geplanter vs. realer Umsatz, Monats-/Jahressicht.
+4. **Billing** (`/billing/invoices/`): Rechnungen aus „taught“ Lessons erzeugen, HTML-Dokumente prüfen.
+5. **Lesson Detail** (`/admin/lessons/lesson/<id>/change/`): „Generate AI Lesson Plan“-Button für Premium, Konflikt-Hinweise einsehen.
 
 ## Quick Start
 
@@ -157,6 +173,12 @@ python manage.py runserver
 
 ![Invoice Example](docs/images/invoice_example.png)
 *Invoice list and detail view with automatic generation from taught lessons*
+
+### UI & AI Highlights (Best UI/Creativity)
+
+- **Konflikt-First Kalender:** Week View mit roten Icons/Rändern für Konflikte; Blocked Times und Lessons nahtlos kombiniert.
+- **AI Lesson Plans im Flow:** Direkt aus dem Lesson-Detail per Button generierbar; Mock-LLM erlaubt reproduzierbare Demos ohne externe API.
+- **Demo-ready:** `./scripts/run_demo.sh` startet in <60 Sekunden mit deterministischen Daten; ideal für Video/GIF-Aufnahmen.
 
 ### Quick Demo Tour (2 Minutes)
 
@@ -307,6 +329,15 @@ python manage.py runserver
 ```
 
 The application is then available at `http://127.0.0.1:8000/`.
+
+## Security & Deployment Checklist
+
+- `.env` aus `.env.example` kopieren, dann **SECRET_KEY** stark setzen; `DEBUG` für Produktion leer lassen (→ `False`).
+- **ALLOWED_HOSTS** auf die tatsächlichen Domains/IPs setzen (kein Wildcard in Prod).
+- **DATABASE_URL/POSTGRES_∗** für PostgreSQL-Deployments konfigurieren (Docker Compose unterstützt env-first Setup).
+- **STATIC_ROOT/collectstatic** für Prod-Builds ausführen; statische Assets über Webserver/CDN ausliefern.
+- **LLM_API_KEY/LLM_API_BASE_URL** nur setzen, wenn echtes LLM gewünscht; für Demos **MOCK_LLM=1** beibehalten.
+- TLS/Reverse Proxy (z. B. Nginx) mit Weiterleitung auf Gunicorn/Daphne absichern; Health-Check unter `/health/`.
 
 ### Load Demo Data
 
