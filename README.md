@@ -31,6 +31,11 @@ cp .env.example .env
 - Health check: `curl http://127.0.0.1:8000/health/` → `{"status": "ok"}`
 - Demo logins: `demo_premium` / `demo123`, `demo_user` / `demo123`
 
+### Environment configuration & security
+- Set a strong `SECRET_KEY` in your `.env` before running the app; `DEBUG` defaults to `False` when omitted.
+- Specify `ALLOWED_HOSTS` (comma-separated) for any non-local deployment to avoid wildcard hosts in production.
+- When using Docker Compose, adjust `POSTGRES_*` variables and `DATABASE_URL` in `.env` instead of relying on hard-coded defaults.
+
 ### Prerequisites (manual setup)
 - Python 3.12 or higher
 - pip
