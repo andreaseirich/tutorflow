@@ -759,6 +759,13 @@ The architecture is designed to be easily extended:
 - API endpoints can be added incrementally
 - Frontend can be integrated later (Django templates, HTMX, React, etc.)
 
+### Extending AI Providers (OpenAI-kompatibel)
+
+1. **Neuer Client**: Implementiere einen Provider-spezifischen Client, der das OpenAI-kompatible Interface von `apps.ai.client.LLMClient` nachbildet (z. B. Azure OpenAI oder lokales Gateway). Timeout- und Fehlerbehandlung beibehalten.
+2. **Konfiguration per Env**: Erweiterte Settings in `LLM_API_BASE_URL`, `LLM_MODEL_NAME` und optional provider-spezifische Header; `MOCK_LLM=1` bleibt als Fallback für Offline/Demo bestehen.
+3. **Service-Hooks**: `apps.ai.services.LessonPlanService` nutzt den Client über eine klar definierte Schnittstelle. Zusätzliche Provider können dort injiziert oder per Factory ausgewählt werden.
+4. **Tests & Samples**: Neue Provider sollten deterministische Beispielantworten in `docs/llm_samples.json` oder eigenen Fixtures ablegen, damit Smoke-Tests ohne externe Calls laufen.
+
 ## Database Schema
 
 ### Relationships
