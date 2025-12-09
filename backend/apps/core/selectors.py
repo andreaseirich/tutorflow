@@ -135,10 +135,9 @@ class IncomeSelector:
         planned_amount = Decimal("0.00")
 
         for plan in monthly_plans:
-            # Berechne geplantes Einkommen basierend auf Stundensatz und Dauer
+            # Planned income uses rate per unit (unit already represents one block)
             hourly_rate = plan.contract.hourly_rate
-            unit_duration_hours = Decimal(plan.contract.unit_duration_minutes) / Decimal("60")
-            planned_amount += hourly_rate * unit_duration_hours * Decimal(plan.planned_units)
+            planned_amount += hourly_rate * Decimal(plan.planned_units)
 
         # Tatsächliche Einheiten aus Lessons
         start_date = date(year, month, 1)
