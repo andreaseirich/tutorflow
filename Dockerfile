@@ -24,6 +24,9 @@ RUN pip install --no-cache-dir gunicorn
 COPY backend/ /app/backend/
 WORKDIR /app/backend
 
+# Compile translation files
+RUN python manage.py compilemessages
+
 # Collect static files
 RUN python manage.py collectstatic --noinput || true
 
