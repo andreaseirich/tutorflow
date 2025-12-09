@@ -184,6 +184,24 @@ class InvoiceServiceTest(TestCase):
         self.assertEqual(item.date, date(2025, 1, 5))
         self.assertIsNone(item.lesson)
 
+    def test_double_invoicing_same_period_is_blocked(self):
+        """Lessons cannot be invoiced twice; second attempt raises ValueError."""
+        period_start = date(2025, 3, 1)
+        period_end = date(2025, 3, 31)
+
+        Lesson.objects.create(
+            contract=self.contract,
+            date=period_start,
+            start_time=time(10, 0),
+            duration_minutes=60,
+            status="taught",
+        )
+
+        InvoiceService.create_invoice_from_lessons(period_start, period_end, self.contract)
+
+        with self.assertRaises(ValueError):
+            InvoiceService.create_invoice_from_lessons(period_start, period_end, self.contract)
+
     def test_create_invoice_without_student_address(self):
         """InvoiceService should not require a student address."""
         period_start = date(2025, 2, 1)
