@@ -13,7 +13,7 @@
 </div>
 
 <p style="margin-top: 10px; color: #495057; font-size: 0.9em;">
-    <strong>{% trans "Note:" %}</strong> {% trans "Drag a time range in the calendar to create a new appointment. Click on an existing appointment to edit it." %}
+    <strong>{% trans "Note:" %}</strong> {% trans "Lessons and blocked times can be created by clicking in a time block; drag-to-create is not implemented." %}
 </p>
 
 <div id="week-calendar" style="margin-top: 20px; position: relative; overflow-x: auto;">
@@ -39,11 +39,8 @@
                 <td class="time-slot" 
                     data-date="{{ weekday.date|date:'Y-m-d' }}" 
                     data-hour="{{ hour }}"
-                    style="border: 1px solid #ddd; padding: 0; position: relative; vertical-align: top; cursor: crosshair;"
-                    onmousedown="startDrag(event, this)"
-                    onmousemove="handleDrag(event, this)"
-                    onmouseup="endDrag(event, this)"
-                    onmouseleave="cancelDrag(event)">
+                    style="border: 1px solid #ddd; padding: 0; position: relative; vertical-align: top; cursor: pointer;"
+                    onclick="openCreateFromSlot(this)">
                     <div class="slot-content" style="position: relative; height: 100%; width: 100%;">
                         {% for lesson in weekday.lessons %}
                             {% if lesson.start_time.hour|add:0 == hour|add:0 %}
@@ -57,7 +54,7 @@
                                         height: {{ lesson.duration_minutes }}px; 
                                         left: 0; 
                                         right: 0; 
-                                        background: #2196f3; 
+                                        background: {% if lesson.status == 'paid' %}#2e7d32{% elif lesson.status == 'taught' %}#607d8b{% else %}#2196f3{% endif %}; 
                                         color: white; 
                                         padding: 2px 4px; 
                                         font-size: 0.75em; 
@@ -68,8 +65,8 @@
                                         box-shadow: 0 1px 3px rgba(0,0,0,0.2);
                                         transition: all 0.2s;
                                         {% if lesson.id in conflicts_by_lesson %}border: 2px solid #dc3545;{% endif %}"
-                                 onmouseover="showLessonPreview(this, event); this.style.background='#1976d2'; this.style.transform='scale(1.02)'; this.style.zIndex='20';"
-                                 onmouseout="hideLessonPreview(); this.style.background='#2196f3'; this.style.transform='scale(1)'; this.style.zIndex='10';"
+                                 onmouseover="showLessonPreview(this, event); this.style.transform='scale(1.02)'; this.style.zIndex='20';"
+                                 onmouseout="hideLessonPreview(); this.style.transform='scale(1)'; this.style.zIndex='10';"
                                  onclick="event.stopPropagation(); window.location.href='{% url 'lesson_plans:lesson_plan' lesson.pk %}?year={{ weekday.date.year }}&month={{ weekday.date.month }}&day={{ weekday.date.day }}'"
                                  title="{{ lesson.contract.student.full_name }} - {{ lesson.start_time|time:'H:i' }} ({{ lesson.duration_minutes }} Min.) - {% trans 'Click to view lesson plan' %}">
                                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -95,7 +92,7 @@
                             {% with start_hour=blocked_time.start_datetime|local_hour start_minute=blocked_time.start_datetime|local_minute end_hour=blocked_time.end_datetime|local_hour end_minute=blocked_time.end_datetime|local_minute %}
                             {% if start_hour|add:0 == hour|add:0 %}
                             {% with duration_minutes=blocked_time.end_datetime|timesince:blocked_time.start_datetime %}
-                            <div class="blocked-time-block" 
+                            <div class="blocked-time-block lesson-block" 
                                  data-blocked-time-id="{{ blocked_time.id }}"
                                  data-start-hour="{{ start_hour }}"
                                  data-start-minute="{{ start_minute }}"
@@ -170,86 +167,12 @@
 </style>
 
 <script>
-let dragState = {
-    isDragging: false,
-    startCell: null,
-    endCell: null,
-    startTime: null,
-    endTime: null
-};
-
-function startDrag(event, cell) {
-    if (event.button !== 0) return; // Nur linke Maustaste
-    event.preventDefault();
-    dragState.isDragging = true;
-    dragState.startCell = cell;
-    dragState.startTime = getTimeFromCell(cell);
-    cell.classList.add('dragging');
-}
-
-function handleDrag(event, cell) {
-    if (!dragState.isDragging) return;
-    if (cell.dataset.date !== dragState.startCell.dataset.date) return; // Nur gleicher Tag
-    
-    dragState.endCell = cell;
-    dragState.endTime = getTimeFromCell(cell);
-    
-    // Markiere alle Zellen zwischen start und end
-    document.querySelectorAll('.time-slot').forEach(slot => {
-        slot.classList.remove('dragging');
-        if (slot.dataset.date === dragState.startCell.dataset.date) {
-            const slotHour = parseInt(slot.dataset.hour);
-            const startHour = parseInt(dragState.startCell.dataset.hour);
-            const endHour = parseInt(cell.dataset.hour);
-            if (slotHour >= Math.min(startHour, endHour) && slotHour <= Math.max(startHour, endHour)) {
-                slot.classList.add('dragging');
-            }
-        }
-    });
-}
-
-function endDrag(event, cell) {
-    if (!dragState.isDragging) return;
-    
-    dragState.isDragging = false;
-    dragState.endCell = cell;
-    dragState.endTime = getTimeFromCell(cell);
-    
-    // Berechne Start- und Endzeit
-    const startHour = parseInt(dragState.startCell.dataset.hour);
-    const endHour = parseInt(dragState.endCell.dataset.hour);
-    const date = dragState.startCell.dataset.date;
-    
-    // Normalisiere (start sollte vor end sein)
-    const actualStartHour = Math.min(startHour, endHour);
-    const actualEndHour = Math.max(startHour, endHour) + 1; // +1 für volle Stunde
-    
-    const startDateTime = new Date(date + 'T' + String(actualStartHour).padStart(2, '0') + ':00:00');
-    const endDateTime = new Date(date + 'T' + String(actualEndHour).padStart(2, '0') + ':00:00');
-    
-    // Zeige Dialog
+function openCreateFromSlot(cell) {
+    const date = cell.dataset.date;
+    const hour = parseInt(cell.dataset.hour);
+    const startDateTime = new Date(date + 'T' + String(hour).padStart(2, '0') + ':00:00');
+    const endDateTime = new Date(date + 'T' + String(hour + 1).padStart(2, '0') + ':00:00');
     showCreateDialog(startDateTime, endDateTime, date);
-    
-    // Entferne Markierungen
-    document.querySelectorAll('.time-slot').forEach(slot => {
-        slot.classList.remove('dragging');
-    });
-}
-
-function cancelDrag(event) {
-    if (dragState.isDragging) {
-        dragState.isDragging = false;
-        document.querySelectorAll('.time-slot').forEach(slot => {
-            slot.classList.remove('dragging');
-        });
-    }
-}
-
-function getTimeFromCell(cell) {
-    return {
-        hour: parseInt(cell.dataset.hour),
-        date: cell.dataset.date
-    };
 }
 
 function showCreateDialog(startDateTime, endDateTime, date) {
