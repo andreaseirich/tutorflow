@@ -44,10 +44,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env_bool("DEBUG", default=True)
+DEBUG = env_bool("DEBUG", default=False)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
@@ -58,11 +58,13 @@ if not SECRET_KEY:
         raise RuntimeError("SECRET_KEY muss über die Umgebung gesetzt werden.")
 
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS")
-if ALLOWED_HOSTS is None:
-    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+if not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 if not DEBUG and (not ALLOWED_HOSTS or ALLOWED_HOSTS == ["*"]):
     raise RuntimeError("ALLOWED_HOSTS muss für Produktionsbetrieb gesetzt werden.")
+
+CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", default=[])
 
 
 # Application definition
@@ -154,7 +156,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+# https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = "en"
 
@@ -179,7 +181,7 @@ LOCALE_PATHS = [
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+# https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -194,10 +196,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", default=False)
+SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", default=False)
+CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", default=False)
+
 if not DEBUG:
-    SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", default=True)
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = int(env("SECURE_HSTS_SECONDS", default="3600"))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = env_bool("SECURE_HSTS_PRELOAD", default=True)
