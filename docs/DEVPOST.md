@@ -42,6 +42,28 @@ cp .env.example .env
 - Logins: `demo_premium` / `demo123`, `demo_user` / `demo123`
 - AI responses are mocked; no external network calls required.
 
+## Submission Checklist (copy into Devpost)
+
+- ✅ Short title + tagline: “AI-assisted tutoring ops with safe defaults”
+- ✅ Repository link and commit hash used for the build
+- ✅ 100–150 word description (problem, solution, outcomes)
+- ✅ Screenshots/GIFs of dashboard, week view, conflicts, billing
+- ✅ Demo video link (show login → calendar → conflict → billing → AI lesson plan)
+- ✅ Tech stack list (Django 6, Python 3.12, SQLite/Postgres, Mock LLM)
+- ✅ Challenges + learnings (deterministic demos, PII scrubber, conflict engine)
+- ✅ Clear instructions to run locally: `cp .env.example .env && ./scripts/run_demo.sh`
+- ✅ Credits/attributions for external assets or OSS code
+- ✅ Team members + roles (or “Solo build”) and Devpost profiles
+
+## Judging Guide (what to show to reviewers)
+
+1. **Login & dashboard (30s):** Use `demo_premium` to show today’s lessons + conflict summary.
+2. **Calendar core loop (60s):** Open `/lessons/week/`, drag to create, click to edit; highlight conflict badges and blocked times.
+3. **AI lesson plan (30s):** Open a lesson with prefilled mock plan; trigger “Generate AI Lesson Plan” to show UX and mock safety note.
+4. **Billing & income (45s):** Create invoice from taught lesson, show invoice list + income overview with planned vs. taught vs. paid.
+5. **Reliability & safety (15s):** Mention `MOCK_LLM=1`, health endpoint `/health/`, and deterministic fixtures in CI/demo.
+
 ## Links
 - Repository: https://github.com/andreaseirich/tutorflow
 - Video Script: [docs/VIDEO_SCRIPT.md](VIDEO_SCRIPT.md)
+- Judging Guide (1-pager): [docs/JUDGING_GUIDE.md](JUDGING_GUIDE.md)
