@@ -62,6 +62,7 @@ When using TutorFlow:
 - **Follow deployment guidelines** in `docs/DEPLOYMENT.md` for production environments
 - **Use strong passwords** and enable authentication features as appropriate
 - **No hardcoded secrets**: `SECRET_KEY`, database credentials, and LLM keys are expected from environment variables; defaults in the repo are demo-only
+- **Secure defaults**: In Produktion niemals mit `DEBUG=True` oder leeren `ALLOWED_HOSTS` betreiben; aktivieren Sie bei Bedarf `SECURE_SSL_REDIRECT`, `SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE` via ENV.
 
 ## Acknowledgments
 

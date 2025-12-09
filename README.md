@@ -311,6 +311,7 @@ venv\Scripts\activate  # Windows
 ```bash
 pip install -r requirements.txt
 ```
+> Tipp: Für reproduzierbare Builds kann `uv pip compile` oder `pip-compile` genutzt werden, um die Pins zu erneuern.
 
 4. Migrate database:
 ```bash
@@ -333,7 +334,7 @@ The application is then available at `http://127.0.0.1:8000/`.
 ## Security & Deployment Checklist
 
 - `.env` aus `.env.example` kopieren, dann **SECRET_KEY** stark setzen; `DEBUG` für Produktion leer lassen (→ `False`).
-- **ALLOWED_HOSTS** auf die tatsächlichen Domains/IPs setzen (kein Wildcard in Prod).
+- **ALLOWED_HOSTS** auf die tatsächlichen Domains/IPs setzen (kein Wildcard in Prod). **Nie** Produktion mit `DEBUG=True` und leeren ALLOWED_HOSTS starten.
 - **DATABASE_URL/POSTGRES_∗** für PostgreSQL-Deployments konfigurieren (Docker Compose unterstützt env-first Setup).
 - **STATIC_ROOT/collectstatic** für Prod-Builds ausführen; statische Assets über Webserver/CDN ausliefern.
 - **LLM_API_KEY/LLM_API_BASE_URL** nur setzen, wenn echtes LLM gewünscht; für Demos **MOCK_LLM=1** beibehalten.
