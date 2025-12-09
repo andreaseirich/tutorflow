@@ -23,3 +23,16 @@ class SanitizeContextTest(SimpleTestCase):
         self.assertEqual(sanitized["student"]["email"], REDACTED)
         self.assertEqual(sanitized["student"]["subjects"], "Math")
         self.assertEqual(sanitized["list"][0]["phone"], REDACTED)
+
+    def test_sanitize_masks_email_and_phone_in_free_text(self):
+        ctx = {
+            "notes": "Reach me at john.doe@test.org or +49 151 2345678 for details.",
+            "nested": ["Call +1-202-555-0199 tomorrow."],
+        }
+
+        sanitized = sanitize_context(ctx)
+
+        self.assertNotIn("john.doe@test.org", sanitized["notes"])
+        self.assertNotIn("151 2345678", sanitized["notes"])
+        self.assertEqual(sanitized["notes"].count(REDACTED) >= 1, True)
+        self.assertIn(REDACTED, sanitized["nested"][0])
