@@ -17,6 +17,6 @@ class SettingsEnvHelperTest(SimpleTestCase):
             self.assertEqual(settings.env_list("ALLOWED_HOSTS"), ["a", "b", "c"])
 
     def test_defaults_are_applied(self):
-        self.assertEqual(settings.SECRET_KEY, "insecure-demo-key")
-        self.assertTrue(settings.DEBUG)
-        self.assertEqual(settings.ALLOWED_HOSTS, ["*"])
+        self.assertEqual(settings.SECRET_KEY, "dev-insecure-secret-key")
+        self.assertFalse(settings.DEBUG)
+        self.assertEqual(settings.ALLOWED_HOSTS, ["localhost", "127.0.0.1"])
