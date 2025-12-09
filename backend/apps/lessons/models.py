@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from apps.contracts.models import Contract
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -61,15 +63,22 @@ class Lesson(models.Model):
             self.duration_minutes + self.travel_time_before_minutes + self.travel_time_after_minutes
         )
 
-    @property
+    @cached_property
     def has_conflicts(self):
-        """Checks if this lesson has conflicts."""
+        """Checks if this lesson has conflicts (cached per instance)."""
         from apps.lessons.services import LessonConflictService
 
         return LessonConflictService.has_conflicts(self)
+
+    def invalidate_conflict_cache(self):
+        self.__dict__.pop("has_conflicts", None)
 
     def get_conflicts(self):
         """Returns all conflicts for this lesson."""
         from apps.lessons.services import LessonConflictService
 
         return LessonConflictService.check_conflicts(self)
+
+    def save(self, *args, **kwargs):
+        self.invalidate_conflict_cache()
+        super().save(*args, **kwargs)
