@@ -3,13 +3,13 @@
 Pygments @ git+https://github.com/pygments/pygments.git@24b8aa76c6cd6d70f39c6dd605cce319c98e2ccc
 asgiref==3.11.1
 certifi==2026.2.25
-charset-normalizer==3.4.6
+charset-normalizer==3.4.7
 Django==6.0.4
 dj-database-url==3.1.2
-gunicorn==25.1.0
+gunicorn==25.3.0
 idna==3.11
 psycopg2-binary==2.9.11
-requests==2.33.0
+requests==2.33.1
 sqlparse==0.5.5
 pillow==12.2.0
 pip-audit>=2.6.0
